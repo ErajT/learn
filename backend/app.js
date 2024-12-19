@@ -25,11 +25,29 @@ app.use(bodyParser.json({ limit: '200mb' }))
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
-
 //middleware for request body
 app.use(express.json());
 // app.use('/users', userRouter);
 app.use('/leaderboard', LeaderboardRouter);
+
+const cron = require('node-cron');
+const axios = require('axios');
+
+// Cron job to trigger the generateLeaderboard API every Friday at 3 PM
+cron.schedule('57 0 * * 4', async () => {
+  console.log('Triggering the generateLeaderboard API at 3 PM on Friday...');
+  
+  try {
+    // Replace with the correct URL of your backend server
+    const response = await axios.post('http://localhost:2000/leaderboard/generate');
+
+    console.log('API triggered successfully:', response.data);
+  } catch (error) {
+    console.error('Error triggering API:', error.message);
+  }
+});
+
+
 
 
 module.exports = app;
