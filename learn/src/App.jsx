@@ -37,7 +37,7 @@ const Sidebar = styled.div`
   top: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  justify-content: center; /* Center icons vertically */
+  justify-content: center; 
   align-items: center;
   padding: 20px 0;
   transition: background-color 0.3s ease-in-out;
@@ -47,7 +47,7 @@ const NavItems = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px; /* Adds space between icons */
+  gap: 30px; 
 `;
 
 const NavItem = styled(NavLink)`
@@ -59,8 +59,8 @@ const NavItem = styled(NavLink)`
   font-size: 1.5rem;
   transition: color 0.2s, transform 0.2s;
   width: 100%;
-  gap: 10px; /* Space between icon and text */
-  margin-bottom: 20px; /* Adds space between NavItems */
+  gap: 10px; 
+  margin-bottom: 20px; 
 
   &.active {
     color: #1abc9c;
@@ -187,9 +187,7 @@ const App = () => {
     <>
       <GlobalStyle />
       <AppContainer>
-        {/* Sidebar */}
         <Sidebar isHome={isHome}>
-          {/* Navigation Icons */}
           <NavItems>
             <NavItem to="/home" title="Home">
               <FaHome />
@@ -204,12 +202,10 @@ const App = () => {
               <FaWpforms />
             </NavItem>
           </NavItems>
-          {/* Logout Button */}
           <LogoutButton onClick={handleLogout} title="Logout">
             <FaSignOutAlt />
           </LogoutButton>
         </Sidebar>
-        {/* Main Content */}
         <Content isHome={isHome}>
           <Routes>
             <Route
