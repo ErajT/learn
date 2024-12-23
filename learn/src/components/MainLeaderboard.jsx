@@ -21,7 +21,7 @@ const pulseEffect = keyframes`
 
 // Main Container
 const LeaderboardContainer = styled.div`
-  background: #2b6777;
+  background: #f9f9f9;
   background-size: 400% 400%;
   animation: ${backgroundAnimation} 15s ease infinite;
   color: #ffffff;
@@ -42,7 +42,7 @@ const LeaderboardContainer = styled.div`
 const Title = styled.h1`
   font-size: 5rem;
   font-weight: 700;
-  color: #b0b9da;
+  color: #2b6777;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
   margin-bottom: 40px;
   transition: margin 0.3s ease;

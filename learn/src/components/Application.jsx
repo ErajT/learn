@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { Snackbar, Alert } from "@mui/material";
+
+// Define constants for TrainingID and TraineeID
+const TRAINING_ID = 1;
+const TRAINEE_ID = 1;
 
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -27,27 +32,32 @@ const Title = styled.h1`
 const DaySelector = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 5px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  width: 100%;
 
   @media (max-width: 768px) {
-    gap: 5px;
-    margin-bottom: 15px;
+    gap: 3px;
   }
 `;
 
 const DayButton = styled.button`
-  padding: 10px 20px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: ${({ active }) => (active ? "#2b6777" : "#fff")};
   color: ${({ active }) => (active ? "#fff" : "#2b6777")};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  flex-shrink: 1;
+  font-size: 1rem;
+  width: 100px;
+  text-align: center;
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
-    padding: 8px 15px;
+    font-size: 0.8rem;
+    padding: 8px;
   }
 `;
 
@@ -102,257 +112,222 @@ const Checkbox = styled.input`
   }
 `;
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalContent = styled.div`
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
+const TextArea = styled.textarea`
   width: 100%;
-
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
+  min-height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  resize: none;
 `;
 
-const CloseButton = styled.button`
+const Button = styled.button`
   background: #2b6777;
   color: #fff;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
+  font-size: 1rem;
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const UploadContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 
   @media (max-width: 768px) {
-    padding: 8px 15px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const UploadSection = styled.div`
+  flex: 1;
+  margin-right: 10px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+`;
+
+const Dropdown = styled.select`
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  margin-top: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    padding: 6px;
   }
 `;
 
 const Application = () => {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const [currentDay, setCurrentDay] = useState("Saturday");
+  const days = ["S", "M", "T", "W", "T", "F", "S"];
+  const today = new Date().toLocaleString("en-US", { weekday: "short" });
+  const [currentDay, setCurrentDay] = useState(today);
   const [tasks, setTasks] = useState({
-    Saturday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Sunday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Monday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Tuesday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Wednesday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Thursday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
-    ],
-    Friday: [
-      { text: "Applied", done: false, type: "checkbox" },
-      { text: "Applied with an Example", done: false, type: "example" },
-      { text: "Applied with a Photo", done: false, type: "photo" },
-      { text: "Applied with a Reference", done: false, type: "reference" },
+    [today]: [
+      { text: "Applied", done: false, type: "checkbox" }
     ],
   });
 
-  const [modalType, setModalType] = useState(null);
-  const [modalTask, setModalTask] = useState(null);
-  const [modalInput, setModalInput] = useState("");
-  const [trainees, setTrainees] = useState([]);
+  const [exampleText, setExampleText] = useState("");
+  const [isPhotoEnabled, setPhotoEnabled] = useState(false);
+  const [isReferenceEnabled, setReferenceEnabled] = useState(false);
   const [selectedReference, setSelectedReference] = useState("");
-  const base = "http://localhost:2000"; // Add protocol
-  const trainingId = 1; // Constant training ID
+  const [trainees, setTrainees] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   useEffect(() => {
-    // Fetch all trainees for the reference dropdown
-    fetch(`${base}/leaderboard/getAllTraineesForTraining/${trainingId}`)
+    fetch(`http://localhost:2000/leaderboard/getAllTraineesForTraining/${TRAINING_ID}`)
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data["data"]);
-        setTrainees(data["data"]);
-      })
+      .then((data) => setTrainees(data.data))
       .catch((error) => console.error("Error fetching trainees:", error));
   }, []);
 
   const handleCheckboxChange = (taskIndex) => {
-    setTasks((prev) => {
-      const updatedTasks = prev[currentDay].map((task, index) =>
-        index === taskIndex ? { ...task, done: !task.done } : task
-      );
-
-      if (taskIndex === 0) {
-        // If the first option is selected (index 0), call the simpleResponse API
-        handleSimpleResponse();
-      } else if (taskIndex >= 1) {
-        // Open modal for example, photo, or reference
-        handleOpenModal(prev[currentDay][taskIndex]);
-      }
-
-      return {
-        ...prev,
-        [currentDay]: updatedTasks,
-      };
-    });
-  };
-
-  const handleOpenModal = (task) => {
-    setModalType(task.type);
-    setModalTask(task.text);
-  };
-
-  const handleCloseModal = () => {
-    setModalType(null);
-    setModalTask(null);
-    setModalInput("");
-  };
-
-  const handleInputSubmit = () => {
-    const commonPayload = {
-      TrainingID: trainingId,
-      TraineeID: 1, // Default to 1 if no trainee is selected
-    };
-    console.log(trainees);
-    console.log(modalInput);
-
-    if (modalType === "example") {
-      fetch(`${base}/leaderboard/example`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...commonPayload, Example: modalInput }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Example submitted:", data);
-          handleCloseModal();
-        })
-        .catch((error) => console.error("Error submitting example:", error));
-    }
-
-    if (modalType === "photo" && modalInput) {
-      const formData = new FormData();
-      formData.append("photo", modalInput);
-      formData.append("TrainingID", commonPayload.TrainingID);
-      formData.append("TraineeID", commonPayload.TraineeID);
-
-      fetch(`${base}/leaderboard/photo`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Photo uploaded:", data);
-          handleCloseModal();
-        })
-        .catch((error) => console.error("Error uploading photo:", error));
-    }
-    console.log(commonPayload.TraineeID);
-    console.log(selectedReference);
-
-    if (modalType === "reference") {
-      fetch(`${base}/leaderboard/refer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...commonPayload,
-          refer: selectedReference,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Trainee referred:", data);
-          handleCloseModal();
-        })
-        .catch((error) => console.error("Error referring trainee:", error));
+    if (taskIndex === 0) {
+      setTasks((prev) => {
+        const updatedTasks = prev[today].map((task, index) =>
+          index === taskIndex ? { ...task, done: !task.done } : task
+        );
+        return { ...prev, [today]: updatedTasks };
+      });
     }
   };
 
-  const handleSimpleResponse = () => {
-    const commonPayload = {
-      TrainingID: trainingId,
-      TraineeID: selectedReference || 1, // Default to 1 if no trainee is selected
-    };
+  const handleSubmitExample = () => {
+    const wordCount = exampleText.trim().split(/\s+/).length;
+    if (wordCount < 1) {
+      setSnackbar({ open: true, message: "The example must be at least 150 words.", severity: "error" });
+      return;
+    }
 
-    fetch(`${base}/leaderboard/simpleResponse`, {
+    fetch(`http://localhost:2000/leaderboard/example`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(commonPayload),
+      body: JSON.stringify({ TrainingID: TRAINING_ID, TraineeID: TRAINEE_ID, Example: exampleText }),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Simple response submitted:", data);
+        setSnackbar({ open: true, message: "Example submitted successfully!", severity: "success" });
+        setPhotoEnabled(true);
+        setReferenceEnabled(true);
       })
-      .catch((error) => console.error("Error submitting simple response:", error));
+      .catch((error) => {
+        setSnackbar({ open: true, message: "Error submitting example.", severity: "error" });
+        console.error("Error submitting example:", error);
+      });
   };
 
-  const reorderDays = () => {
-    const indexOfSaturday = days.indexOf("Saturday");
-    return [...days.slice(indexOfSaturday), ...days.slice(0, indexOfSaturday)];
+  const handlePhotoSubmit = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("TrainingID", TRAINING_ID);
+    formData.append("TrainieeID", TRAINEE_ID);
+
+    fetch(`http://localhost:2000/leaderboard/photo`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSnackbar({ open: true, message: "Photo uploaded successfully!", severity: "success" });
+      })
+      .catch((error) => {
+        setSnackbar({ open: true, message: "Error uploading photo.", severity: "error" });
+        console.error("Error uploading photo:", error);
+      });
+  };
+
+  const handleReferenceSubmit = () => {
+    if (!selectedReference) {
+      setSnackbar({ open: true, message: "Please select a trainee.", severity: "error" });
+      return;
+    }
+
+    fetch(`http://localhost:2000/leaderboard/refer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ TrainingID: TRAINING_ID, TraineeID: TRAINEE_ID ,refer: selectedReference }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSnackbar({ open: true, message: "Trainee referred successfully!", severity: "success" });
+      })
+      .catch((error) => {
+        setSnackbar({ open: true, message: "Error referring trainee.", severity: "error" });
+        console.error("Error referring trainee:", error);
+      });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
     <AppContainer>
       <Title>Weekly Checklist</Title>
       <DaySelector>
-        {reorderDays().map((day) => (
-          <DayButton key={day} active={day === currentDay} onClick={() => setCurrentDay(day)}>
-            <span className="day-name">{window.innerWidth <= 768 ? day.charAt(0) : day}</span>
+        {days.map((day) => (
+          <DayButton key={day} active={day === today} disabled={day !== today}>
+            {day} {/* Displaying only the first letter */}
           </DayButton>
         ))}
       </DaySelector>
       <ChecklistContainer>
-        {tasks[currentDay].map((task, index) => (
+        {tasks[today].map((task, index) => (
           <ChecklistItem key={index}>
             <Label>
               <Checkbox
                 type="checkbox"
                 checked={task.done}
+                disabled={index !== 0 || task.done}
                 onChange={() => handleCheckboxChange(index)}
               />
               {task.text}
             </Label>
           </ChecklistItem>
         ))}
-      </ChecklistContainer>
-      {modalType && (
-        <ModalOverlay>
-          <ModalContent>
-            <h3>{modalTask}</h3>
-            {modalType === "photo" ? (
-              <input type="file" onChange={(e) => setModalInput(e.target.files[0])} />
-            ) : modalType === "reference" ? (
-              <select
+        <TextArea
+          placeholder="Write your example here (minimum 150 words)"
+          value={exampleText}
+          disabled={!tasks[today][0].done}
+          onChange={(e) => setExampleText(e.target.value)}
+        />
+        <Button onClick={handleSubmitExample} disabled={!tasks[today][0].done}>
+          Submit Example
+        </Button>
+        {isPhotoEnabled && isReferenceEnabled && (
+          <UploadContainer>
+            <UploadSection>
+              <h3>Photo</h3>
+              <input type="file" onChange={handlePhotoSubmit} />
+              <Button onClick={handlePhotoSubmit}>Submit Photo</Button>
+            </UploadSection>
+            <UploadSection>
+              <h3>Reference</h3>
+              <Dropdown
                 value={selectedReference}
                 onChange={(e) => setSelectedReference(e.target.value)}
               >
@@ -362,22 +337,22 @@ const Application = () => {
                     {trainee.Name}
                   </option>
                 ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                placeholder="Enter your input"
-                value={modalInput}
-                onChange={(e) => setModalInput(e.target.value)}
-              />
-            )}
-            <CloseButton onClick={handleInputSubmit}>Submit</CloseButton>
-            <CloseButton onClick={handleCloseModal} style={{ marginLeft: "10px" }}>
-              Cancel
-            </CloseButton>
-          </ModalContent>
-        </ModalOverlay>
-      )}
+              </Dropdown>
+              <Button onClick={handleReferenceSubmit}>Submit Reference</Button>
+            </UploadSection>
+          </UploadContainer>
+        )}
+      </ChecklistContainer>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </AppContainer>
   );
 };
