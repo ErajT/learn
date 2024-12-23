@@ -1,245 +1,250 @@
-import React, { useState } from "react";
-import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React from "react";
+import { Routes, Route, NavLink, useLocation, useNavigate } from "react-router-dom";
+import styled, { createGlobalStyle } from "styled-components";
+import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
 import Application from "./components/Application";
 
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+`;
 const AppContainer = styled.div`
   display: flex;
-  flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  position: relative;
-  margin: 0;
-  padding: 0;
+  background-color: #ecf0f1;
 `;
 
 const Sidebar = styled.div`
-  background-color: rgb(48, 57, 67);
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ isHome }) => (isHome ? "#2b6777" : "#2b6777")};
   color: #ecf0f1;
+  width: 80px;
+  height: 100%;
   position: fixed;
-  top: 0;
   left: 0;
-  width: 100%;
-  height: ${({ isOpen }) => (isOpen ? "200px" : "0")};
-  overflow: hidden;
-  transition: height 0.3s ease-in-out;
+  top: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  box-shadow: ${({ isOpen }) =>
-    isOpen ? "0px 4px 10px rgba(0, 0, 0, 0.3)" : "none"};
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-
-  @media (min-width: 768px) {
-    width: 300px;
-    height: 100%;
-    transform: ${({ isOpen }) =>
-      isOpen ? "translateX(0)" : "translateX(-100%)"};
-    transition: transform 0.3s ease-in-out;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-  }
+  justify-content: center; 
+  align-items: center;
+  padding: 20px 0;
+  transition: background-color 0.3s ease-in-out;
 `;
 
-const SidebarHeader = styled.div`
+const NavItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px; 
+`;
+
+const NavItem = styled(NavLink)`
   display: flex;
   align-items: center;
-  padding: 20px;
-  background-color: #1a252f;
-  font-size: 1.5rem;
-  font-weight: bold;
-`;
-
-const Logo = styled.img`
-  height: 40px;
-  width: 40px;
-  margin-right: 15px;
-`;
-
-const NavLinkStyled = styled(NavLink)`
+  justify-content: center;
   color: #ecf0f1;
   text-decoration: none;
-  padding: 15px 20px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  transition: background-color 0.2s, color 0.2s;
-  display: block; /* Ensure each link takes the full width */
+  font-size: 1.5rem;
+  transition: color 0.2s, transform 0.2s;
+  width: 100%;
+  gap: 10px; 
+  margin-bottom: 20px; 
 
   &.active {
-    background-color: #1abc9c;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  &:hover {
-    background-color: #34495e;
-    color: #fff;
-  }
-`;
-
-const LogoutButton = styled.button`
-  margin: 20px;
-  margin-top: auto;
-  padding: 10px;
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #c0392b;
-  }
-`;
-
-const HamburgerMenu = styled.button`
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1100;
-  font-size: 1.5rem;
-  background: transparent;
-  color: #2c3e50;
-  border: none;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
+    color: #1abc9c;
   }
 
   &:hover {
     color: #1abc9c;
+    transform: scale(1.1);
+  }
+`;
+
+const LogoutButton = styled.button`
+  color: #fff;
+  background-color: transparent; 
+  border: none;
+  padding: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: absolute;
+  bottom: 20px; 
+  width: 100%; 
+  text-align: center;
+
+  &:hover {
+    transform: scale(1.1);
   }
 `;
 
 const Content = styled.div`
   flex: 1;
-  padding: 20px;
-  transition: margin-left 0.3s ease-in-out;
-  margin-top: -20px;
-  margin-right: -20px;
-  margin-left: -20px;
+  margin-left: 80px;
+  padding: ${({ isHome }) => (isHome ? "20px" : "0")}; 
+  overflow-y: auto;
+  background-color: #ecf0f1; 
 `;
 
 const UserInfoBox = styled.div`
-  background: #ecf0f1;
+  background: url('/back.png') no-repeat center center;
+  background-size: cover;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 1200px;
+  // max-width: 1200px;
   margin: 20px auto;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  background-position: center;
+  background-size: cover;
+  height: 250px;
+
+  @media (max-width: 768px) {
+    height: 300px; 
+  }
 `;
 
-const ImageBox = styled.div`
-  background: #1abc9c;
-  border-radius: 8px;
-  height: 200px;
-  width: 100%;
-  margin-bottom: 20px;
-`;
-
-const InfoBoxesContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const InfoBox = styled.div`
-  background: #34495e;
-  padding: 20px;
-  color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
+  gap: 5px;
+  color: #fff; 
+  h2 {
+    margin: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 10px;
+    font-size: 1.5rem;
+  }
 `;
 
-const InfoBoxImage = styled.img`
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+const FeatureBoxesContainer = styled.div`
+margin-top:80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr; 
+  }
+`;
+const FeatureBox = styled.div`
+  background: #fff;
   border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #777;
+  }
 `;
 
 const App = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     alert("Logged out successfully!");
     navigate("/");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prevState) => !prevState);
-  };
+  const isHome = location.pathname === "/home";
+  return(
+    <>
+      <GlobalStyle />
+      <AppContainer>
+        <Sidebar isHome={isHome}>
+          <NavItems>
+            <NavItem to="/home" title="Home">
+              <FaHome />
+            </NavItem>
+            <NavItem to="/fullleaderboard" title="Full Leaderboard">
+              <FaTrophy />
+            </NavItem>
+            <NavItem to="/mainleaderboard" title="Main Leaderboard">
+              <FaChartBar />
+            </NavItem>
+            <NavItem to="/application" title="Form">
+              <FaWpforms />
+            </NavItem>
+          </NavItems>
+          <LogoutButton onClick={handleLogout} title="Logout">
+            <FaSignOutAlt />
+          </LogoutButton>
+        </Sidebar>
+        <Content isHome={isHome}>
+          <Routes>
+            <Route
+              path="/home"
+              element={
+                <div>
+                  <UserInfoBox>
+                    <UserInfo>
+                      <h2>John Doe</h2>
+                      <p>Software Engineer</p>
+                      <p>john.doe@example.com</p>
+                    </UserInfo>
+                  </UserInfoBox>
 
-  const handleNavLinkClick = () => {
-    setIsSidebarOpen(false);
-  };
-
-  return (
-    <AppContainer>
-      <Sidebar isOpen={isSidebarOpen}>
-        <SidebarHeader>
-          <Logo src="logo.png" alt="Logo" /> Dashboard
-        </SidebarHeader>
-        <nav>
-          <NavLinkStyled to="/mainleaderboard" onClick={handleNavLinkClick}>
-            Main Leaderboard
-          </NavLinkStyled>
-          <NavLinkStyled to="/fullleaderboard" onClick={handleNavLinkClick}>
-            Full Leaderboard
-          </NavLinkStyled>
-          <NavLinkStyled to="/application" onClick={handleNavLinkClick}>
-            Application
-          </NavLinkStyled>
-        </nav>
-        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-      </Sidebar>
-
-      <HamburgerMenu onClick={toggleSidebar}>☰</HamburgerMenu>
-
-      {/* Main Content */}
-      <Content isOpen={isSidebarOpen}>
-        <Routes>
-          <Route path="/mainleaderboard" element={<MainLeaderboard />} />
-          <Route path="/fullleaderboard" element={<FullLeaderboard />} />
-          <Route path="/application" element={<Application />} />
-        </Routes>
-
-        <UserInfoBox>
-          <ImageBox />
-          <InfoBoxesContainer>
-            <InfoBox>
-              <InfoBoxImage src="path/to/photo1.png" alt="Info Box 1" />
-              <h3>Info Box 1</h3>
-            </InfoBox>
-            <InfoBox>
-              <InfoBoxImage src="path/to/photo2.png" alt="Info Box 2" />
-              <h3>Info Box 2</h3>
-            </InfoBox>
-            <InfoBox>
-              <InfoBoxImage src="path/to/photo3.png" alt="Info Box 3" />
-              <h3>Info Box 3</h3>
-            </InfoBox>
-          </InfoBoxesContainer>
-        </UserInfoBox>
-      </Content>
-    </AppContainer>
+                  <FeatureBoxesContainer>
+                    <FeatureBox>
+                      <h3>Feature 1</h3>
+                      <p>Detailed description of feature 1 goes here.</p>
+                    </FeatureBox>
+                    <FeatureBox>
+                      <h3>Feature 2</h3>
+                      <p>Detailed description of feature 2 goes here.</p>
+                    </FeatureBox>
+                    <FeatureBox>
+                      <h3>Feature 3</h3>
+                      <p>Detailed description of feature 3 goes here.</p>
+                    </FeatureBox>
+                  </FeatureBoxesContainer>
+                </div>
+              }
+            />
+            <Route path="/mainleaderboard" element={<MainLeaderboard />} />
+            <Route path="/fullleaderboard" element={<FullLeaderboard />} />
+            <Route path="/application" element={<Application/>} />
+          </Routes>
+        </Content>
+      </AppContainer>
+    </>
   );
 };
-
 export default App;
