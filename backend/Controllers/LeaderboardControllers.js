@@ -188,7 +188,7 @@ exports.Photo = async (req, res) => {
         const photoBuffer = photo.buffer;
 
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
-        let pointsAwarded = 10;  // Points for Photo submission
+        let pointsAwarded = 15;  // Points for Photo submission
 
         if (result1.length !== 0) {
             let currentOptions = result1[0]["Options"] || "";
@@ -248,7 +248,7 @@ exports.Refer = async (req, res) => {
         await updateTraineeScore(TraineeID, pointsAwarded);
 
         // Add 20 points to the referred trainee
-        await updateTraineeScore(refer, 20);
+        await updateTraineeScore(refer, pointsAwarded);
 
         res.status(200).send({
             status: "success",
