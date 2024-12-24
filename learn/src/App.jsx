@@ -1,10 +1,11 @@
 import React from "react";
 import { Routes, Route, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
-import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt, FaPersonBooth } from "react-icons/fa";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
 import Application from "./components/Application";
+import Login from "./components/login";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -202,6 +203,9 @@ const App = () => {
             <NavItem to="/application" title="Form">
               <FaWpforms />
             </NavItem>
+            <NavItem to="/login" title="Login">
+              <FaPersonBooth />
+            </NavItem>
           </NavItems>
           <LogoutButton onClick={handleLogout} title="Logout">
             <FaSignOutAlt />
@@ -241,6 +245,7 @@ const App = () => {
             <Route path="/mainleaderboard" element={<MainLeaderboard />} />
             <Route path="/fullleaderboard" element={<FullLeaderboard />} />
             <Route path="/application" element={<Application/>} />
+            <Route path="/login" element={<Login/>} />
           </Routes>
         </Content>
       </AppContainer>

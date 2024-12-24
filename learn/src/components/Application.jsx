@@ -179,8 +179,8 @@ const Dropdown = styled.select`
 `;
 
 const Application = () => {
-  const days = ["S", "M", "T", "W", "T", "F", "S"];
-  const today = new Date().toLocaleString("en-US", { weekday: "short" }).charAt(0);
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+  const today = new Date().toLocaleString("en-US", { weekday: "short" });
   const [currentDay, setCurrentDay] = useState(today);
   const [tasks, setTasks] = useState({
     [today]: [
@@ -291,7 +291,7 @@ const Application = () => {
       <DaySelector>
         {days.map((day) => (
           <DayButton key={day} active={day === today} disabled={day !== today}>
-            {day} {/* Displaying only the first letter */}
+            {day[0]} {/* Displaying only the first letter */}
           </DayButton>
         ))}
       </DaySelector>
