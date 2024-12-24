@@ -137,6 +137,7 @@ const FullLeaderboard = () => {
 
 export default FullLeaderboard;
 
+<<<<<<< HEAD
 
 // // admin home page 
 // import React, { useState } from "react";
@@ -408,3 +409,5 @@ export default FullLeaderboard;
 // };
 
 // export default TrainingManager;
+=======
+>>>>>>> 73a3d71a0e66f722102f251745b6e908e7760ec7
