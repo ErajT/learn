@@ -180,7 +180,7 @@ const Dropdown = styled.select`
 
 const Application = () => {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
-  const today = new Date().toLocaleString("en-US", { weekday: "short" });
+  const today = new Date().toLocaleString("en-US", { weekday: "short" }).charAt(0);
   const [currentDay, setCurrentDay] = useState(today);
   const [tasks, setTasks] = useState({
     [today]: [
