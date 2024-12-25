@@ -2,6 +2,7 @@
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
+import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
 import Homepage from "./components/Homepage";
 import MainLeaderboard from "./components/MainLeaderboard";
@@ -10,6 +11,8 @@ import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
 import Trainee from "./components/Trainee";
+import Leaderboard  from "./components/Leaderboard";
+import DetailedLeaderboard from "./components/DetailedLeaderboard";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -57,7 +60,8 @@ const App = () => {
         {showSidebar && <Sidebar />}
         <Content showSidebar={showSidebar}>
           <Routes>
-            <Route path="/" />
+            {/* <Route path="/" /> */}
+            <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Homepage />} />
             <Route path="/mainleaderboard" element={<MainLeaderboard />} />
             <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
@@ -66,6 +70,8 @@ const App = () => {
             <Route path="/training" element={<Training />} />
             <Route path="/Material" element={<Material />} />
             <Route path="/trainee" element={<Trainee />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
         </Content>
