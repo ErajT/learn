@@ -129,7 +129,6 @@ const MaterialPage = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        {/* Upload Section */}
         <Grid item xs={12} md={4}>
           <Paper
             elevation={4}
