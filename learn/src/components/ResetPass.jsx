@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { useParams } from "react-router-dom";  // Import useParams to get token from URL
 
 // Styled Components
 const MainContainer = styled.div`
@@ -22,7 +23,7 @@ const Container = styled.div`
   overflow: hidden;
   width: 40vw;
   max-width: 100%;
-  min-height: 200px;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
 
@@ -96,21 +97,31 @@ const Snackbar = styled.div`
   font-size: 17px;
 `;
 
-const ForgotPass = () => {
-  const [email, setEmail] = useState("");
+const ResetPass = () => {
+  const { token } = useParams(); // Extract token from URL
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidPassword = (password) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password);
 
-  const handleForgotPassword = async (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!isValidEmail(email)) {
-      setSnackbarMessage("Please enter a valid email address.");
+    if (password !== confirmPassword) {
+      setSnackbarMessage("Passwords do not match.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      setSnackbarMessage("Password must be at least 6 characters and contain both letters and numbers.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       setLoading(false);
@@ -118,20 +129,24 @@ const ForgotPass = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:2000/users/forgetpassword", {
-        email: email,
-      });
-      console.log("api hit");
+        console.log("api not hit yet");
+      const response = await axios.patch(
+        `http://localhost:2000/users/resetPassword/${token}`,  // Send token in URL
+        { updatedPassword: password }
+      );
 
       if (response.status === 200) {
-        setSnackbarMessage("Password reset link sent to your email!");
+        setSnackbarMessage("Password reset successful!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
+        setTimeout(() => {
+          window.location.href = "/login"; // Use location.href for redirection
+        }, 2000);
       } else {
-        throw new Error("Failed to send reset link.");
+        throw new Error("Failed to reset password.");
       }
     } catch (error) {
-      setSnackbarMessage(error.response?.data?.message || "Error sending password reset link.");
+      setSnackbarMessage(error.response?.data?.message || "Error resetting password.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
@@ -143,17 +158,25 @@ const ForgotPass = () => {
     <MainContainer>
       <Container>
         <FormContainer>
-          <Title>Forgot Password</Title>
+          <Title>Reset Password</Title>
           <InputContainer>
             <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="password"
+              placeholder="New Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </InputContainer>
-          <Button disabled={loading} onClick={handleForgotPassword}>
-            Send Reset Link
+          <InputContainer>
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </InputContainer>
+          <Button disabled={loading} onClick={handleResetPassword}>
+            Reset Password
           </Button>
         </FormContainer>
       </Container>
@@ -164,4 +187,4 @@ const ForgotPass = () => {
   );
 };
 
-export default ForgotPass;
+export default ResetPass;

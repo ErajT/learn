@@ -6,11 +6,14 @@ import Sidebar from "./components/Sidebar";
 import Homepage from "./components/Homepage";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
+import Application from "./components/Application";
 import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
 import Trainee from "./components/Trainee";
 import Login from "./components/login";
+import ForgotPass from "./components/ForgotPass";
+import ResetPass from "./components/ResetPass";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -62,12 +65,14 @@ const App = () => {
             <Route path="/home" element={<Homepage />} />
             <Route path="/mainleaderboard" element={<MainLeaderboard />} />
             <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
-            <Route path="/form" element={<div>Form</div>} />
+            <Route path="/form" element={<Application />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/training" element={<Training />} />
             <Route path="/Material" element={<Material />} />
             <Route path="/trainee" element={<Trainee />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot" element={<ForgotPass />} />
+            <Route path="/reset/:token" element={<ResetPass />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
         </Content>

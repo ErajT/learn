@@ -250,7 +250,7 @@ const Login = () => {
               />
             </InputContainer>
             <Button disabled={loading}>Sign In</Button>
-            <ForgotPasswordLink onClick={() => window.location.href = "/ForgotPass"}>
+            <ForgotPasswordLink onClick={() => window.location.href = "/forgot"}>
               Forgot Password?
             </ForgotPasswordLink>
           </Form>
