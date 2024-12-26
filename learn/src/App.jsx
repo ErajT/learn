@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, matchPath } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
@@ -11,7 +10,7 @@ import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
 import Trainee from "./components/Trainee";
-import Leaderboard  from "./components/Leaderboard";
+import Leaderboard from "./components/Leaderboard";
 import DetailedLeaderboard from "./components/DetailedLeaderboard";
 
 const GlobalStyle = createGlobalStyle`
@@ -35,8 +34,7 @@ const AppContainer = styled.div`
   background-color: #ecf0f1;
 `;
 
-const Content = styled.div.attrs(props => ({
-}))`
+const Content = styled.div`
   flex: 1;
   margin-left: ${(props) => (props.showSidebar ? "80px" : "0")};
   overflow-y: auto;
@@ -46,9 +44,23 @@ const Content = styled.div.attrs(props => ({
 const App = () => {
   const location = useLocation();
 
-  const sidebarRoutes = ["/home", "/mainleaderboard", "/fullLeaderboard", "/admin","/Training","/material","/trainee"];
+  // Update the `sidebarRoutes` to include dynamic route patterns
+  const sidebarRoutes = [
+    "/home",
+    "/mainleaderboard",
+    "/fullLeaderboard",
+    "/admin",
+    "/training",
+    "/material",
+    "/trainee",
+    "/leaderboard",
+    "/leaderboard/:weekId",
+  ];
 
-  const showSidebar = sidebarRoutes.includes(location.pathname);
+  // Check if the current location matches any of the sidebar routes
+  const showSidebar = sidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
 
   console.log("Current Path:", location.pathname);
   console.log("Show Sidebar:", showSidebar);
@@ -60,7 +72,6 @@ const App = () => {
         {showSidebar && <Sidebar />}
         <Content showSidebar={showSidebar}>
           <Routes>
-            {/* <Route path="/" /> */}
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Homepage />} />
             <Route path="/mainleaderboard" element={<MainLeaderboard />} />
@@ -68,7 +79,7 @@ const App = () => {
             <Route path="/form" element={<div>Form</div>} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/training" element={<Training />} />
-            <Route path="/Material" element={<Material />} />
+            <Route path="/material" element={<Material />} />
             <Route path="/trainee" element={<Trainee />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />

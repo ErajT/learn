@@ -1,62 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, Button } from '@mui/material';
 import jsPDF from 'jspdf';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'; 
+import DownloadIcon from '@mui/icons-material/Download'; 
 
 const Container = styled(Box)`
-  background-color: #2b6777;
+  background-color: #f5f5f5;
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 60px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
 const WeekBox = styled(Box)`
-  background-color: grey;
-  color: white;
+  background-color: #ffffff;
+  color: #2b6777;
   padding: 20px;
   margin: 10px;
   cursor: pointer;
   text-align: center;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+
   &:hover {
-    background-color: #3b7f87;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background-color: #e8f0f2;
   }
 `;
 
 const LeaderboardContainer = styled(Box)`
-  color: #ffffff;
   width: 100%;
   max-width: 800px;
   margin-top: 40px;
 `;
 
-const LeaderboardItem = styled.div`
+const LeaderboardItem = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
   padding: 15px;
-  background-color: #b0b9da;
+  background-color: #2b6777;
   border-radius: 10px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Rank = styled.div`
+  display: flex;
+  align-items: center;
   font-size: 1.6rem;
   font-weight: bold;
-  color: #2b6777;
+  color: #ffffff;
   width: 60px;
   text-align: center;
+
+  svg {
+    margin-right: 5px;
+  }
 `;
 
 const Name = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
-  color: #2b6777;
+  color: #ffffff;
   flex: 1;
   text-align: left;
 `;
@@ -64,43 +81,26 @@ const Name = styled.div`
 const Score = styled.div`
   font-size: 1.3rem;
   font-weight: bold;
-  color: #2b6777;
+  color: #ffffff;
   text-align: right;
   width: 80px;
 `;
 
-const GeneratePDFButton = styled.button`
-  background-color: #3cb371;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 12px 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 40px;
+const GeneratePDFButton = styled(Button)`
+  background-color: #2b6777 !important;
+  color: white !important;
+  border-radius: 5px !important;
+  padding: 12px 25px !important;
+  font-size: 1rem !important;
+  margin-top: 40px !important;
 
   &:hover {
-    background-color: #2a9d67;
+    background-color: #235e66 !important;
   }
 `;
 
-const PDFTitle = styled.div`
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  color: #2b6777;
-  margin-bottom: 30px;
-`;
-
-const RankBar = styled.div`
-  width: 100%;
-  height: 4px;
-  background-color: #2b6777;
-  margin: 10px 0;
-`;
-
 const DetailedLeaderboard = () => {
-  const { weekId } = useParams(); 
+  const { weekId } = useParams();
   const navigate = useNavigate();
   const [weeks, setWeeks] = useState([]);
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -152,6 +152,7 @@ const DetailedLeaderboard = () => {
   const handleWeekClick = (id) => {
     navigate(`/leaderboard/${id}`);
   };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFont('helvetica', 'bold');
@@ -168,27 +169,21 @@ const DetailedLeaderboard = () => {
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
     doc.line(20, 43, 190, 43);
-   let verticalOffset = 50;  
+    let verticalOffset = 50;
     leaderboardData.forEach((player, index) => {
       doc.text(`${player.rank}`, 20, verticalOffset);
       doc.text(player.name, 60, verticalOffset);
       doc.text(player.score.toString(), 160, verticalOffset);
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
       doc.line(20, verticalOffset + 2, 190, verticalOffset + 2);
-  
-      verticalOffset += 10; 
+      verticalOffset += 10;
     });
-    doc.setFontSize(10);
-    doc.text(`Page ${doc.internal.getNumberOfPages()}`, 180, doc.internal.pageSize.height - 10);
     doc.save(`leaderboard_week_${weekId}.pdf`);
   };
-  
 
   if (!weekId) {
     return (
       <Container>
-        <Typography variant="h4" color="white" gutterBottom>
+        <Typography variant="h3" color="#2b6777" gutterBottom>
           Leaderboard Weeks
         </Typography>
         <Grid container spacing={2}>
@@ -206,19 +201,23 @@ const DetailedLeaderboard = () => {
 
   return (
     <Container>
-      <Typography variant="h4" color="white" gutterBottom>
+      <Typography variant="h3" color="#2b6777" gutterBottom>
         Leaderboard - Week {weekId}
       </Typography>
       <LeaderboardContainer>
         {leaderboardData.map((player) => (
           <LeaderboardItem key={player.rank}>
-            <Rank>{player.rank}</Rank>
+            <Rank>
+              {player.rank}
+            </Rank>
             <Name>{player.name}</Name>
             <Score>{player.score}</Score>
           </LeaderboardItem>
         ))}
       </LeaderboardContainer>
-      <GeneratePDFButton onClick={generatePDF}>Generate PDF</GeneratePDFButton>
+      <GeneratePDFButton onClick={generatePDF} startIcon={<DownloadIcon />}>
+        Generate PDF
+      </GeneratePDFButton>
     </Container>
   );
 };

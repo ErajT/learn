@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const LeaderboardContainer = styled.div`
-  background-color: #2b6777;
+  background-color: #ffffff;
   color: #ffffff;
   width: 100%;
   height: 100vh;
@@ -21,7 +21,7 @@ const LeaderboardContainer = styled.div`
 const Title = styled.h1`
   font-size: 3rem;
   font-weight: 700;
-  color: #b0b9da;
+  color: #2b6777;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
   margin-bottom: 50px;
 
@@ -39,7 +39,7 @@ const LeaderboardItem = styled.div`
   justify-content: space-between;
   margin-bottom: 15px;
   padding: 10px;
-  background-color: #b0b9da;
+  background-color: #2b6777;
   border-radius: 10px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
@@ -52,7 +52,7 @@ const LeaderboardItem = styled.div`
 const Rank = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2b6777;
+  color: #ffffff;
   width: 50px;
   text-align: center;
 
@@ -64,7 +64,7 @@ const Rank = styled.div`
 const Name = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2b6777;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -96,7 +96,7 @@ const ProgressBar = styled.div`
 const Score = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
-  color: #2b6777;
+  color: #ffffff;
   text-align: right;
   width: 60px;
 
