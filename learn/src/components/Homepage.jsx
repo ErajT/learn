@@ -25,7 +25,7 @@ const UserInfoBox = styled.div`
     height: auto; /* Allow the height to adjust for smaller screens */
     flex-direction: column;
     padding: 15px;
-  }
+  } 
 `;
 
 const UserInfo = styled.div`

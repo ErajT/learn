@@ -206,12 +206,18 @@ const Login = () => {
         "email": email,
         "password": password,
       });
+      const position = response.data.position;
+
+      console.log(response);
 
       if (response.status === 200) {
         setSnackbarMessage("Login successful!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
 
+        if(position == "trainee")
+        {
+          Cookies.set("position", JSON.stringify("trainee"));
         // Second API call to fetch trainee details
         const traineeDetailsResponse = await axios.get(
           `http://localhost:2000/leaderboard/getDetails/${email}`
@@ -228,11 +234,20 @@ const Login = () => {
           setSnackbarMessage("Details fetched and stored successfully!");
           setSnackbarSeverity("success");
           setSnackbarOpen(true);
+        
         }
         
         setTimeout(() => {
           window.location.href = "/Home"; // Redirect on success
         }, 1500);
+      }
+      else if(position == "admin")
+      {
+        Cookies.set("position", JSON.stringify("admin"));
+        setTimeout(() => {
+          window.location.href = "/admin"; // Redirect on success
+        }, 1500);
+      }
       } else {
         throw new Error("Login failed.");
       }
@@ -247,7 +262,7 @@ const Login = () => {
 
   return (
     <MainContainer>
-      <Logo src="/Logo15.png" alt="Logo" />
+      {/* <Logo src="/Logo15.png" alt="Logo" /> */}
       <Container>
         <SignInContainer>
           <Form onSubmit={handleLogin}>

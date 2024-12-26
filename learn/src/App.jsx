@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
@@ -15,8 +14,10 @@ import Trainee from "./components/Trainee";
 import Login from "./components/login";
 import ForgotPass from "./components/ForgotPass";
 import ResetPass from "./components/ResetPass";
-import Leaderboard  from "./components/Leaderboard";
+import Leaderboard from "./components/Leaderboard";
 import DetailedLeaderboard from "./components/DetailedLeaderboard";
+import UnauthorizedAccess from "./components/UnauthorizedAccess";
+import RoleAuthorizer from "./components/RoleAuthorizer"; // Import the RoleAuthorizer component
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -39,8 +40,7 @@ const AppContainer = styled.div`
   background-color: #ecf0f1;
 `;
 
-const Content = styled.div.attrs(props => ({
-}))`
+const Content = styled.div.attrs((props) => ({}))`
   flex: 1;
   margin-left: ${(props) => (props.showSidebar ? "80px" : "0")};
   overflow-y: auto;
@@ -50,12 +50,20 @@ const Content = styled.div.attrs(props => ({
 const App = () => {
   const location = useLocation();
 
-  const sidebarRoutes = ["/home", "/mainleaderboard", "/fullLeaderboard", "/admin","/Training","/material","/trainee"];
+  // Define routes that require the sidebar
+  const sidebarRoutes = [
+    "/home",
+    "/mainleaderboard",
+    "/fullLeaderboard",
+    "/admin",
+    "/training",
+    "/material",
+    "/trainee",
+    "/leaderboard",
+    "/leaderboard/:weekId",
+  ];
 
   const showSidebar = sidebarRoutes.includes(location.pathname);
-
-  console.log("Current Path:", location.pathname);
-  console.log("Show Sidebar:", showSidebar);
 
   return (
     <>
@@ -64,21 +72,58 @@ const App = () => {
         {showSidebar && <Sidebar />}
         <Content showSidebar={showSidebar}>
           <Routes>
-            {/* <Route path="/" /> */}
+            {/* Public Routes */}
             <Route path="/" element={<Landing />} />
-            <Route path="/home" element={<Homepage />} />
-            <Route path="/mainleaderboard" element={<MainLeaderboard />} />
-            <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
-            <Route path="/form" element={<Application />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/training" element={<Training />} />
-            <Route path="/Material" element={<Material />} />
-            <Route path="/trainee" element={<Trainee />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot" element={<ForgotPass />} />
             <Route path="/reset/:token" element={<ResetPass />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
+            <Route path="/unauthorized" element={<UnauthorizedAccess />} />
+
+            {/* Protected Routes */}
+            <Route
+              path="/home"
+              element={
+                <RoleAuthorizer allowedRole="trainee">
+                  <Homepage />
+                </RoleAuthorizer>
+              }
+            />
+            <Route
+              path="/mainleaderboard"
+              element={
+                <RoleAuthorizer allowedRole="trainee">
+                  <MainLeaderboard />
+                </RoleAuthorizer>
+              }
+            />
+            <Route
+              path="/fullLeaderboard"
+              element={
+                <RoleAuthorizer allowedRole="trainee">
+                  <FullLeaderboard />
+                </RoleAuthorizer>
+              }
+            />
+            <Route
+              path="/form"
+              element={
+                <RoleAuthorizer allowedRole="trainee">
+                  <Application />
+                </RoleAuthorizer>
+              }
+            />
+
+            {/* Grouping Admin-Specific Routes */}
+            <Route element={<RoleAuthorizer allowedRole="admin" />}>
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/training" element={<Training />} />
+              <Route path="/material" element={<Material />} />
+              <Route path="/trainee" element={<Trainee />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
+            </Route>
+
+            {/* Catch-all Route */}
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
         </Content>

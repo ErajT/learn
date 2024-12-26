@@ -123,7 +123,7 @@ const handleConfirmTrainee = () => {
          const userData = {
            email: newTrainee.email,
            password: newTrainee.password,
-           designation: "trainee",
+           position: "trainee",
            id: traineeId,
          };
  
@@ -321,7 +321,7 @@ const handleFileUpload = async (event) => {
           const userData = {
             email: trainee.Email,
             password: trainee.password,
-            designation: "trainee",
+            position: "trainee",
             id: traineeIdsofeach[index], // Use the corresponding trainee ID
           };
 
