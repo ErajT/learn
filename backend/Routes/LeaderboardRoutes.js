@@ -7,19 +7,14 @@ const router = express.Router();
 router.route('/getTraineeDetails/:id')
     .get(LeaderboardHandler.getTraineeDetails);
 
-router.route('/simpleResponse')
-    .post(LeaderboardHandler.simpleResponse);
-
 router.route('/example')
     .post(LeaderboardHandler.Example);
 
-// Set up multer storage (in-memory storage)
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Define the route to handle photo uploads
 router.route('/photo')
-    .post(upload.single('photo'), LeaderboardHandler.Photo);  // Use multer middleware before your controller
+    .post(upload.single('photo'), LeaderboardHandler.Photo);
     
 
 router.route('/getAllTraineesForTraining/:id')
@@ -30,5 +25,14 @@ router.route('/Refer')
 
 router.route('/generate')
     .post(LeaderboardHandler.generateLeaderboard)
+
+router.route("/getTopThree/:TrainingID")
+    .get(LeaderboardHandler.getTopThreeTrainees);
+
+router.route("/getFullLeaderboard/:TrainingID")
+    .get(LeaderboardHandler.getFullLeaderboard);
+
+router.route("/getDetails/:email")
+    .get(LeaderboardHandler.getDetails)
 
 module.exports = router

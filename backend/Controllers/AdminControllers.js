@@ -1,0 +1,458 @@
+const Qexecution = require("./query");
+
+
+exports.addTraining = async (req, res) => {
+    const { companyName, TrainerName, Topic, Date, Description } = req.body;
+
+    // Queries
+    const SQL_CHECK_COMPANY = "SELECT CompanyID FROM company WHERE Name = ?";
+    const SQL_INSERT_COMPANY = "INSERT INTO company(Name) VALUES(?)";
+    const SQL_INSERT_TRAINING = "INSERT INTO training(CompanyID, TrainerName, Topic, Date, Description) VALUES(?,?,?,?,?)";
+
+    try {
+        // Check if the company exists
+        const existingCompany = await Qexecution.queryExecute(SQL_CHECK_COMPANY, [companyName]);
+
+        let companyID;
+        if (existingCompany.length > 0) {
+            // Company exists, get the ID
+            companyID = existingCompany[0].CompanyID;
+        } else {
+            // Company doesn't exist, insert it
+            const resultInsertCompany = await Qexecution.queryExecute(SQL_INSERT_COMPANY, [companyName]);
+            companyID = resultInsertCompany.insertId; // Get the auto-incremented CompanyID
+            console.log(companyID);
+        }
+
+        // Insert training
+        const resultInsertTraining = await Qexecution.queryExecute(SQL_INSERT_TRAINING, [companyID, TrainerName, Topic, Date, Description]);
+        const trainingID = resultInsertTraining.insertId; // Get the auto-incremented TrainingID
+
+        res.status(200).send({
+            status: "success",
+            message: "Training added successfully",
+            trainingID: trainingID,  // Return the TrainingID
+            companyID: companyID     // Return the CompanyID
+        });
+    } catch (err) {
+        res.status(404).send({
+            status: "fail",
+            message: "Error saving training",
+            error: err.message,
+        });
+    }
+};
+
+// API to Add a Trainee
+exports.addTrainee = async (req, res) => {
+    const { TrainingID, CompanyID, Name, Email, PhoneNumber } = req.body;
+
+    // Set Score to 0 if not provided
+    const Score = 0;
+
+    // Queries
+    const SQL_INSERT_TRAINEE = `
+        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    const SQL_GET_TRAINEE_ID = `
+        SELECT TraineeID FROM Trainee WHERE Email = ? AND PhoneNumber = ? ORDER BY TraineeID DESC LIMIT 1
+    `;
+
+    try {
+        // Insert the new trainee into the database
+        const result = await Qexecution.queryExecute(SQL_INSERT_TRAINEE, [
+            CompanyID,
+            TrainingID,
+            Name,
+            Email,
+            PhoneNumber,
+            Score,
+        ]);
+
+        // Check if the insertion was successful
+        if (result.affectedRows > 0) {
+            // Get the inserted trainee's ID
+            const [traineeRecord] = await Qexecution.queryExecute(SQL_GET_TRAINEE_ID, [Email, PhoneNumber]);
+            const traineeID = traineeRecord?.TraineeID;
+
+            res.status(200).send({
+                status: "success",
+                message: "Trainee added successfully.",
+                data: traineeID, // Return the ID
+            });
+        } else {
+            res.status(500).send({
+                status: "fail",
+                message: "Error saving the trainee.",
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            status: "fail",
+            message: "Error saving the trainee.",
+            error: err.message,
+        });
+    }
+};
+
+// API to Insert Many Trainees
+exports.addManyTrainees = async (req, res) => {
+    const { TrainingID, CompanyID, trainees } = req.body; // Array of trainees to be inserted
+
+    if (!Array.isArray(trainees) || trainees.length === 0) {
+        return res.status(400).send({
+            status: "fail",
+            message: "No trainees data provided or invalid format.",
+        });
+    }
+
+    // SQL Query to Insert Multiple Trainees
+    const SQL_INSERT_MANY_TRAINEES = `
+        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score)
+        VALUES ?
+    `;
+    const SQL_GET_TRAINEE_IDS = `
+        SELECT TraineeID FROM Trainee WHERE Email IN (?) AND PhoneNumber IN (?) ORDER BY TraineeID ASC
+    `;
+
+    // Prepare the values to insert in the proper format for batch insertion
+    const values = trainees.map(trainee => [
+        CompanyID,        // Same CompanyID for all
+        TrainingID,       // Same TrainingID for all
+        trainee.Name,
+        trainee.Email,
+        trainee.PhoneNumber,
+        0, // Default Score to 0
+    ]);
+    const emails = trainees.map(trainee => trainee.Email);
+    const phoneNumbers = trainees.map(trainee => trainee.PhoneNumber);
+
+    try {
+        // Execute the batch insert
+        const result = await Qexecution.queryExecute(SQL_INSERT_MANY_TRAINEES, [values]);
+
+        // Check if the insertion was successful
+        if (result.affectedRows > 0) {
+            // Get the inserted trainee IDs
+            const traineeRecords = await Qexecution.queryExecute(SQL_GET_TRAINEE_IDS, [emails, phoneNumbers]);
+            const traineeIDs = traineeRecords.map(record => record.TraineeID);
+
+            res.status(200).send({
+                status: "success",
+                message: `${result.affectedRows} trainees added successfully.`,
+                data: traineeIDs, // Return the IDs
+            });
+        } else {
+            res.status(500).send({
+                status: "fail",
+                message: "Error saving the trainees.",
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            status: "fail",
+            message: "Error saving the trainees.",
+            error: err.message,
+        });
+    }
+};
+
+
+// API to Get All Leaderboards for a Particular Training
+exports.getAllLeaderboards = async (req, res) => {
+    const { TrainingID } = req.params; // Assuming TrainingID is passed as a URL parameter
+
+    const getAllLeaderboardsSQL = `
+        SELECT LeaderboardID, WeekDates, Ranking, Score, WeekNumber
+        FROM Leaderboard
+        WHERE TrainingID = ?
+        ORDER BY LeaderboardID DESC
+    `;
+
+    try {
+        // Get all leaderboards for the given TrainingID
+        const leaderboards = await Qexecution.queryExecute(getAllLeaderboardsSQL, [TrainingID]);
+
+        if (!leaderboards.length) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No leaderboards found for the given training.",
+            });
+        }
+
+        // Prepare the response
+        const allLeaderboards = [];
+
+        // Iterate through the leaderboards using a for loop (for async/await compatibility)
+        for (let leaderboard of leaderboards) {
+            const { LeaderboardID, WeekDates, Ranking, Score, WeekNumber } = leaderboard;
+
+            // Split the comma-separated lists of trainee IDs and scores
+            const rankingList = Ranking.split(", ");
+            const scoreList = Score.split(", ");
+
+            const leaderboardDetails = [];
+
+            // Iterate through the trainees in the ranking and score lists
+            for (let i = 0; i < rankingList.length; i++) {
+                const traineeID = rankingList[i];
+                const score = scoreList[i];
+
+                // Get the name of the trainee
+                const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+                const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
+
+                if (trainee.length) {
+                    leaderboardDetails.push({
+                        Name: trainee[0].Name,
+                        Score: score, // Use the score from the leaderboard
+                    });
+                }
+            }
+
+            allLeaderboards.push({
+                LeaderboardID,
+                WeekDates,
+                WeekNumber,
+                leaderboardDetails
+            });
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "All leaderboards fetched successfully.",
+            allLeaderboards,
+        });
+    } catch (err) {
+        console.error("Error fetching leaderboards:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching leaderboards.",
+            error: err.message,
+        });
+    }
+};
+
+// API to Get All Trainings with Company Name
+exports.getAllTrainings = async (req, res) => {
+    const getAllTrainingsSQL = `
+        SELECT t.TrainingID, t.CompanyID, t.TrainerName, t.Topic, t.Date, t.Description, c.Name AS CompanyName
+        FROM Training t
+        JOIN Company c ON t.CompanyID = c.CompanyID
+    `;
+
+    try {
+        // Get all trainings with company names
+        const trainings = await Qexecution.queryExecute(getAllTrainingsSQL);
+
+        if (trainings.length === 0) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No trainings found.",
+            });
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "All trainings fetched successfully.",
+            trainings,
+        });
+    } catch (err) {
+        console.error("Error fetching trainings:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching trainings.",
+            error: err.message,
+        });
+    }
+};
+
+exports.getTraineesForTraining = async (req, res) => {
+    // Query to join Training and Trainee tables and fetch Trainees
+    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ?";
+
+    try {
+        const { TrainingID } = req.params; // Get TrainingID from request params
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [TrainingID]);
+
+        if (result.length === 0) {
+            return res.status(400).send({
+                status: "fail",
+                message: "No trainees found for this training or invalid TrainingID",
+            });
+        }
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            data: result, // List of TraineeID and Name
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error retrieving trainees",
+            error: err.message,
+        });
+    }
+};
+
+// API to Add Material for a Training
+exports.addMaterial = async (req, res) => {
+    const { TrainingID, Title, Description } = req.body; // Expecting TrainingID, Title, Description
+    const Material = req.file; // The file uploaded (should be a PDF, PPT, image, etc.)
+
+    // Check if Material exists in the request
+
+    console.log(TrainingID, Title, Description);
+    if (!Material) {
+        return res.status(400).send({
+            status: "fail",
+            message: "No material uploaded. Please upload a valid file.",
+        });
+    }
+
+    // SQL Query to Check if a record for the given TrainingID exists in the Material table
+    const checkMaterialSQL = "SELECT * FROM Material WHERE TrainingID = ?";
+
+    // Prepare the column names for materials
+    const materialColumns = ['M1_File', 'M2_File', 'M3_File', 'M4_File', 'M5_File', 'M6_File'];
+    const titleColumns = ['M1_Title', 'M2_Title', 'M3_Title', 'M4_Title', 'M5_Title', 'M6_Title'];
+    const descColumns = ['M1_Description', 'M2_Description', 'M3_Description', 'M4_Description', 'M5_Description', 'M6_Description'];
+
+    try {
+        // Check if there is already a material record for the given TrainingID
+        const existingMaterial = await Qexecution.queryExecute(checkMaterialSQL, [TrainingID]);
+
+        // If no record exists, create a new record and store the material
+        if (existingMaterial.length === 0) {
+            const insertMaterialSQL = `
+                INSERT INTO Material (TrainingID, M1_Title, M1_Description, M1_File)
+                VALUES (?, ?, ?, ?)
+            `;
+            await Qexecution.queryExecute(insertMaterialSQL, [
+                TrainingID, 
+                Title, 
+                Description, 
+                Material.buffer // Store the file as a buffer in the database
+            ]);
+            return res.status(200).send({
+                status: "success",
+                message: "Material added successfully to M1.",
+            });
+        } else {
+            // If the record exists, check for the first empty column to store the material
+            let materialUpdated = false;
+
+            for (let i = 0; i < materialColumns.length; i++) {
+                const materialColumn = materialColumns[i];
+                const titleColumn = titleColumns[i];
+                const descColumn = descColumns[i];
+
+                // Check if the material column is null
+                if (existingMaterial[0][materialColumn] === null) {
+                    // Update the first empty column
+                    const updateMaterialSQL = `
+                        UPDATE Material
+                        SET 
+                            ${titleColumn} = ?, 
+                            ${descColumn} = ?, 
+                            ${materialColumn} = ?
+                        WHERE TrainingID = ?
+                    `;
+                    await Qexecution.queryExecute(updateMaterialSQL, [
+                        Title,
+                        Description,
+                        Material.buffer, // Store the file as a buffer in the database
+                        TrainingID
+                    ]);
+
+                    materialUpdated = true;
+                    return res.status(200).send({
+                        status: "success",
+                        message: `Material added successfully to ${materialColumn}.`,
+                    });
+                }
+            }
+
+            if (!materialUpdated) {
+                return res.status(400).send({
+                    status: "fail",
+                    message: "All material columns are already occupied for this training.",
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error adding material:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error adding material.",
+            error: err.message,
+        });
+    }
+};
+
+// API to Get All Materials for a Specific Training
+exports.getMaterials = async (req, res) => {
+    const { TrainingID } = req.params; // TrainingID is passed as a path parameter
+
+    // SQL Query to Fetch All Materials for the Given TrainingID
+    const getMaterialsSQL = `
+        SELECT 
+            M1_Title, M1_Description, M1_File,
+            M2_Title, M2_Description, M2_File,
+            M3_Title, M3_Description, M3_File,
+            M4_Title, M4_Description, M4_File,
+            M5_Title, M5_Description, M5_File,
+            M6_Title, M6_Description, M6_File
+        FROM Material
+        WHERE TrainingID = ?
+    `;
+
+    try {
+        // Execute the query to fetch materials
+        const materials = await Qexecution.queryExecute(getMaterialsSQL, [TrainingID]);
+
+        if (materials.length === 0) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No materials found for the given training ID.",
+            });
+        }
+
+        // Transform the result into a structured response
+        const materialData = materials[0];
+        const materialList = [];
+
+        // Iterate through the columns to gather non-null materials
+        for (let i = 1; i <= 6; i++) {
+            const title = materialData[`M${i}_Title`];
+            const description = materialData[`M${i}_Description`];
+            const file = materialData[`M${i}_File`];
+
+            if (title && description && file) {
+                materialList.push({
+                    Title: title,
+                    Description: description,
+                    File: file.toString('base64'), // Convert binary data to base64 for transfer
+                });
+            }
+        }
+
+        return res.status(200).send({
+            status: "success",
+            materials: materialList,
+        });
+    } catch (err) {
+        console.error("Error fetching materials:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching materials.",
+            error: err.message,
+        });
+    }
+};
+

@@ -30,7 +30,6 @@ const updateTraineeScore = async (TraineeID, pointsToAdd) => {
     }
 };
 
-
 exports.getTraineeDetails = async (req, res) => {
     const SQL = "SELECT * FROM Trainee WHERE TraineeID=?";
     try {
@@ -58,12 +57,7 @@ exports.getTraineeDetails = async (req, res) => {
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = `
-        SELECT t.TraineeID, t.Name
-        FROM Trainee t
-        JOIN Training tr ON t.CompanyID = tr.CompanyID
-        WHERE tr.TrainingID = ?
-    `;
+    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ?";
 
     try {
         const { id } = req.params; // Get TrainingID from request params
@@ -93,44 +87,6 @@ exports.getTraineesForTraining = async (req, res) => {
     }
 };
 
-exports.simpleResponse = async (req, res) => {
-    const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, SimpleResponse) VALUES(?,?,?,?,?,?)";
-    const SQL3 = "UPDATE Submissions SET SimpleResponse = ?, Options = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
-
-    try {
-        const { TrainingID, TraineeID } = req.body;
-        const { newDate, DayNumber } = getCurrentDateAndDay(); // Get current date and day
-
-        const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
-        const simple = true;
-        let pointsAwarded = 2;  // Points for Simple Response
-
-        if (result1.length != 0) {
-            const options = result1[0]["Options"] || "";
-            const newOptions = options + ",1";
-            console.log("New Options:", newOptions);
-            await Qexecution.queryExecute(SQL3, [simple, newOptions, TraineeID, TrainingID, newDate]);
-        } else {
-            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, DayNumber, newDate, "1", simple]);
-        }
-
-        // Call the updateTraineeScore function to update the score
-        await updateTraineeScore(TraineeID, pointsAwarded);
-
-        res.status(200).send({
-            status: "success",
-            message: "response saved successfully"
-        });
-    } catch (err) {
-        res.status(404).send({
-            status: "fail",
-            message: "Error saving response",
-            error: err.message,
-        });
-    }
-};
-
 exports.Example = async (req, res) => {
     const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
     const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, Example) VALUES(?,?,?,?,?,?)";
@@ -141,7 +97,7 @@ exports.Example = async (req, res) => {
         const { newDate, DayNumber } = getCurrentDateAndDay();
 
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
-        let pointsAwarded = 5;  // Points for Example submission
+        let pointsAwarded = 10;  // Points for Example submission
 
         if (result1.length != 0) {
             let currentOptions = result1[0]["Options"] || "";
@@ -269,28 +225,23 @@ exports.generateLeaderboard = async (req, res) => {
         SELECT TrainingID
         FROM Training
     `;
-    
-    const getCompanyIDSQL = `
-        SELECT CompanyID
-        FROM Training
-        WHERE TrainingID = ?
-    `;
-    
+
     const getLastLeaderboardSQL = `
-        SELECT MAX(LeaderboardID) AS LastLeaderboardID
+        SELECT LeaderboardID, WeekDates
         FROM Leaderboard
-        WHERE CompanyID = ?
+        WHERE TrainingID = ?
+        ORDER BY LeaderboardID DESC
+        LIMIT 1
     `;
 
     const getTraineesSQL = `
-        SELECT t.TraineeID, COALESCE(t.Score, 0) AS Score, t.CompanyID
-        FROM Trainee t
-        INNER JOIN Training tr ON t.CompanyID = tr.CompanyID
-        WHERE tr.TrainingID = ?
+        SELECT TraineeID, COALESCE(Score, 0) AS Score
+        FROM Trainee
+        WHERE TrainingID = ?
     `;
-    
+
     const insertLeaderboardSQL = `
-        INSERT INTO Leaderboard (LeaderboardID, CompanyID, WeekNumber, WeekDates, Ranking, Score)
+        INSERT INTO Leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
@@ -310,18 +261,23 @@ exports.generateLeaderboard = async (req, res) => {
         for (const training of trainings) {
             const { TrainingID } = training;
 
-            // Get CompanyID from TrainingID
-            const companyResult = await Qexecution.queryExecute(getCompanyIDSQL, [TrainingID]);
-            if (!companyResult.length) {
-                results.push({ TrainingID, message: "No company found for the provided training ID." });
-                continue;
-            }
-            const companyID = companyResult[0].CompanyID;
+            // Get the last leaderboard details for the training (including the week dates)
+            const lastLeaderboardResult = await Qexecution.queryExecute(getLastLeaderboardSQL, [TrainingID]);
+            const lastLeaderboardID = lastLeaderboardResult[0]?.LeaderboardID || 0;
+            const lastWeekDates = lastLeaderboardResult[0]?.WeekDates;
 
-            // Get the last leaderboard ID for the company using the companyID
-            const lastLeaderboardResult = await Qexecution.queryExecute(getLastLeaderboardSQL, [companyID]);
-            const lastLeaderboardID = lastLeaderboardResult[0]?.LastLeaderboardID || 0;
-            const newLeaderboardID = lastLeaderboardID + 1; // Increment the last leaderboard ID
+            // If a leaderboard for the current week already exists, skip this training
+            if (lastWeekDates) {
+                const [startDate, endDate] = lastWeekDates.split(" - ");
+                const currentDate = new Date();
+                const endDateOfLastWeek = new Date(endDate);
+
+                // Check if the end date of the last leaderboard matches today's date
+                if (currentDate.toISOString().split('T')[0] === endDateOfLastWeek.toISOString().split('T')[0]) {
+                    results.push({ TrainingID, message: `Leaderboard for this week has already been generated.` });
+                    continue;
+                }
+            }
 
             // Get all trainees and their scores for the training
             const trainees = await Qexecution.queryExecute(getTraineesSQL, [TrainingID]);
@@ -335,27 +291,24 @@ exports.generateLeaderboard = async (req, res) => {
             const sortedTrainees = trainees.sort((a, b) => b.Score - a.Score);
 
             // Generate ranking and score list
-            const rankings = sortedTrainees.map((trainee, index) => ({
-                Rank: index + 1,
-                TraineeID: trainee.TraineeID,
-                Score: Number(trainee.Score).toFixed(2),
-            }));
+            const rankingString = sortedTrainees.map(r => r.TraineeID).join(", ");
+            const scoresString = sortedTrainees.map(r => Number(r.Score).toFixed(2)).join(", ");
 
-            const rankingString = rankings.map(r => `Rank ${r.Rank}: TraineeID ${r.TraineeID}`).join(", ");
-            const scoresString = rankings.map(r => r.Score).join(", ");
-
-            // Calculate the start and end dates for the leaderboard
+            // Calculate the start and end dates for the leaderboard (7 days window)
             const currentDate = new Date();
             const startDate = new Date(currentDate);
             startDate.setDate(currentDate.getDate() - 6); // Include the last 7 days
-
             const weekDates = `${startDate.toISOString().split('T')[0]} - ${currentDate.toISOString().split('T')[0]}`;
+
+            // Increment leaderboard ID and week number for the new leaderboard
+            const newLeaderboardID = lastLeaderboardID + 1;
+            const newWeekNumber = (lastLeaderboardResult[0]?.WeekNumber || 0) + 1;
 
             // Save leaderboard entry
             await Qexecution.queryExecute(insertLeaderboardSQL, [
                 newLeaderboardID,
-                companyID,
-                lastLeaderboardResult[0]?.LastWeek + 1 || 1, // Increment week number
+                TrainingID,
+                newWeekNumber,
                 weekDates,
                 rankingString,
                 scoresString,
@@ -365,7 +318,7 @@ exports.generateLeaderboard = async (req, res) => {
                 TrainingID,
                 leaderboard: {
                     LeaderboardID: newLeaderboardID,
-                    WeekNumber: lastLeaderboardResult[0]?.LastWeek + 1 || 1,
+                    WeekNumber: newWeekNumber,
                     WeekDates: weekDates,
                     Rankings: rankingString,
                     Scores: scoresString,
@@ -389,4 +342,151 @@ exports.generateLeaderboard = async (req, res) => {
     }
 };
 
+// API to Get Top Three Trainees based on the latest leaderboard
+exports.getTopThreeTrainees = async (req, res) => {
+    const { TrainingID } = req.params; // Assuming TrainingID is passed as a URL parameter
 
+    const getLatestLeaderboardSQL = `
+        SELECT LeaderboardID, WeekDates, Ranking, Score
+        FROM Leaderboard
+        WHERE TrainingID = ?
+        ORDER BY LeaderboardID DESC
+        LIMIT 1
+    `;
+
+    try {
+        // Get the latest leaderboard for the given TrainingID
+        const latestLeaderboard = await Qexecution.queryExecute(getLatestLeaderboardSQL, [TrainingID]);
+        if (!latestLeaderboard.length) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No leaderboard found for the given training.",
+            });
+        }
+
+        const { Ranking, Score } = latestLeaderboard[0];
+
+        // Split the comma-separated lists of trainee IDs and scores
+        const rankingList = Ranking.split(", ");
+        const scoreList = Score.split(", ");
+
+        // Prepare the response
+        const topThree = [];
+        for (let i = 0; i < 3; i++) {
+            const traineeID = rankingList[i];
+            const score = scoreList[i];
+            
+            // Get the name of the trainee
+            const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+            const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
+
+            if (trainee.length) {
+                topThree.push({
+                    Name: trainee[0].Name,
+                    Score: score, // Use the score from the leaderboard
+                });
+            }
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "Top three trainees fetched successfully.",
+            topThree,
+        });
+    } catch (err) {
+        console.error("Error fetching top three trainees:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching top three trainees.",
+            error: err.message,
+        });
+    }
+};
+
+// API to Get All Trainees from the latest leaderboard
+exports.getFullLeaderboard = async (req, res) => {
+    const { TrainingID } = req.params; // Assuming TrainingID is passed as a URL parameter
+
+    const getLatestLeaderboardSQL = `
+        SELECT LeaderboardID, WeekDates, Ranking, Score
+        FROM Leaderboard
+        WHERE TrainingID = ?
+        ORDER BY LeaderboardID DESC
+        LIMIT 1
+    `;
+
+    try {
+        // Get the latest leaderboard for the given TrainingID
+        const latestLeaderboard = await Qexecution.queryExecute(getLatestLeaderboardSQL, [TrainingID]);
+        if (!latestLeaderboard.length) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No leaderboard found for the given training.",
+            });
+        }
+
+        const { LeaderboardID, Ranking, Score } = latestLeaderboard[0];
+
+        // Split the comma-separated lists of trainee IDs and scores
+        const rankingList = Ranking.split(", ");
+        const scoreList = Score.split(", ");
+
+        // Prepare the response
+        const allTrainees = [];
+        for (let i = 0; i < rankingList.length; i++) {
+            const traineeID = rankingList[i];
+            const score = scoreList[i];
+            
+            // Get the name of the trainee
+            const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+            const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
+
+            if (trainee.length) {
+                allTrainees.push({
+                    Name: trainee[0].Name,
+                    Score: score, // Use the score from the leaderboard
+                });
+            }
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "All trainees fetched successfully.",
+            allTrainees,
+        });
+    } catch (err) {
+        console.error("Error fetching all trainees:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching all trainees.",
+            error: err.message,
+        });
+    }
+};
+
+exports.getDetails = async (req,res) => {
+    const SQL = "SELECT * FROM Trainee WHERE Email=?";
+    try {
+        const { email } = req.params;
+        console.log(email);
+        const result = await Qexecution.queryExecute(SQL, [email]);
+        console.log(result);
+        if (result.length === 0) {
+            res.status(400).send({
+                status: "fail",
+                message: "No data is available",
+            });
+        } else {
+            res.status(200).send({
+                status: "success",
+                data: result
+            });
+        }
+    } catch (err) {
+        res.status(404).send({
+            status: "fail",
+            message: "Error getting trainee",
+            error: err.message,
+        });
+    }
+};
