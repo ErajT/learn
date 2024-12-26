@@ -60,13 +60,14 @@ const TraineePage = () => {
         axios
         .get(`http://localhost:2000/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
         .then((response) => {
-          if (response.data) {
+          console.log(response);
+          if (response.data.data) {
             console.log(response.data.data);
             setTrainees(response.data.data); // Assuming the API response contains a 'trainees' field
             setSnackbarMessage("Trainees fetched successfully!");
             setSnackbarOpen(true);
           } else {
-            setSnackbarMessage("Failed to fetch trainees.");
+            setSnackbarMessage("No trainees found.");
             setSnackbarOpen(true);
           }
         })

@@ -82,39 +82,13 @@ const App = () => {
             <Route path="/reset/:token" element={<ResetPass />} />
             <Route path="/unauthorized" element={<UnauthorizedAccess />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/home"
-              element={
-                <RoleAuthorizer allowedRole="trainee">
-                  <Homepage />
-                </RoleAuthorizer>
-              }
-            />
-            <Route
-              path="/mainleaderboard"
-              element={
-                <RoleAuthorizer allowedRole="trainee">
-                  <MainLeaderboard />
-                </RoleAuthorizer>
-              }
-            />
-            <Route
-              path="/fullLeaderboard"
-              element={
-                <RoleAuthorizer allowedRole="trainee">
-                  <FullLeaderboard />
-                </RoleAuthorizer>
-              }
-            />
-            <Route
-              path="/form"
-              element={
-                <RoleAuthorizer allowedRole="trainee">
-                  <Application />
-                </RoleAuthorizer>
-              }
-            />
+            {/* Protected Routes for trainee */}
+            <Route element={<RoleAuthorizer allowedRole="trainee" />}>
+              <Route path="/home" element={<Homepage />} />
+              <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
+              <Route path="/mainLeaderboard" element={<MainLeaderboard />} />
+              <Route path="/form" element={<Application />} />
+            </Route>
 
             {/* Grouping Admin-Specific Routes */}
             <Route element={<RoleAuthorizer allowedRole="admin" />}>

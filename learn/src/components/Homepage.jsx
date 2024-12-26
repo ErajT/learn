@@ -1,5 +1,8 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import styled from "styled-components";
+import Cookies from "js-cookie"; // Import js-cookie
+import axios from "axios"; // Import axios for API calls
+import {Button } from "@mui/material";
 
 const Container = styled.div`
   padding: 0 40px; 
@@ -61,7 +64,8 @@ const UserInfo = styled.div`
   }
 `;
 
-const FeatureBoxesContainer = styled.div`
+
+const MaterialBoxesContainer = styled.div`
   margin-top: 80px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -78,7 +82,7 @@ const FeatureBoxesContainer = styled.div`
   }
 `;
 
-const FeatureBox = styled.div`
+const MaterialList = styled.div`
   background: #fff;
   border-radius: 8px;
   padding: 20px;
@@ -113,30 +117,95 @@ const FeatureBox = styled.div`
   }
 `;
 
-const HomePage = () => (
-  <Container>
-    <UserInfoBox>
-      <UserInfo>
-        <h2>John Doe</h2>
-        <p>Software Engineer</p>
-        <p>john.doe@example.com</p>
-      </UserInfo>
-    </UserInfoBox>
-    <FeatureBoxesContainer>
-      <FeatureBox>
-        <h3>Feature 1</h3>
-        <p>Detailed description of feature 1 goes here.</p>
-      </FeatureBox>
-      <FeatureBox>
-        <h3>Feature 2</h3>
-        <p>Detailed description of feature 2 goes here.</p>
-      </FeatureBox>
-      <FeatureBox>
-        <h3>Feature 3</h3>
-        <p>Detailed description of feature 3 goes here.</p>
-      </FeatureBox>
-    </FeatureBoxesContainer>
-  </Container>
-);
+const HomePage = () => {
+  const [traineeDetails, setTraineeDetails] = useState({
+    name: "",
+    trainingName: "",
+    companyName: "",
+  });
+  const [materials, setMaterials] = useState([]);
+
+  useEffect(() => {
+    // Fetch trainee details from the cookie
+    const traineeDetailsCookie = Cookies.get("traineeDetails");
+    console.log(traineeDetailsCookie);
+    if (traineeDetailsCookie) {
+      const parsedDetails = JSON.parse(traineeDetailsCookie);
+      setTraineeDetails({
+        name: parsedDetails.Name || "",
+        trainingName: parsedDetails.TrainingName || "",
+        companyName: parsedDetails.CompanyName || "",
+      });
+    }
+    const trainingID = JSON.parse(traineeDetailsCookie).TrainingID; // Assuming trainingID is stored in cookies
+    console.log(trainingID)
+    if (trainingID) {
+
+      axios.get(`http://localhost:2000/admin/getMaterial/${trainingID}`)
+        .then(response => {
+          if (response.data.status === "success") {
+            setMaterials(response.data.materials);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching materials:", error);
+        });
+    }
+  }, []);
+
+  const handleViewFile = (base64File) => {
+    const byteCharacters = atob(base64File); // decode base64
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+
+    const blob = new Blob(byteArrays, { type: 'application/pdf' }); // Assuming the file is a PDF
+    const blobURL = URL.createObjectURL(blob);
+    window.open(blobURL, '_blank');
+  };
+
+  return (
+    <Container>
+      <UserInfoBox>
+        <UserInfo>
+          <p>
+            <label>Name:</label> {traineeDetails.name}
+          </p>
+          <p>
+            <label>Training Name:</label> {traineeDetails.trainingName}
+          </p>
+          <p>
+            <label>Company Name:</label> {traineeDetails.companyName}
+          </p>
+        </UserInfo>
+      </UserInfoBox>
+      <MaterialBoxesContainer>
+      <MaterialList>
+        <h3>Materials</h3>
+        {materials.length > 0 ? (
+          materials.map((material, index) => (
+            <div key={index} className="material-item">
+              <h4>{material.Title}</h4>
+              <p>{material.Description}</p>
+              <Button onClick={() => handleViewFile(material.File)} >
+                View {material.Title}
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p>No materials available for this training.</p>
+        )}
+      </MaterialList>
+      </MaterialBoxesContainer>
+    </Container>
+  );
+};
 
 export default HomePage;
