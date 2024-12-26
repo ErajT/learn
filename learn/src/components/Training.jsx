@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Cookies from 'js-cookie'; // Import js-cookie
 
 const Container = styled.div`
   padding: 0 40px;
@@ -145,6 +146,14 @@ const HomePage = () => {
         image: "https://img.freepik.com/free-photo/african-man-black-suit_1157-45560.jpg?t=st=1734983083~exp=1734986683~hmac=53d0da30c9949e740c0ef138c6c6c1dbfe5cecb533e05407d327b30fca820438&w=740",
       },
     });
+
+    // Retrieve the cookie value and log it to the console
+    const selectedTraining = Cookies.get('selectedTraining');
+    if (selectedTraining) {
+      console.log("Selected Training:", JSON.parse(selectedTraining));
+    } else {
+      console.log("No selected training cookie found.");
+    }
   }, []);
 
   return (

@@ -1,28 +1,89 @@
-import React, { useState } from "react";
-import { Box, Button, Typography, Modal, Grid, Card, CardContent, CardMedia, TextField, IconButton, Dialog, DialogTitle, DialogActions } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, Typography, Modal, TextField, IconButton, Dialog, DialogTitle, DialogActions } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
+import axios from 'axios';
+import Cookies from 'js-cookie'; // Import js-cookie
 
 const TrainingManager = () => {
   const [openModal, setOpenModal] = useState(false);
   const [trainings, setTrainings] = useState([]);
   const [newTraining, setNewTraining] = useState({
-    name: "",
     trainer: "",
-    imageUrl: "",
+    companyName: "",
+    topic: "",
+    date: "",
+    description: ""
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [trainingToDelete, setTrainingToDelete] = useState(null);
 
+  useEffect(() => {
+    // Fetch the trainings when the component mounts
+    axios.get('http://localhost:2000/admin/getAllTrainings')
+      .then(response => {
+        if (response.data.status === "success") {
+          const fetchedTrainings = response.data.trainings.map(training => ({
+            name: training.Topic,
+            trainer: training.TrainerName,
+            company: training.CompanyName,
+            date: new Date(training.Date).toLocaleDateString(), // Format the date
+            companyId: training.CompanyID, // Assuming CompanyId is present
+            trainingId: training.TrainingID // Assuming TrainingId is present
+          }));
+          setTrainings(fetchedTrainings);
+        }
+      })
+      .catch(error => {
+        console.error("There was an error fetching the trainings:", error);
+      });
+  }, []);
+
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  const handleAddTraining = () => {
-    if (newTraining.name && newTraining.trainer && newTraining.imageUrl) {
-      setTrainings([...trainings, newTraining]);
-      setNewTraining({ name: "", trainer: "", imageUrl: "" });
-      handleCloseModal();
+  const handleAddTraining = async () => {
+    if (newTraining.trainer && newTraining.companyName && newTraining.topic && newTraining.date && newTraining.description) {
+      try {
+        // First, post the new training
+        const response = await axios.post('http://localhost:2000/admin/addTraining', {
+          companyName: newTraining.companyName,
+          TrainerName: newTraining.trainer,
+          Topic: newTraining.topic,
+          Date: newTraining.date,
+          Description: newTraining.description
+        });
+
+        if (response.data.status === "success") {
+          // After successfully adding the training, fetch the updated list
+          axios.get('http://localhost:2000/admin/getAllTrainings')
+            .then(response => {
+              if (response.data.status === "success") {
+                const fetchedTrainings = response.data.trainings.map(training => ({
+                  name: training.Topic,
+                  trainer: training.TrainerName,
+                  company: training.CompanyName,
+                  date: new Date(training.Date).toLocaleDateString(), // Format the date
+                  companyId: training.CompanyID, // Assuming CompanyId is present
+                  trainingId: training.trainingID // Assuming TrainingId is present
+                }));
+                setTrainings(fetchedTrainings);
+              }
+            })
+            .catch(error => {
+              console.error("There was an error fetching the trainings:", error);
+            });
+
+          // Reset form fields and close the modal
+          setNewTraining({ topic: "", trainer: "", companyName: "", date: "", description: "" });
+          handleCloseModal();
+        } else {
+          console.error("Failed to add training");
+        }
+      } catch (error) {
+        console.error("Error adding training:", error);
+      }
     }
   };
 
@@ -38,6 +99,22 @@ const TrainingManager = () => {
   };
 
   const closeDeleteDialog = () => setDeleteDialogOpen(false);
+
+  const handleTrainingClick = (training) => {
+    console.log(training);
+    // Save the training details including companyId and trainingId in a cookie
+    const trainingDetails = {
+      trainingID: training.trainingId, // Corrected to use the actual field name
+      companyID: training.companyId,  // Corrected to use the actual field name
+      name: training.name,
+      trainer: training.trainer,
+      company: training.company,
+      date: training.date
+    };
+
+    // Save to cookie for 7 days
+    Cookies.set('selectedTraining', JSON.stringify(trainingDetails), { expires: 7 });
+  };
 
   return (
     <Box sx={{ backgroundColor: "#f8f9fa", minHeight: "100vh", padding: 3 }}>
@@ -120,39 +197,32 @@ const TrainingManager = () => {
                 boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
               },
             }}
+            onClick={() => handleTrainingClick(training)} // Save details on click
           >
             <Link to="/Training" style={{ textDecoration: "none" }}>
-              <CardMedia
-                component="img"
-                image={training.imageUrl}
-                alt={training.name}
+              <Box
                 sx={{
-                  height: "60%",
-                  width: "100%",
-                  objectFit: "cover",
-                }}
-              />
-              <CardContent
-                sx={{
-                  height: "40%",
-                  padding: "8px",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
+                  height: "100%",
+                  padding: 2,
                 }}
               >
                 <Typography variant="h6" fontWeight="bold" textAlign="center">
                   {training.name}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                >
+                <Typography variant="body2" color="text.secondary" textAlign="center">
+                  Company: {training.company}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" textAlign="center">
                   Trainer: {training.trainer}
                 </Typography>
-              </CardContent>
+                <Typography variant="body2" color="text.secondary" textAlign="center">
+                  Date: {training.date}
+                </Typography>
+              </Box>
             </Link>
             <IconButton
               sx={{
@@ -192,13 +262,13 @@ const TrainingManager = () => {
             Add Training
           </Typography>
           <TextField
-            label="Training Name"
+            label="Topic"
             fullWidth
             variant="outlined"
             margin="dense"
-            value={newTraining.name}
+            value={newTraining.topic}
             onChange={(e) =>
-              setNewTraining({ ...newTraining, name: e.target.value })
+              setNewTraining({ ...newTraining, topic: e.target.value })
             }
           />
           <TextField
@@ -212,13 +282,34 @@ const TrainingManager = () => {
             }
           />
           <TextField
-            label="Image URL"
+            label="Company Name"
             fullWidth
             variant="outlined"
             margin="dense"
-            value={newTraining.imageUrl}
+            value={newTraining.companyName}
             onChange={(e) =>
-              setNewTraining({ ...newTraining, imageUrl: e.target.value })
+              setNewTraining({ ...newTraining, companyName: e.target.value })
+            }
+          />
+          <TextField
+            label=""
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            type="date"
+            value={newTraining.date}
+            onChange={(e) =>
+              setNewTraining({ ...newTraining, date: e.target.value })
+            }
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            value={newTraining.description}
+            onChange={(e) =>
+              setNewTraining({ ...newTraining, description: e.target.value })
             }
           />
           <Box textAlign="center" marginTop={2}>
@@ -232,6 +323,7 @@ const TrainingManager = () => {
           </Box>
         </Box>
       </Modal>
+
       <Dialog
         open={deleteDialogOpen}
         onClose={closeDeleteDialog}

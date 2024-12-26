@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios"; // Import axios
+import Cookies from "js-cookie"; // Import js-cookie for managing cookies
 
 // Styled Components (same as before)
 const MainContainer = styled.div`
@@ -210,6 +211,24 @@ const Login = () => {
         setSnackbarMessage("Login successful!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
+
+        // Second API call to fetch trainee details
+        const traineeDetailsResponse = await axios.get(
+          `http://localhost:2000/leaderboard/getDetails/${email}`
+        );
+
+        if (traineeDetailsResponse.status === 200) {
+          // Store trainee details in a cookie
+          console.log(traineeDetailsResponse);
+          Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data), {
+            expires: 7, // Cookie will expire in 7 days
+            secure: true, // Ensure secure cookie usage in HTTPS
+          });
+
+          setSnackbarMessage("Details fetched and stored successfully!");
+          setSnackbarSeverity("success");
+          setSnackbarOpen(true);
+        }
         
         setTimeout(() => {
           window.location.href = "/Home"; // Redirect on success

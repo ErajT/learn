@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import {
   Box,
   Typography,
@@ -16,7 +17,6 @@ import {
   Alert,
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const MaterialPage = () => {
@@ -29,30 +29,44 @@ const MaterialPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
+  const [trainingId, setTrainingId] = useState(null);
 
   const MAX_MATERIALS = 6;
 
   useEffect(() => {
-    const initialMaterials = [
-      {
-        id: 1,
-        title: "Sample PDF",
-        description: "A sample PDF document",
-        fileName: "sample1.pdf",
-        fileUrl: "#",
-      },
-      {
-        id: 2,
-        title: "Worksheet",
-        description: "An example worksheet",
-        fileName: "worksheet.docx",
-        fileUrl: "#",
-      },
-    ];
-    setMaterials(initialMaterials);
+    const selectedTraining = Cookies.get("selectedTraining");
+    if (selectedTraining) {
+      const parsedTraining = JSON.parse(selectedTraining);
+      if (parsedTraining?.trainingID) {
+        setTrainingId(parsedTraining.trainingID);
+        fetchMaterials(parsedTraining.trainingID);
+      }
+    }
   }, []);
 
-  const handleUpload = () => {
+  const fetchMaterials = async (trainingId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:2000/admin/getMaterial/${trainingId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.materials);
+        setMaterials(data.materials || []); // Gracefully handle empty data
+      } else {
+        setMaterials([]);
+      }
+    } catch (error) {
+      console.error("Error fetching materials:", error);
+    }
+  };
+
+  const handleUpload = async () => {
     if (materials.length >= MAX_MATERIALS) {
       setSnackbarMessage(`Upload limit of ${MAX_MATERIALS} materials reached.`);
       setSnackbarSeverity("warning");
@@ -67,21 +81,39 @@ const MaterialPage = () => {
       return;
     }
 
-    const newMaterialEntry = {
-      id: materials.length + 1,
-      title: newMaterial,
-      description: description || `Description of ${newMaterial}`,
-      fileName: file.name,
-      fileUrl: URL.createObjectURL(file),
-    };
+    const formData = new FormData();
+    formData.append("TrainingID", trainingId);
+    formData.append("Title", newMaterial);
+    formData.append("Description", description || "No description provided");
+    formData.append("material", file);
 
-    setMaterials([newMaterialEntry, ...materials]);
-    setNewMaterial("");
-    setDescription("");
-    setFile(null);
-    setSnackbarMessage("Material uploaded successfully!");
-    setSnackbarSeverity("success");
-    setSnackbarOpen(true);
+    try {
+      const response = await fetch("http://localhost:2000/admin/addMaterial", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const addedMaterial = await response.json();
+        setMaterials([addedMaterial, ...materials]);
+        setSnackbarMessage("Material uploaded successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        setNewMaterial("");
+        setDescription("");
+        setFile(null);
+      } else {
+        const errorResponse = await response.json();
+        setSnackbarMessage(errorResponse.message || "Upload failed.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error("Error uploading material:", error);
+      setSnackbarMessage("Failed to upload material. Please try again.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
   const handleDeleteClick = (material) => {
@@ -107,6 +139,25 @@ const MaterialPage = () => {
     setSnackbarOpen(false);
   };
 
+  // Convert the base64 to a Blob URL for viewing in an iframe
+  const handleViewFile = (base64File) => {
+    const byteCharacters = atob(base64File); // decode base64
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+
+    const blob = new Blob(byteArrays, { type: 'application/pdf' }); // Assuming the file is a PDF
+    const blobURL = URL.createObjectURL(blob);
+    window.open(blobURL, '_blank');
+  };
+
   return (
     <Box
       sx={{
@@ -129,38 +180,32 @@ const MaterialPage = () => {
       </Typography>
 
       <Grid container spacing={4}>
+        {/* Upload New Material */}
         <Grid item xs={12} md={4}>
           <Paper
             elevation={4}
             sx={{
               padding: 4,
+              margin: "0 auto",
               borderRadius: 3,
               background: "linear-gradient(to right, #e1eef6, #ffffff)",
               color: "#2b6777",
-              boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.15)",
             }}
           >
-            <Box
+            <IconButton
+              size="large"
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                mb: 3,
+                color: "#2b6777",
+                margin: "0 auto",
+                backgroundColor: "rgba(43, 103, 119, 0.1)",
+                "&:hover": {
+                  backgroundColor: "rgba(43, 103, 119, 0.2)",
+                },
               }}
             >
-              <IconButton
-                size="large"
-                sx={{
-                  color: "#2b6777",
-                  backgroundColor: "rgba(43, 103, 119, 0.1)",
-                  "&:hover": {
-                    backgroundColor: "rgba(43, 103, 119, 0.2)",
-                  },
-                }}
-              >
-                <UploadFileIcon fontSize="large" />
-              </IconButton>
-            </Box>
+              <UploadFileIcon fontSize="large" />
+            </IconButton>
+
             <Typography
               variant="h6"
               fontWeight="bold"
@@ -168,16 +213,6 @@ const MaterialPage = () => {
               mb={3}
             >
               Upload New Material
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: "#777",
-                textAlign: "center",
-                mb: 2,
-              }}
-            >
-              {`You can upload ${MAX_MATERIALS - materials.length} more material(s).`}
             </Typography>
             <TextField
               variant="outlined"
@@ -199,32 +234,18 @@ const MaterialPage = () => {
             />
             <Input
               type="file"
-              inputProps={{ accept: ".pdf,.doc,.docx,.txt" }}
               onChange={(e) => setFile(e.target.files[0])}
-              sx={{
-                mb: 3,
-                "::file-selector-button": {
-                  backgroundColor: "#2b6777",
-                  color: "white",
-                  borderRadius: 3,
-                  padding: "5px 15px",
-                  cursor: "pointer",
-                },
-              }}
+              sx={{ mb: 2 }}
             />
             <Button
               variant="contained"
-              startIcon={<AddCircleOutlineIcon />}
               onClick={handleUpload}
               fullWidth
               sx={{
                 fontWeight: "bold",
-                textTransform: "capitalize",
                 backgroundColor: "#2b6777",
                 color: "white",
-                "&:hover": {
-                  backgroundColor: "#225866",
-                },
+                "&:hover": { backgroundColor: "#225866" },
               }}
             >
               Upload Material
@@ -232,7 +253,7 @@ const MaterialPage = () => {
           </Paper>
         </Grid>
 
-        {/* Display Section */}
+        {/* Display Materials */}
         <Grid item xs={12} md={8}>
           <Grid container spacing={4}>
             {materials.map((material) => (
@@ -259,7 +280,7 @@ const MaterialPage = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {material.title}
+                      {material.Title}
                     </Typography>
                     <IconButton
                       color="error"
@@ -272,13 +293,12 @@ const MaterialPage = () => {
                     variant="body2"
                     sx={{ color: "#777777", mb: 2, textAlign: "center" }}
                   >
-                    {material.description}
+                    {material.Description}
                   </Typography>
                   <Button
                     variant="contained"
                     fullWidth
-                    href={material.fileUrl}
-                    target="_blank"
+                    onClick={() => handleViewFile(material.File)} // Pass base64 to view
                     sx={{
                       backgroundColor: "#2b6777",
                       color: "white",
@@ -287,7 +307,7 @@ const MaterialPage = () => {
                       },
                     }}
                   >
-                    View {material.fileName}
+                    View Material
                   </Button>
                 </Paper>
               </Grid>
