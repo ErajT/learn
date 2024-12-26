@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, matchPath } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
@@ -63,7 +63,10 @@ const App = () => {
     "/leaderboard/:weekId",
   ];
 
-  const showSidebar = sidebarRoutes.includes(location.pathname);
+  // Check if the current location matches any of the sidebar routes
+  const showSidebar = sidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
 
   return (
     <>

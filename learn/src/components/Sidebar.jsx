@@ -8,7 +8,7 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   background-color: #2b6777;
   color: #ecf0f1;
-  width: 60px;
+  width: 80px;
   height: 100%;
   position: fixed;
   left: 0;
@@ -22,7 +22,7 @@ const NavItems = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 50px;
 `;
 
 const NavItem = styled(NavLink)`

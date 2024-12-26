@@ -4,36 +4,41 @@ import styled from "styled-components";
 const Container = styled.div`
   padding: 0 40px; 
   margin: 0 auto;
-//   max-width: 1200px; 
 `;
 
 const UserInfoBox = styled.div`
   background: url('/back.png') no-repeat center center;
   background-size: cover;
-  padding: 20px;
+  padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin: 20px auto;
+  margin: 50px auto;
   display: flex;
   align-items: center;
   gap: 40px;
   height: 250px;
 
   @media (max-width: 768px) {
-    gap: 20px; /* Reduce the gap between the user info and image */
-    height: auto; /* Allow the height to adjust for smaller screens */
-    flex-direction: column;
-    padding: 15px;
-  } 
+    background: url('/back1.png') no-repeat center center; /* Use smaller image */
+    background-size: cover;
+    gap: 20px; /* Reduce gap for small screens */
+    height: auto; /* Allow dynamic height */
+    flex-direction: column; /* Stack content vertically */
+    padding: 1px;
+    margin: 10px 20px 10px 10px; /* Reduced margin for small screens */
+    width:auto;
+  }
 `;
 
 const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: 2px;
   color: #fff;
+  padding: 20px;
+
   h2 {
     margin: 10px;
     font-size: 2rem;
@@ -46,10 +51,12 @@ const UserInfo = styled.div`
 
   @media (max-width: 768px) {
     h2 {
-      font-size: 1.5rem; /* Adjust font size for small screens */
+      font-size: 1rem; /* Adjusted font size for small screens */
+      // padding:10px;
     }
     p {
-      font-size: 1rem; /* Adjust font size for small screens */
+      font-size: 1rem;
+      // padding:10px; /* Adjusted font size for small screens */
     }
   }
 `;
@@ -78,10 +85,12 @@ const FeatureBox = styled.div`
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
+  
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
   }
+  
   h3 {
     font-size: 1.2rem;
     font-weight: bold;

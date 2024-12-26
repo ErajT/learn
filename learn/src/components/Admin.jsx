@@ -121,14 +121,15 @@ const TrainingManager = () => {
       <Box
         component="header"
         sx={{
-          backgroundImage: "url('/back.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: 250,
-          borderRadius: 2,
-          marginBottom: 3,
-          position: "relative",
-        }}
+  backgroundImage: "url('/back.png')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  height: 250,
+  borderRadius: 2,
+  marginBottom: 4,
+  marginTop: 8, // Adds gap from the top
+  position: "relative",
+}}
       >
         <Box
           sx={{
