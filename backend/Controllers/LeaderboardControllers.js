@@ -464,13 +464,35 @@ exports.getFullLeaderboard = async (req, res) => {
     }
 };
 
-exports.getDetails = async (req,res) => {
-    const SQL = "SELECT * FROM Trainee WHERE Email=?";
+exports.getDetails = async (req, res) => {
+    // SQL query to join Trainee, Training, and Company tables
+    const SQL = `
+        SELECT 
+            Trainee.*, 
+            Training.Topic AS TrainingName, 
+            Company.Name AS CompanyName 
+        FROM 
+            Trainee 
+        LEFT JOIN 
+            Training 
+        ON 
+            Trainee.TrainingID = Training.TrainingID 
+        LEFT JOIN 
+            Company 
+        ON 
+            Trainee.CompanyID = Company.CompanyID 
+        WHERE 
+            Trainee.Email = ?`;
+
     try {
-        const { email } = req.params;
+        const { email } = req.params; // Get email from request parameters
         console.log(email);
+
+        // Execute the query with the provided email
         const result = await Qexecution.queryExecute(SQL, [email]);
         console.log(result);
+
+        // Check if the result is empty
         if (result.length === 0) {
             res.status(400).send({
                 status: "fail",
@@ -479,13 +501,14 @@ exports.getDetails = async (req,res) => {
         } else {
             res.status(200).send({
                 status: "success",
-                data: result
+                data: result, // Send the result with training and company details
             });
         }
     } catch (err) {
+        // Handle errors
         res.status(404).send({
             status: "fail",
-            message: "Error getting trainee",
+            message: "Error getting trainee details",
             error: err.message,
         });
     }

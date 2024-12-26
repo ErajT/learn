@@ -108,6 +108,7 @@ module.exports = {
                 status: "success",
                 message: "Login successful",
                 email: results.email,
+                position: results.position,
                 token: jsontoken, // Optionally include the unencrypted token for client-side use
             });
     

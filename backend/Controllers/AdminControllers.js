@@ -279,9 +279,9 @@ exports.getTraineesForTraining = async (req, res) => {
         const result = await Qexecution.queryExecute(SQL, [TrainingID]);
 
         if (result.length === 0) {
-            return res.status(400).send({
-                status: "fail",
-                message: "No trainees found for this training or invalid TrainingID",
+            return res.status(200).send({
+                status: "success",
+                message: "No trainees found for this training",
             });
         }
 
