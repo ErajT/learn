@@ -170,7 +170,7 @@ const FullLeaderboard = () => {
 
   return (
     <LeaderboardContainer>
-      <Title>Full Leaderboard</Title>
+      <Title>Consolidated Leaderboard</Title>
       {message ? (
         <Message>{message}</Message>
       ) : (

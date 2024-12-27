@@ -341,18 +341,21 @@ const Leaderboard = () => {
             {topThree.map((trainee, index) => {
               const podiumStyles = [
                 {
+                  order: 2, // Position 1 in the center
                   bgColor: "linear-gradient(135deg, #ffe066, #ffcc00)",
                   height: "300px",
                   medal: "🥇",
                   medalColor: "#ffcc00",
                 },
                 {
+                  order: 1, // Position 2 to the left
                   bgColor: "linear-gradient(135deg, #d9d9d9, #b0b0b0)",
                   height: "250px",
                   medal: "🥈",
                   medalColor: "#b0b0b0",
                 },
                 {
+                  order: 3, // Position 3 to the right
                   bgColor: "linear-gradient(135deg, #cd7f32, #a45a29)",
                   height: "200px",
                   medal: "🥉",
@@ -360,16 +363,21 @@ const Leaderboard = () => {
                 },
               ];
 
-              const { bgColor, height, medal, medalColor } = podiumStyles[index];
+              const { order, bgColor, height, medal, medalColor } = podiumStyles[index];
               return (
-                <Podium key={index} bgColor={bgColor} height={height}>
+                <Podium
+                  key={index}
+                  bgColor={bgColor}
+                  height={height}
+                  style={{ order }}
+                >
                   <Medal bgColor={medalColor}>{medal}</Medal>
                   <Name>{trainee.Name}</Name>
                   <Score>{trainee.Score} points</Score>
                 </Podium>
               );
             })}
-          </PodiumContainer>
+          </PodiumContainer>;
           <NextButton>Full Leaderboard</NextButton>
         </>
       )}
