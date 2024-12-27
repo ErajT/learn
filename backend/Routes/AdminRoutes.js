@@ -31,4 +31,10 @@ router.route('/addMaterial')
 router.route('/getMaterial/:TrainingID')
     .get(AdminHandler.getMaterials);
 
+router.route('/getweeks/:TrainingID')
+    .get(AdminHandler.getweeks);
+
+router.route('/getFullLeaderboard/:TrainingID/:WeekNumber')
+    .get(AdminHandler.getFullLeaderboard);
+
 module.exports = router

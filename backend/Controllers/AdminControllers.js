@@ -456,3 +456,91 @@ exports.getMaterials = async (req, res) => {
     }
 };
 
+exports.getweeks = async (req, res) => {
+    const { TrainingID } = req.params;
+
+    const SQL1 = "SELECT WeekNumber FROM leaderboard WHERE TrainingID = ?";
+
+    try {
+        // Execute the query to get the weeks from the database
+        const response = await Qexecution.queryExecute(SQL1, [TrainingID]);
+        console.log(response);
+
+        // Extract WeekNumber from each record in the response and create a list of weeks
+        const weeks = response.map(item => item.WeekNumber);
+
+        // Return the list of weeks in the response
+        return res.status(200).send({
+            status: "success",
+            weeks: weeks,
+        });
+    } catch (err) {
+        // Handle any errors that occur during the database operation
+        res.status(500).send({
+            status: "fail",
+            error: err.message,
+        });
+    }
+};
+
+// API to Get All Trainees from the latest leaderboard
+exports.getFullLeaderboard = async (req, res) => {
+    const { TrainingID, WeekNumber } = req.params; // Assuming TrainingID is passed as a URL parameter
+
+    const getLatestLeaderboardSQL = `
+        SELECT LeaderboardID, WeekDates, Ranking, Score
+        FROM Leaderboard
+        WHERE TrainingID = ? AND WeekNumber = ?
+        ORDER BY LeaderboardID DESC
+        LIMIT 1
+    `;
+
+    try {
+        // Get the latest leaderboard for the given TrainingID
+        const latestLeaderboard = await Qexecution.queryExecute(getLatestLeaderboardSQL, [TrainingID, WeekNumber]);
+        if (!latestLeaderboard.length) {
+            return res.status(200 ).send({
+                status: "fail",
+                message: "No leaderboard found for the given training.",
+            });
+        }
+
+        const { LeaderboardID, Ranking, Score } = latestLeaderboard[0];
+
+        // Split the comma-separated lists of trainee IDs and scores
+        const rankingList = Ranking.split(", ");
+        const scoreList = Score.split(", ");
+
+        // Prepare the response
+        const allTrainees = [];
+        for (let i = 0; i < rankingList.length; i++) {
+            const traineeID = rankingList[i];
+            const score = scoreList[i];
+            
+            // Get the name of the trainee
+            const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+            const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
+
+            if (trainee.length) {
+                allTrainees.push({
+                    Name: trainee[0].Name,
+                    Score: score, // Use the score from the leaderboard
+                });
+            }
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "All trainees fetched successfully.",
+            allTrainees,
+        });
+    } catch (err) {
+        console.error("Error fetching all trainees:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching all trainees.",
+            error: err.message,
+        });
+    }
+};
+

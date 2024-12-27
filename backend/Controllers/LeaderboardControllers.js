@@ -358,7 +358,7 @@ exports.getTopThreeTrainees = async (req, res) => {
         // Get the latest leaderboard for the given TrainingID
         const latestLeaderboard = await Qexecution.queryExecute(getLatestLeaderboardSQL, [TrainingID]);
         if (!latestLeaderboard.length) {
-            return res.status(404).send({
+            return res.status(200).send({
                 status: "fail",
                 message: "No leaderboard found for the given training.",
             });
@@ -419,7 +419,7 @@ exports.getFullLeaderboard = async (req, res) => {
         // Get the latest leaderboard for the given TrainingID
         const latestLeaderboard = await Qexecution.queryExecute(getLatestLeaderboardSQL, [TrainingID]);
         if (!latestLeaderboard.length) {
-            return res.status(404).send({
+            return res.status(200 ).send({
                 status: "fail",
                 message: "No leaderboard found for the given training.",
             });
