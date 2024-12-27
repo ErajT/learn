@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Box, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; // Import js-cookie to get cookies
+import axios from "axios"; // Import axios for making API calls
 
 const Container = styled(Box)`
   background: linear-gradient(135deg, #f3f4f6, #e9ecef);
@@ -51,15 +53,33 @@ const LeaderboardPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchWeeks = () => {
-      const data = [
-        { id: 1, name: "Week 1" },
-        { id: 2, name: "Week 2" },
-        { id: 3, name: "Week 3" },
-        { id: 4, name: "Week 4" },
-      ];
-      setWeeks(data);
+    // Get the TrainingID from the cookie
+    const traineeDetailsCookie = Cookies.get("selectedTraining"); 
+    console.log(traineeDetailsCookie);
+    const trainingID = JSON.parse(traineeDetailsCookie)?.trainingID;
+
+    if (!trainingID) {
+      console.error("Training ID not found in cookies");
+      return;
+    }
+
+    // Fetch weeks for the given TrainingID
+    const fetchWeeks = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:2000/admin/getweeks/${trainingID}`
+        );
+        
+        if (response.data.status === "success") {
+          setWeeks(response.data.weeks || []);
+        } else {
+          console.error("Failed to fetch weeks:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching weeks:", error.message);
+      }
     };
+
     fetchWeeks();
   }, []);
 
@@ -73,8 +93,8 @@ const LeaderboardPage = () => {
       <Divider />
       <Grid container spacing={3} justifyContent="center">
         {weeks.map((week) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={week.id}>
-            <WeekBox onClick={() => handleBoxClick(week.id)}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={week}>
+            <WeekBox onClick={() => handleBoxClick(week)}>
               <Typography
                 variant="h6"
                 align="center"
@@ -84,7 +104,7 @@ const LeaderboardPage = () => {
                   fontSize: "1.2rem",
                 }}
               >
-                {week.name}
+                {`Week ${week}`}
               </Typography>
             </WeekBox>
           </Grid>

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import Cookies from "js-cookie"; // Add js-cookie for cookie handling
 
+// Styled Components
 const LeaderboardContainer = styled.div`
   background-color: #ffffff;
   color: #ffffff;
@@ -105,35 +108,87 @@ const Score = styled.div`
   }
 `;
 
+const Message = styled.div`
+  font-size: 1.5rem;
+  color: #555;
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
 const FullLeaderboard = () => {
-  const leaderboardData = [
-    { rank: 1, name: "ABCD", emoji: "", score: 6960, positive: 70 },
-    { rank: 2, name: "Da", emoji: "", score: 5243, positive: 60 },
-    { rank: 3, name: "Captain", emoji: "", score: 4940, positive: 50 },
-    { rank: 4, name: "Fl", emoji: "", score: 4707, positive: 55 },
-    { rank: 5, name: "Ka", emoji: "", score: 3831, positive: 40 },
-    { rank: 6, name: "Sh", emoji: "", score: 2804, positive: 30 },
-  ];
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [message, setMessage] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const traineeDetailsCookie = Cookies.get("traineeDetails"); // Get the trainingID from cookies
+    const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
+    console.log(trainingID);
+
+    if (!trainingID) {
+      setMessage("Training ID not found in cookies.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:2000/leaderboard/getFullLeaderboard/${trainingID}`
+        );
+
+        if (response.data.status === "success") {
+          if (response.data.message === "All trainees fetched successfully.") {
+            setLeaderboardData(response.data.allTrainees || []);
+          } else {
+            setMessage(response.data.message || "Failed to fetch leaderboard.");
+          }
+        } else {
+          setMessage(response.data.message || "Failed to fetch leaderboard.");
+        }
+      } catch (error) {
+        setMessage(error.message || "An error occurred while fetching the leaderboard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
+
+  if (loading) {
+    return <LeaderboardContainer>Loading...</LeaderboardContainer>;
+  }
+
+  // Maximum score for the progress bar (385)
+  const MAX_SCORE = 385;
 
   return (
     <LeaderboardContainer>
       <Title>Full Leaderboard</Title>
-      {leaderboardData.map((player) => (
-        <LeaderboardItem key={player.rank}>
-          <Rank>{player.rank}</Rank>
-          <Name>
-            {player.name} {player.emoji}
-          </Name>
-          <ProgressContainer>
-            <ProgressBar type="positive" percentage={player.positive} />
-            <ProgressBar type="negative" percentage={100 - player.positive} />
-          </ProgressContainer>
-          <Score>{player.score}</Score>
-        </LeaderboardItem>
-      ))}
+      {message ? (
+        <Message>{message}</Message>
+      ) : (
+        leaderboardData.map((player, index) => (
+          <LeaderboardItem key={index}>
+            <Rank>{index + 1}</Rank>
+            <Name>{player.Name}</Name>
+            <ProgressContainer>
+              {/* Calculate the percentage for the positive progress bar */}
+              <ProgressBar type="positive" percentage={(player.Score / MAX_SCORE) * 100} />
+              <ProgressBar type="negative" percentage={100 - (player.Score / MAX_SCORE) * 100} />
+            </ProgressContainer>
+            <Score>{player.Score}</Score>
+          </LeaderboardItem>
+        ))
+      )}
     </LeaderboardContainer>
   );
 };
 
 export default FullLeaderboard;
-

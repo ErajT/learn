@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Box, Grid, Typography, Button } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import jsPDF from 'jspdf';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'; 
 import DownloadIcon from '@mui/icons-material/Download'; 
+import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
 
 const Container = styled(Box)`
   background-color: #f5f5f5;
@@ -13,24 +13,6 @@ const Container = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const WeekBox = styled(Box)`
-  background-color: #ffffff;
-  color: #2b6777;
-  padding: 20px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    background-color: #e8f0f2;
-  }
 `;
 
 const LeaderboardContainer = styled(Box)`
@@ -100,58 +82,43 @@ const GeneratePDFButton = styled(Button)`
 `;
 
 const DetailedLeaderboard = () => {
-  const { weekId } = useParams();
-  const navigate = useNavigate();
-  const [weeks, setWeeks] = useState([]);
+  const { weekId } = useParams(); // Get the weekId from URL parameters
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
-    const fetchWeeks = () => {
-      const data = [
-        { id: 1, name: 'Jan Week 1' },
-        { id: 2, name: 'Jan Week 2' },
-        { id: 3, name: 'Jan Week 3' },
-        { id: 4, name: 'Jan Week 4' },
-      ];
-      setWeeks(data);
-    };
-    const fetchLeaderboardData = (id) => {
-      const allData = {
-        1: [
-          { rank: 1, name: 'Player A', score: 5000 },
-          { rank: 2, name: 'Player B', score: 4500 },
-          { rank: 3, name: 'Player C', score: 4000 },
-        ],
-        2: [
-          { rank: 1, name: 'Player X', score: 5200 },
-          { rank: 2, name: 'Player Y', score: 4800 },
-          { rank: 3, name: 'Player Z', score: 4600 },
-        ],
-        3: [
-          { rank: 1, name: 'Player L', score: 5300 },
-          { rank: 2, name: 'Player M', score: 4900 },
-          { rank: 3, name: 'Player N', score: 4700 },
-        ],
-        4: [
-          { rank: 1, name: 'Player Q', score: 5400 },
-          { rank: 2, name: 'Player R', score: 5000 },
-          { rank: 3, name: 'Player S', score: 4800 },
-        ],
-      };
-      return allData[id] || [];
-    };
-
-    fetchWeeks();
+    const trainingdetailscookie = Cookies.get('selectedTraining'); // Get the training ID from cookies
+    const trainingId = JSON.parse(trainingdetailscookie)?.trainingID;
+    console.log(trainingId);
+    console.log(weekId);
+    if (!trainingId) {
+      console.error('Training ID not found in cookies');
+      return;
+    }
 
     if (weekId) {
-      const data = fetchLeaderboardData(weekId);
-      setLeaderboardData(data);
+      // Fetch leaderboard data from the API using weekId and trainingId
+      const fetchLeaderboardData = async () => {
+        try {
+          const response = await fetch(`http://localhost:2000/admin/getFullLeaderboard/${trainingId}/${weekId}`);
+          if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            const updatedLeaderboardData = data.allTrainees.map((player, index) => ({
+              ...player,
+              rank: index + 1, // Dynamically assign the rank based on index
+            }));
+            setLeaderboardData(updatedLeaderboardData);
+          } else {
+            console.error('Error fetching leaderboard data');
+          }
+        } catch (error) {
+          console.error('Error fetching leaderboard data:', error);
+        }
+      };
+
+      fetchLeaderboardData();
     }
   }, [weekId]);
-
-  const handleWeekClick = (id) => {
-    navigate(`/leaderboard/${id}`);
-  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -170,7 +137,7 @@ const DetailedLeaderboard = () => {
     doc.setLineWidth(0.5);
     doc.line(20, 43, 190, 43);
     let verticalOffset = 50;
-    leaderboardData.forEach((player, index) => {
+    leaderboardData.forEach((player) => {
       doc.text(`${player.rank}`, 20, verticalOffset);
       doc.text(player.name, 60, verticalOffset);
       doc.text(player.score.toString(), 160, verticalOffset);
@@ -180,40 +147,25 @@ const DetailedLeaderboard = () => {
     doc.save(`leaderboard_week_${weekId}.pdf`);
   };
 
-  if (!weekId) {
-    return (
-      <Container>
-        <Typography variant="h3" color="#2b6777" gutterBottom>
-          Leaderboard Weeks
-        </Typography>
-        <Grid container spacing={2}>
-          {weeks.map((week) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={week.id}>
-              <WeekBox onClick={() => handleWeekClick(week.id)}>
-                <Typography variant="h6">{week.name}</Typography>
-              </WeekBox>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    );
-  }
-
   return (
     <Container>
       <Typography variant="h3" color="#2b6777" gutterBottom>
         Leaderboard - Week {weekId}
       </Typography>
       <LeaderboardContainer>
-        {leaderboardData.map((player) => (
-          <LeaderboardItem key={player.rank}>
-            <Rank>
-              {player.rank}
-            </Rank>
-            <Name>{player.name}</Name>
-            <Score>{player.score}</Score>
-          </LeaderboardItem>
-        ))}
+        {leaderboardData.length > 0 ? (
+          leaderboardData.map((player) => (
+            <LeaderboardItem key={player.rank}>
+              <Rank>
+                {player.rank}
+              </Rank>
+              <Name>{player.Name}</Name>
+              <Score>{player.Score}</Score>
+            </LeaderboardItem>
+          ))
+        ) : (
+          <Typography variant="h6" color="gray">Loading leaderboard...</Typography>
+        )}
       </LeaderboardContainer>
       <GeneratePDFButton onClick={generatePDF} startIcon={<DownloadIcon />}>
         Generate PDF

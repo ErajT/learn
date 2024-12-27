@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled, { keyframes } from "styled-components";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 // Animations
 const backgroundAnimation = keyframes`
@@ -220,42 +222,162 @@ const NextButton = styled.button`
   }
 `;
 
+// Styled components
+const Message = styled.div`
+  font-size: 1.5rem;
+  color: #555;
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+// Snackbar component
+const Snackbar = styled.div`
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f44336; /* Red for error */
+  color: white;
+  padding: 16px;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 1rem;
+  animation: fadeIn 0.3s ease, fadeOut 0.3s ease 3s;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+`;
+
+
 // Main Leaderboard Component
 const Leaderboard = () => {
+  const [topThree, setTopThree] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState(null);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      const traineeDetailsCookie = Cookies.get("traineeDetails"); // Get TrainingID from cookies
+      try {
+        const traineeDetails = traineeDetailsCookie
+          ? JSON.parse(traineeDetailsCookie)
+          : null;
+        const trainingID = traineeDetails?.TrainingID;
+
+        if (!trainingID) {
+          setMessage("Training ID not found in cookies.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(
+          `http://localhost:2000/leaderboard/getTopThree/${trainingID}`
+        );
+        if (response.data.status === "success") {
+          if (response.data.topThree?.length > 0) {
+            setTopThree(response.data.topThree);
+          } else {
+            setMessage("No leaderboard found for your training.");
+          }
+        } else {
+          const errorMessage = response.data.message || "Failed to fetch leaderboard.";
+          if (errorMessage === "No leaderboard found for the given training.") {
+            setMessage(errorMessage);
+          } else {
+            setSnackbarMessage(errorMessage);
+          }
+        }
+      } catch (err) {
+        const errorMessage = err.message || "An error occurred while fetching leaderboard.";
+        setSnackbarMessage(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
+
+  const handleSnackbarClose = () => {
+    setSnackbarMessage(null);
+  };
+
+  if (loading) {
+    return <LeaderboardContainer>Loading...</LeaderboardContainer>;
+  }
+
   return (
     <LeaderboardContainer>
       <Title>🏆 Leaderboard Podium</Title>
-      <PodiumContainer>
-        <Podium
-          bgColor="linear-gradient(135deg, #d9d9d9, #b0b0b0)"
-          textColor="#2b6777"
-          height="250px"
-        >
-          <Medal bgColor="#b0b0b0">🥈</Medal>
-          <Name>Ashley</Name>
-          <Score>5805 points</Score>
-        </Podium>
-        <Podium
-          bgColor="linear-gradient(135deg, #ffe066, #ffcc00)"
-          textColor="#2b6777"
-          height="300px"
-          isFirst
-        >
-          <Medal bgColor="#ffcc00">🥇</Medal>
-          <Name>Chris</Name>
-          <Score>6500 points</Score>
-        </Podium>
-        <Podium
-          bgColor="linear-gradient(135deg, #cd7f32, #a45a29)"
-          textColor="#ffffff"
-          height="200px"
-        >
-          <Medal bgColor="#cd7f32">🥉</Medal>
-          <Name>Jordan</Name>
-          <Score>5200 points</Score>
-        </Podium>
-      </PodiumContainer>
-      <NextButton>Full Leaderboard</NextButton>
+      {message === "No leaderboard found for the given training." ? (
+        <Message>{message}</Message>
+      ) : (
+        <>
+          <PodiumContainer>
+            {topThree.map((trainee, index) => {
+              const podiumStyles = [
+                {
+                  bgColor: "linear-gradient(135deg, #ffe066, #ffcc00)",
+                  height: "300px",
+                  medal: "🥇",
+                  medalColor: "#ffcc00",
+                },
+                {
+                  bgColor: "linear-gradient(135deg, #d9d9d9, #b0b0b0)",
+                  height: "250px",
+                  medal: "🥈",
+                  medalColor: "#b0b0b0",
+                },
+                {
+                  bgColor: "linear-gradient(135deg, #cd7f32, #a45a29)",
+                  height: "200px",
+                  medal: "🥉",
+                  medalColor: "#cd7f32",
+                },
+              ];
+
+              const { bgColor, height, medal, medalColor } = podiumStyles[index];
+              return (
+                <Podium key={index} bgColor={bgColor} height={height}>
+                  <Medal bgColor={medalColor}>{medal}</Medal>
+                  <Name>{trainee.Name}</Name>
+                  <Score>{trainee.Score} points</Score>
+                </Podium>
+              );
+            })}
+          </PodiumContainer>
+          <NextButton>Full Leaderboard</NextButton>
+        </>
+      )}
+      {snackbarMessage && (
+        <Snackbar onClick={handleSnackbarClose}>
+          {snackbarMessage}
+        </Snackbar>
+      )}
     </LeaderboardContainer>
   );
 };
