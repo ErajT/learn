@@ -8,7 +8,7 @@ const connection=mysql.createPool({
     host: "127.0.0.1",
     user: "root",
     password: "root",
-    database: "learn",
+    database: "newschema",
     port: 3306,
     ssl: false
 })
