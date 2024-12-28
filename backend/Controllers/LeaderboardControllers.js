@@ -109,7 +109,7 @@ exports.Example = async (req, res) => {
         }
 
         // Call the updateTraineeScore function to update the score
-        await updateTraineeScore(TraineeID, pointsAwarded);
+        // await updateTraineeScore(TraineeID, pointsAwarded);
 
         res.status(200).send({
             status: "success"
@@ -156,7 +156,7 @@ exports.Photo = async (req, res) => {
         }
 
         // Call the updateTraineeScore function to update the score
-        await updateTraineeScore(TraineeID, pointsAwarded);
+        // await updateTraineeScore(TraineeID, pointsAwarded);
 
         res.status(200).send({
             status: "success",
@@ -181,13 +181,6 @@ exports.Refer = async (req, res) => {
         const { TrainingID, TraineeID, refer } = req.body;
         const { newDate, DayNumber } = getCurrentDateAndDay(); // Get current date and day
 
-        if (TraineeID === refer) {
-            return res.status(400).send({
-                status: "fail",
-                message: "You cannot refer yourself",
-            });
-        }
-
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
         let pointsAwarded = 15;  // Points for Refer
 
@@ -201,10 +194,10 @@ exports.Refer = async (req, res) => {
         }
 
         // Call the updateTraineeScore function to update the score
-        await updateTraineeScore(TraineeID, pointsAwarded);
+        // await updateTraineeScore(TraineeID, pointsAwarded);
 
         // Add 20 points to the referred trainee
-        await updateTraineeScore(refer, pointsAwarded);
+        // await updateTraineeScore(refer, pointsAwarded);
 
         res.status(200).send({
             status: "success",
