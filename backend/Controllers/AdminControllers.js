@@ -544,3 +544,57 @@ exports.getFullLeaderboard = async (req, res) => {
     }
 };
 
+exports.getSubmissionsBasedOnDate = async (req,res) => {
+    const {TrainingID, Date, TraineeID} = req.params;
+    const SQL1 = "SELECT Example, Photo, Refer FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
+    try{
+        const result = await Qexecution.queryExecute(SQL1, [TrainingID, Date, TraineeID]);
+        const sub = result[0];
+        // console.log(sub);
+        res.status(200).send({
+            status: "success",
+            message: "All trainees fetched successfully.",
+            submission: sub,
+        });
+    } catch (err) {
+        console.error("Error fetching all trainees:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching all trainees.",
+            error: err.message,
+        });
+    }
+}
+
+exports.getTraineesForTraining = async (req, res) => {
+    // Query to join Training and Trainee tables and fetch Trainees
+    const SQL = "SELECT TraineeID, Name FROM Trainee WHERE TrainingID = ?";
+
+    try {
+        const { id } = req.params; // Get TrainingID from request params
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [id]);
+
+        if (result.length === 0) {
+            return res.status(400).send({
+                status: "fail",
+                message: "No trainees found for this training or invalid TrainingID",
+            });
+        }
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            data: result, // List of TraineeID and Name
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error retrieving trainees",
+            error: err.message,
+        });
+    }
+};
+

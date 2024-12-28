@@ -37,4 +37,10 @@ router.route('/getweeks/:TrainingID')
 router.route('/getFullLeaderboard/:TrainingID/:WeekNumber')
     .get(AdminHandler.getFullLeaderboard);
 
+router.route('/getSubmissionsBasedOnDate/:TrainingID/:TraineeID/:Date')
+    .get(AdminHandler.getSubmissionsBasedOnDate);
+
+router.route('/getAllTraineesForTraining/:id')
+    .get(AdminHandler.getTraineesForTraining);
+
 module.exports = router
