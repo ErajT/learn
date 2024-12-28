@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Snackbar, Alert } from "@mui/material";
-
-// Define constants for TrainingID and TraineeID
-const TRAINING_ID = 1;
-const TRAINEE_ID = 1;
+import Cookies from "js-cookie";
 
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -164,7 +161,7 @@ const UploadSection = styled.div`
   }
 `;
 
-const Dropdown = styled.select`
+const Input = styled.input`
   width: 100%;
   padding: 8px;
   border-radius: 5px;
@@ -191,16 +188,12 @@ const Application = () => {
   const [exampleText, setExampleText] = useState("");
   const [isPhotoEnabled, setPhotoEnabled] = useState(false);
   const [isReferenceEnabled, setReferenceEnabled] = useState(false);
-  const [selectedReference, setSelectedReference] = useState("");
-  const [trainees, setTrainees] = useState([]);
+  const [referenceEmail, setReferenceEmail] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
-  useEffect(() => {
-    fetch(`http://localhost:2000/leaderboard/getAllTraineesForTraining/${TRAINING_ID}`)
-      .then((response) => response.json())
-      .then((data) => setTrainees(data.data))
-      .catch((error) => console.error("Error fetching trainees:", error));
-  }, []);
+  const cookieData = Cookies.get("traineeDetails");
+  const { TrainingID, TraineeID } = cookieData ? JSON.parse(cookieData) : {};
 
   const handleCheckboxChange = (taskIndex) => {
     if (taskIndex === 0) {
@@ -223,7 +216,7 @@ const Application = () => {
     fetch(`http://localhost:2000/leaderboard/example`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ TrainingID: TRAINING_ID, TraineeID: TRAINEE_ID, Example: exampleText }),
+      body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -237,39 +230,21 @@ const Application = () => {
       });
   };
 
-  const handlePhotoSubmit = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("photo", file);
-    formData.append("TrainingID", TRAINING_ID);
-    formData.append("TrainieeID", TRAINEE_ID);
-
-    fetch(`http://localhost:2000/leaderboard/photo`, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setSnackbar({ open: true, message: "Photo uploaded successfully!", severity: "success" });
-      })
-      .catch((error) => {
-        setSnackbar({ open: true, message: "Error uploading photo.", severity: "error" });
-        console.error("Error uploading photo:", error);
-      });
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleReferenceSubmit = () => {
-    if (!selectedReference) {
-      setSnackbar({ open: true, message: "Please select a trainee.", severity: "error" });
+    if (!referenceEmail || !validateEmail(referenceEmail)) {
+      setSnackbar({ open: true, message: "Please enter a valid email address.", severity: "error" });
       return;
     }
 
     fetch(`http://localhost:2000/leaderboard/refer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ TrainingID: TRAINING_ID, TraineeID: TRAINEE_ID ,refer: selectedReference }),
+      body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -278,6 +253,31 @@ const Application = () => {
       .catch((error) => {
         setSnackbar({ open: true, message: "Error referring trainee.", severity: "error" });
         console.error("Error referring trainee:", error);
+      });
+  };
+
+  const handlePhotoSubmit = () => {
+    if (!photoFile) {
+      setSnackbar({ open: true, message: "Please select a photo file to upload.", severity: "error" });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("TrainingID", TrainingID);
+    formData.append("TraineeID", TraineeID);
+    formData.append("photo", photoFile);
+
+    fetch(`http://localhost:2000/leaderboard/photo`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSnackbar({ open: true, message: "Photo submitted successfully!", severity: "success" });
+      })
+      .catch((error) => {
+        setSnackbar({ open: true, message: "Error submitting photo.", severity: "error" });
+        console.error("Error submitting photo:", error);
       });
   };
 
@@ -322,22 +322,17 @@ const Application = () => {
           <UploadContainer>
             <UploadSection>
               <h3>Photo</h3>
-              <input type="file" onChange={handlePhotoSubmit} />
+              <input type="file" onChange={(e) => setPhotoFile(e.target.files[0])} />
               <Button onClick={handlePhotoSubmit}>Submit Photo</Button>
             </UploadSection>
             <UploadSection>
               <h3>Reference</h3>
-              <Dropdown
-                value={selectedReference}
-                onChange={(e) => setSelectedReference(e.target.value)}
-              >
-                <option value="">Select a trainee</option>
-                {trainees.map((trainee) => (
-                  <option key={trainee.TraineeID} value={trainee.TraineeID}>
-                    {trainee.Name}
-                  </option>
-                ))}
-              </Dropdown>
+              <Input
+                type="email"
+                placeholder="Enter trainee email"
+                value={referenceEmail}
+                onChange={(e) => setReferenceEmail(e.target.value)}
+              />
               <Button onClick={handleReferenceSubmit}>Submit Reference</Button>
             </UploadSection>
           </UploadContainer>
