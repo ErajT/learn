@@ -546,7 +546,7 @@ exports.getFullLeaderboard = async (req, res) => {
 
 exports.getSubmissionsBasedOnDate = async (req,res) => {
     const {TrainingID, Date, TraineeID} = req.params;
-    const SQL1 = "SELECT Example, Photo, Refer FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
+    const SQL1 = "SELECT Approved, Example, Refer, Photo FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
     try{
         const result = await Qexecution.queryExecute(SQL1, [TrainingID, Date, TraineeID]);
         const sub = result[0];
@@ -564,6 +564,11 @@ exports.getSubmissionsBasedOnDate = async (req,res) => {
             error: err.message,
         });
     }
+}
+
+exports.approve = async (req,res) => {
+    const {TrainingID, TraineeIDs, Date} = req.body;
+
 }
 
 exports.getTraineesForTraining = async (req, res) => {

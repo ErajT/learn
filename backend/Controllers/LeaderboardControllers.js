@@ -90,7 +90,7 @@ exports.getTraineesForTraining = async (req, res) => {
 exports.Example = async (req, res) => {
     const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
     const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, Example) VALUES(?,?,?,?,?,?)";
-    const SQL3 = "UPDATE Submissions SET Options = ?, Example = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
+    const SQL3 = "UPDATE Submissions SET Options = ?, Example = ?, Approved=0 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
         const { TrainingID, TraineeID, Example } = req.body;
