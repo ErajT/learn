@@ -10,6 +10,7 @@ import Application from "./components/Application";
 import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
+import Submission from "./components/Submission";
 import Trainee from "./components/Trainee";
 import Login from "./components/login";
 import ForgotPass from "./components/ForgotPass";
@@ -99,6 +100,7 @@ const App = () => {
               <Route path="/trainee" element={<Trainee />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
+              <Route path="/submission" element={<Submission />} />
             </Route>
 
             {/* Catch-all Route */}
