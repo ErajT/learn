@@ -11,25 +11,6 @@ const getCurrentDateAndDay = () => {
     return { newDate, DayNumber };
 };
 
-const updateTraineeScore = async (TraineeID, pointsToAdd) => {
-    try {
-        // Query to get the current score of the trainee
-        const currentScoreResult = await Qexecution.queryExecute("SELECT Score FROM Trainee WHERE TraineeID = ?", [TraineeID]);
-        const currentScore = currentScoreResult.length ? currentScoreResult[0].Score : 0; // Default to 0 if score is null
-        
-        // Calculate the new score by adding the new points to the old score
-        const newScore = (currentScore || 0) + pointsToAdd;
-
-        // Update the trainee's score in the database
-        await Qexecution.queryExecute("UPDATE Trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
-
-        return newScore;
-    } catch (err) {
-        console.error("Error updating trainee score:", err.message);
-        throw new Error("Error updating trainee score");
-    }
-};
-
 exports.getTraineeDetails = async (req, res) => {
     const SQL = "SELECT * FROM Trainee WHERE TraineeID=?";
     try {
