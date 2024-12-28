@@ -60,6 +60,7 @@ const App = () => {
     "/material",
     "/trainee",
     "/leaderboard",
+    "/form",
     "/leaderboard/:weekId",
   ];
 

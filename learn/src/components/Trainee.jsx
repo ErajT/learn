@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie"; // Make sure to import Cookies if not already done
+import Cookies from "js-cookie";
 import * as XLSX from "xlsx";
 import axios from 'axios';
 import {
@@ -24,7 +24,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-
 const TraineePage = () => {
   const [trainees, setTrainees] = useState([]);
   const [newTrainee, setNewTrainee] = useState({
@@ -37,13 +36,20 @@ const TraineePage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState({});
+  const [passwordVisible, setPasswordVisible] = useState(() =>
+    trainees.reduce((acc, _, index) => ({ ...acc, [index]: false }), {})
+);
   const [trainingId, setTrainingId] = useState(null);
   const [companyId, setCompanyId] = useState(null);
   const [traineeIds, setTraineeIds] = useState(null);
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
+  useEffect(() => {
+    setPasswordVisible(
+        trainees.reduce((acc, _, index) => ({ ...acc, [index]: false }), {})
+    );
+}, [trainees]);
 
   // Fetch trainees when component mounts or trainingId changes
   useEffect(() => {
@@ -52,315 +58,176 @@ const TraineePage = () => {
       const parsedTraining = JSON.parse(selectedTraining);
       if (parsedTraining?.trainingID) {
         setTrainingId(parsedTraining.trainingID);
-        // console.log(parsedTraining);
         setCompanyId(parsedTraining.companyID);
 
-        console.log(parsedTraining.trainingID);
-        
         axios
-        .get(`http://localhost:2000/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
-        .then((response) => {
-          console.log(response);
-          if (response.data.data) {
-            console.log(response.data.data);
-            setTrainees(response.data.data); // Assuming the API response contains a 'trainees' field
-            setSnackbarMessage("Trainees fetched successfully!");
+          .get(`http://localhost:2000/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
+          .then((response) => {
+            if (response.data.data) {
+              setTrainees(response.data.data);
+              setSnackbarMessage("Trainees fetched successfully!");
+              setSnackbarOpen(true);
+            } else {
+              setSnackbarMessage("No trainees found.");
+              setSnackbarOpen(true);
+            }
+          })
+          .catch((error) => {
+            setSnackbarMessage("Error fetching trainees.");
             setSnackbarOpen(true);
-          } else {
-            setSnackbarMessage("No trainees found.");
-            setSnackbarOpen(true);
-          }
-        })
-        .catch((error) => {
-          setSnackbarMessage("Error fetching trainees.");
-          setSnackbarOpen(true);
-        });
-    }
-  }
-}, []); // Dependency array left empty to run only once when component mounts
-
-const handleConfirmTrainee = () => {
-  // Validate the new trainee data
-  if (!newTrainee.name || !newTrainee.email || !newTrainee.phone || !newTrainee.password) {
-    setSnackbarMessage("Please fill out all fields.");
-    setSnackbarOpen(true);
-    return;
-  }
-
-  // Prepare the data to send in the POST request
-  const traineeData = {
-    TrainingID: trainingId, // TrainingID from state
-    CompanyID: companyId, // Replace this with the actual CompanyID if needed
-    Name: newTrainee.name,
-    Email: newTrainee.email,
-    PhoneNumber: newTrainee.phone,
-  };
-  setModalOpen(false);
-
-  // console.log(traineeData);
-
-  // Make the POST request to save the trainee
-  axios
-    .post("http://localhost:2000/admin/saveTrainee", traineeData)
-    .then((response) => {
-      // console.log(response);
-      if (response.status) {
-        setTrainees((prevTrainees) => [
-          ...prevTrainees,
-          {
-            Name: newTrainee.name,         
-            Email: newTrainee.email,
-            PhoneNumber: newTrainee.phone,
-            password: newTrainee.password,
-          },
-        ]);
-        setSnackbarMessage("Trainee added successfully!");
-        setSnackbarOpen(true);
-         // Save the trainee ID
-         const traineeId = response.data.data; // Assuming `response.data.data` contains the trainee ID
-         setTraineeIds(traineeId);
- 
-         // Prepare data for the second API
-         const userData = {
-           email: newTrainee.email,
-           password: newTrainee.password,
-           position: "trainee",
-           id: traineeId,
-         };
- 
-         // Make the second API call to create the user
-         axios
-           .post("http://localhost:2000/users", userData)
-           .then((userResponse) => {
-             if (userResponse.status) {
-               setSnackbarMessage("Trainee and user account created successfully!");
-               setSnackbarOpen(true);
-             } else {
-               setSnackbarMessage("Trainee saved, but failed to create user account.");
-               setSnackbarOpen(true);
-             }
-           })
-           .catch((userError) => {
-             setSnackbarMessage("Trainee saved, but error creating user account.");
-             setSnackbarOpen(true);
-             console.error("User API error:", userError);
-           });
- 
-        setNewTrainee({ name: "", email: "", phone: "", password: "" });
-      } else {
-        setSnackbarMessage("Failed to add trainee.");
-        setSnackbarOpen(true);
+          });
       }
-    })
-    .catch((error) => {
-      setSnackbarMessage("Error saving trainee.");
+    }
+  }, []);
+
+  const handleConfirmTrainee = () => {
+    if (!newTrainee.name || !newTrainee.email || !newTrainee.phone || !newTrainee.password) {
+      setSnackbarMessage("Please fill out all fields.");
       setSnackbarOpen(true);
-    });
-};
+      return;
+    }
 
-
-
-// const handleFileUpload = (event) => {
-//   const file = event.target.files[0];
-//   if (!file) return; // If no file is selected, return early
-//   const reader = new FileReader();
-
-//   reader.onload = (e) => {
-//     const data = new Uint8Array(e.target.result);
-//     const workbook = XLSX.read(data, { type: "array" });
-//     const sheetName = workbook.SheetNames[0];
-//     const sheet = workbook.Sheets[sheetName];
-//     let parsedData = XLSX.utils.sheet_to_json(sheet);
-
-//     // Trim keys to remove extra spaces
-//     parsedData = parsedData.map((row) =>
-//       Object.fromEntries(
-//         Object.entries(row).map(([key, value]) => [key.trim(), value])
-//       )
-//     );
-
-//     console.log("Parsed Data: ", parsedData);
-
-//     // Prepare the trainees array without the password field
-//     const traineesFromFile = parsedData.map((row) => ({
-//       Name: row.Name || row.name || "Unknown",
-//       Email: row.Email || row.email || "No Email",
-//       PhoneNumber: row.Phone || row.phone || "No Phone",
-//       password: "12345"
-//     }));
-
-//     const traineesFromFile1 = parsedData.map((row) => ({
-//       Name: row.Name || row.name || "Unknown",
-//       Email: row.Email || row.email || "No Email",
-//       PhoneNumber: row.Phone || row.phone || "No Phone",
-//     }));
-
-//     // Prepare data for POST request
-//     const requestData = {
-//       TrainingID: trainingId, // Assuming trainingId is available in your state
-//       CompanyID: companyId, // Replace this with the actual CompanyID if needed
-//       trainees: traineesFromFile1,
-//     };
-
-//     // setTrainees((prevTrainees) => [...prevTrainees, ...traineesFromFile]);
-
-//     setSnackbarMessage("Trainees imported successfully!");
-//     setSnackbarOpen(true);
-
-//     // Make the POST request to add multiple trainees
-//     axios
-//       .post("http://localhost:2000/admin/saveAllTrainees", requestData)
-//       .then((response) => {
-//         if (response.status) {
-//           setTrainees((prevTrainees) => [...prevTrainees, ...traineesFromFile]);
-//           console.log(response.data.data);
-//           const traineeIdsofeach = response.data.data;
-//           // Loop through trainees and make an additional API call for each
-//           const userPromises = traineesFromFile.map((trainee, index) => {
-//             const userData = {
-//               email: trainee.Email,
-//               password: trainee.password,
-//               designation: "trainee",
-//               id: traineeIdsofeach[index], // Use the corresponding trainee ID
-//             };
-
-//             console.log(userPromises);
-
-//             return axios
-//               .post("http://localhost:2000/users", userData)
-//               .then((userResponse) => {
-//                 if (!userResponse.status) {
-//                   console.error(`Failed to create user for ${trainee.Email}`);
-//                 }
-//               })
-//               .catch((error) => {
-//                 console.error(`Error creating user for ${trainee.Email}:`, error);
-//               });
-//           });
-
-//           // Wait for all user API calls to complete
-//           Promise.all(userPromises)
-//             .then(() => {
-//               setSnackbarMessage("All trainees and user accounts added successfully!");
-//               setSnackbarOpen(true);
-//             })
-//             .catch(() => {
-//               setSnackbarMessage("Some user accounts could not be created.");
-//               setSnackbarOpen(true);
-//             });
-//         } else {
-//           setSnackbarMessage("Failed to add trainees.");
-//           setSnackbarOpen(true);
-//         }
-//       })
-//       .catch((error) => {
-//         setSnackbarMessage("Error adding trainees.");
-//         setSnackbarOpen(true);
-//       });
-//   };
-
-//   reader.readAsArrayBuffer(file);
-
-//   // Reset the file input value to allow uploading the same file again
-//   event.target.value = "";
-// };
-
-const handleFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return; // If no file is selected, return early
-  const reader = new FileReader();
-
-  reader.onload = async (e) => {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    let parsedData = XLSX.utils.sheet_to_json(sheet);
-
-    // Trim keys to remove extra spaces
-    parsedData = parsedData.map((row) =>
-      Object.fromEntries(
-        Object.entries(row).map(([key, value]) => [key.trim(), value])
-      )
-    );
-
-    console.log("Parsed Data: ", parsedData);
-
-    // Prepare the trainees array
-    const traineesFromFile = parsedData.map((row) => ({
-      Name: row.Name || row.name || "Unknown",
-      Email: row.Email || row.email || "No Email",
-      PhoneNumber: row.Phone || row.phone || "No Phone",
-      password: "12345",
-    }));
-
-    const traineesForRequest = parsedData.map((row) => ({
-      Name: row.Name || row.name || "Unknown",
-      Email: row.Email || row.email || "No Email",
-      PhoneNumber: row.Phone || row.phone || "No Phone",
-    }));
-
-    // Prepare data for POST request
-    const requestData = {
-      TrainingID: trainingId, // Assuming trainingId is available in your state
-      CompanyID: companyId, // Replace this with the actual CompanyID if needed
-      trainees: traineesForRequest,
+    const traineeData = {
+      TrainingID: trainingId,
+      CompanyID: companyId,
+      Name: newTrainee.name,
+      Email: newTrainee.email,
+      PhoneNumber: newTrainee.phone,
     };
 
-    try {
-      const response = await axios.post(
-        "http://localhost:2000/admin/saveAllTrainees",
-        requestData
-      );
+    setModalOpen(false);
 
-      if (response.status) {
-        const traineeIdsofeach = response.data.data; // Trainee IDs from the backend
-        setTrainees((prevTrainees) => [...prevTrainees, ...traineesFromFile]);
+    axios
+      .post("http://localhost:2000/admin/saveTrainee", traineeData)
+      .then((response) => {
+        if (response.status) {
+          setTrainees((prevTrainees) => [
+            ...prevTrainees,
+            {
+              Name: newTrainee.name,
+              Email: newTrainee.email,
+              PhoneNumber: newTrainee.phone,
+              password: newTrainee.password,
+            },
+          ]);
+          setSnackbarMessage("Trainee added successfully!");
+          setSnackbarOpen(true);
 
-        // Loop through trainees and make an additional API call for each
-        for (const [index, trainee] of traineesFromFile.entries()) {
+          const traineeId = response.data.data;
+
           const userData = {
-            email: trainee.Email,
-            password: trainee.password,
+            email: newTrainee.email,
+            password: newTrainee.password,
             position: "trainee",
-            id: traineeIdsofeach[index], // Use the corresponding trainee ID
+            id: traineeId,
           };
 
-          try {
-            const userResponse = await axios.post(
-              "http://localhost:2000/users",
-              userData
-            );
+          axios
+            .post("http://localhost:2000/users", userData)
+            .then((userResponse) => {
+              if (userResponse.status) {
+                setSnackbarMessage("Trainee and user account created successfully!");
+                setSnackbarOpen(true);
+              } else {
+                setSnackbarMessage("Trainee saved, but failed to create user account.");
+                setSnackbarOpen(true);
+              }
+            })
+            .catch((userError) => {
+              setSnackbarMessage("Trainee saved, but error creating user account.");
+              setSnackbarOpen(true);
+            });
 
-            if (!userResponse.status) {
-              console.error(`Failed to create user for ${trainee.Email}`);
-            }
-          } catch (error) {
-            console.error(`Error creating user for ${trainee.Email}:`, error);
-          }
+          setNewTrainee({ name: "", email: "", phone: "", password: "" });
+        } else {
+          setSnackbarMessage("Failed to add trainee.");
+          setSnackbarOpen(true);
         }
-
-        // After all trainees are processed
-        setSnackbarMessage(
-          "All trainees and user accounts added successfully!"
-        );
+      })
+      .catch(() => {
+        setSnackbarMessage("Error saving trainee.");
         setSnackbarOpen(true);
-      } else {
-        setSnackbarMessage("Failed to add trainees.");
-        setSnackbarOpen(true);
-      }
-    } catch (error) {
-      setSnackbarMessage("Error adding trainees.");
-      setSnackbarOpen(true);
-      console.error("Error saving trainees:", error);
-    }
+      });
   };
 
-  reader.readAsArrayBuffer(file);
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  // Reset the file input value to allow uploading the same file again
-  event.target.value = "";
-};
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      let parsedData = XLSX.utils.sheet_to_json(sheet);
+
+      parsedData = parsedData.map((row) =>
+        Object.fromEntries(
+          Object.entries(row).map(([key, value]) => [key.trim(), value])
+        )
+      );
+
+      const traineesFromFile = parsedData.map((row) => ({
+        Name: row.Name || row.name || "Unknown",
+        Email: row.Email || row.email || "No Email",
+        PhoneNumber: row.Phone || row.phone || "No Phone",
+        password: "12345",
+      }));
+
+      const traineesForRequest = parsedData.map((row) => ({
+        Name: row.Name || row.name || "Unknown",
+        Email: row.Email || row.email || "No Email",
+        PhoneNumber: row.Phone || row.phone || "No Phone",
+      }));
+
+      const requestData = {
+        TrainingID: trainingId,
+        CompanyID: companyId,
+        trainees: traineesForRequest,
+      };
+
+      try {
+        const response = await axios.post(
+          "http://localhost:2000/admin/saveAllTrainees",
+          requestData
+        );
+
+        if (response.status) {
+          const traineeIdsofeach = response.data.data;
+          setTrainees((prevTrainees) => [...prevTrainees, ...traineesFromFile]);
+
+          for (const [index, trainee] of traineesFromFile.entries()) {
+            const userData = {
+              email: trainee.Email,
+              password: trainee.password,
+              position: "trainee",
+              id: traineeIdsofeach[index],
+            };
+
+            try {
+              await axios.post("http://localhost:2000/users", userData);
+            } catch (error) {
+              console.error(`Error creating user for ${trainee.Email}:`, error);
+            }
+          }
+
+          setSnackbarMessage("All trainees and user accounts added successfully!");
+          setSnackbarOpen(true);
+        } else {
+          setSnackbarMessage("Failed to add trainees.");
+          setSnackbarOpen(true);
+        }
+      } catch (error) {
+        setSnackbarMessage("Error adding trainees.");
+        setSnackbarOpen(true);
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+    event.target.value = "";
+  };
 
   const handleDeleteTrainee = (index) => {
     setTrainees(trainees.filter((_, i) => i !== index));
@@ -368,11 +235,15 @@ const handleFileUpload = async (event) => {
 
   const togglePasswordVisibility = (index) => {
     setPasswordVisible((prevState) => ({
-      ...prevState,
-      [index]: !prevState[index],
+        ...prevState,
+        [index]: !prevState[index],
     }));
-  };
+};
 
+
+  const filteredTrainees = trainees.filter((trainee) =>
+    trainee.Name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
@@ -385,7 +256,6 @@ const handleFileUpload = async (event) => {
         color: "#2b6777",
       }}
     >
-      {/* Title */}
       <Typography
         variant="h3"
         sx={{
@@ -398,7 +268,6 @@ const handleFileUpload = async (event) => {
         Trainee Management
       </Typography>
 
-      {/* Search Bar */}
       <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
         <TextField
           variant="outlined"
@@ -420,7 +289,6 @@ const handleFileUpload = async (event) => {
         />
       </Box>
 
-      {/* Buttons */}
       <Box
         sx={{
           display: "flex",
@@ -457,7 +325,6 @@ const handleFileUpload = async (event) => {
         </Button>
       </Box>
 
-      {/* Trainee Cards */}
       <Box
         sx={{
           display: "grid",
@@ -468,7 +335,7 @@ const handleFileUpload = async (event) => {
           },
         }}
       >
-        {trainees.map((trainee, index) => (
+        {filteredTrainees.map((trainee, index) => (
           <Paper
             key={index}
             elevation={4}
@@ -491,18 +358,26 @@ const handleFileUpload = async (event) => {
             </Typography>
             <Typography sx={{ wordBreak: "break-word" }}>{trainee.Email}</Typography>
             <Typography sx={{ wordBreak: "break-word" }}>{trainee.PhoneNumber}</Typography>
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1 }}>
-              <Typography>Password: </Typography>
-              <IconButton onClick={() => togglePasswordVisibility(index)}>
-                {passwordVisible[index] ? <VisibilityOffIcon /> : <VisibilityIcon />}
-              </IconButton>
-              {passwordVisible[index] ? trainee.password : "••••••••"}
-            </Box>
+            <Box
+        sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: 1,
+        }}
+    >
+        <Typography>Password: </Typography>
+        <IconButton onClick={() => togglePasswordVisibility(index)}>
+            {passwordVisible[index] ? <VisibilityOffIcon /> : <VisibilityIcon />}
+        </IconButton>
+        <Typography sx={{ ml: 1 }}>
+            {passwordVisible[index] ? trainee.password : "••••••••"}
+        </Typography>
+    </Box>
           </Paper>
         ))}
       </Box>
 
-      {/* Add Trainee Modal */}
       <Dialog open={modalOpen} onClose={handleCloseModal} fullWidth maxWidth="sm">
         <DialogTitle>Add New Trainee</DialogTitle>
         <DialogContent>
@@ -541,7 +416,6 @@ const handleFileUpload = async (event) => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar */}
       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
         <Alert severity="success" onClose={handleSnackbarClose}>
           {snackbarMessage}
