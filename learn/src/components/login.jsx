@@ -179,7 +179,7 @@ const Snackbar = styled.div`
 `;
 
 const Login = () => {
-  const backendUrl = "https://learn-2ptu.vercel.app/";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

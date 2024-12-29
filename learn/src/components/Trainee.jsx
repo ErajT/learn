@@ -100,7 +100,7 @@ const TraineePage = () => {
     setModalOpen(false);
 
     axios
-      .post("${backendUrl}/admin/saveTrainee", traineeData)
+      .post(`${backendUrl}/admin/saveTrainee`, traineeData)
       .then((response) => {
         if (response.status) {
           setTrainees((prevTrainees) => [
@@ -125,7 +125,7 @@ const TraineePage = () => {
           };
 
           axios
-            .post("${backendUrl}/users", userData)
+            .post(`${backendUrl}/users`, userData)
             .then((userResponse) => {
               if (userResponse.status) {
                 setSnackbarMessage("Trainee and user account created successfully!");
@@ -192,7 +192,7 @@ const TraineePage = () => {
 
       try {
         const response = await axios.post(
-          "${backendUrl}/admin/saveAllTrainees",
+          `${backendUrl}/admin/saveAllTrainees`,
           requestData
         );
 
@@ -209,7 +209,7 @@ const TraineePage = () => {
             };
 
             try {
-              await axios.post("${backendUrl}/users", userData);
+              await axios.post(`${backendUrl}/users`, userData);
             } catch (error) {
               console.error(`Error creating user for ${trainee.Email}:`, error);
             }

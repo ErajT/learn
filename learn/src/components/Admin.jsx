@@ -22,7 +22,7 @@ const TrainingManager = () => {
 
   useEffect(() => {
     // Fetch the trainings when the component mounts
-    axios.get('${backendUrl}/admin/getAllTrainings')
+    axios.get(`${backendUrl}/admin/getAllTrainings`)
       .then(response => {
         if (response.data.status === "success") {
           const fetchedTrainings = response.data.trainings.map(training => ({

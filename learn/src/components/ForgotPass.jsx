@@ -120,7 +120,7 @@ const ForgotPass = () => {
     }
 
     try {
-      const response = await axios.post("${backendUrl}/users/forgetpassword", {
+      const response = await axios.post(`${backendUrl}/users/forgetpassword`, {
         email: email,
       });
       console.log("api hit");

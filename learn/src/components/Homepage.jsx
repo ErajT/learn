@@ -164,7 +164,7 @@ const HomePage = () => {
       console.log("Subscription successful!", subscription);
   
       // Send subscription to backend
-      const response = await axios.post("${backendUrl}/leaderboard/saveSubscription", {
+      const response = await axios.post(`${backendUrl}/leaderboard/saveSubscription`, {
         "subscription": subscription,
         "traineeID": traineeID
       });

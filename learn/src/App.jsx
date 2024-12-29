@@ -3,6 +3,8 @@ import { Routes, Route, useLocation, matchPath } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
+import AdminSidebar from "./components/AdminSidebar";
+import AdminSide from "./components/AdminSide";
 import Homepage from "./components/Homepage";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
@@ -56,18 +58,33 @@ const App = () => {
     "/home",
     "/mainleaderboard",
     "/fullLeaderboard",
-    "/admin",
+    "/form",
+  ];
+
+  const AdminSidebarRoutes = [
     "/training",
     "/material",
     "/trainee",
     "/leaderboard",
-    "/form",
-    "/leaderboard/:weekId",
-    "/form",
+    "/submission",
+    "/leaderboard/:weekId"
   ];
+
+  const AdminSideRoutes = [
+    "/admin",
+  ]
 
   // Check if the current location matches any of the sidebar routes
   const showSidebar = sidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
+
+   // Check if the current location matches any of the sidebar routes
+   const showAdminSidebar = AdminSidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
+
+  const showAdminSide = AdminSideRoutes.some((route) =>
     matchPath(route, location.pathname)
   );
 
@@ -75,8 +92,10 @@ const App = () => {
     <>
       <GlobalStyle />
       <AppContainer>
-        {showSidebar && <Sidebar />}
-        <Content showSidebar={showSidebar}>
+        {showSidebar && <Sidebar /> }
+        {showAdminSidebar && <AdminSidebar />}
+        {showAdminSide && <AdminSide/>}
+        <Content showSidebar={showSidebar || showAdminSidebar || showAdminSide}>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
