@@ -43,4 +43,10 @@ router.route('/getSubmissionsBasedOnDate/:TrainingID/:TraineeID/:Date')
 router.route('/getAllTraineesForTraining/:id')
     .get(AdminHandler.getTraineesForTraining);
 
+router.route('/approve')
+    .post(AdminHandler.approve);
+
+router.route('/getSubmissionsOfTrainee/:TrainingID/:TraineeID')
+    .get(AdminHandler.getSubmissionsOfTrainee);
+
 module.exports = router

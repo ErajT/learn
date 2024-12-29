@@ -1,5 +1,23 @@
 const Qexecution = require("./query");
 
+const updateTraineeScore = async (TraineeID, pointsToAdd) => {
+    try {
+        // Query to get the current score of the trainee
+        const currentScoreResult = await Qexecution.queryExecute("SELECT Score FROM Trainee WHERE TraineeID = ?", [TraineeID]);
+        const currentScore = currentScoreResult.length ? currentScoreResult[0].Score : 0; // Default to 0 if score is null
+        
+        // Calculate the new score by adding the new points to the old score
+        const newScore = (currentScore || 0) + pointsToAdd;
+
+        // Update the trainee's score in the database
+        await Qexecution.queryExecute("UPDATE Trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
+
+        return newScore;
+    } catch (err) {
+        console.error("Error updating trainee score:", err.message);
+        throw new Error("Error updating trainee score");
+    }
+};
 
 exports.addTraining = async (req, res) => {
     const { companyName, TrainerName, Topic, Date, Description } = req.body;
@@ -547,25 +565,93 @@ exports.getFullLeaderboard = async (req, res) => {
 
 exports.getSubmissionsBasedOnDate = async (req,res) => {
     const {TrainingID, Date, TraineeID} = req.params;
-    const SQL1 = "SELECT Example, Photo, Refer FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
+    const SQL1 = "SELECT Approved, Example, Refer, Photo FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
     try{
         const result = await Qexecution.queryExecute(SQL1, [TrainingID, Date, TraineeID]);
         const sub = result[0];
-        console.log(sub);
-        res.status(200).send({
-            status: "success",
-            message: "All trainees fetched successfully.",
-            submission: sub,
-        });
+        // console.log(sub);
+        if(sub){
+            res.status(200).send({
+                status: "success",
+                message: "submission fetched successfully.",
+                submission: sub,
+            });
+        }
+        else{
+            res.status(201).send({
+                status: "success",
+                message: "No submission found for this trainee.",
+            });
+        }
     } catch (err) {
-        console.error("Error fetching all trainees:", err.message);
+        console.error("Error fetching submissions:", err.message);
         res.status(500).send({
             status: "fail",
-            message: "Error fetching all trainees.",
+            message: "Error fetching submissions.",
             error: err.message,
         });
     }
 }
+
+exports.approve = async (req, res) => {
+    const { TrainingID, TraineeIDs, Date } = req.body;
+
+    try {
+        // Step 1: Loop through all the TraineeIDs
+        for (const TraineeID of TraineeIDs) {
+            // Step 2: Query the submissions table for each TraineeID, TrainingID, and Date
+            const submissionQuery = `SELECT * FROM submissions WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
+            const submissionResult = await Qexecution.queryExecute(submissionQuery, [TraineeID, TrainingID, Date]);
+
+            if (submissionResult.length === 0) {
+                return res.status(400).send({ message: `No submission found for TraineeID ${TraineeID} on the provided date.` });
+            }
+
+            const submission = submissionResult[0];
+
+            // Step 3: Check if the submission is approved, or if it is NULL
+            if (submission.Approved === 0) {
+                // Approved is 0, proceed to check for points and update score
+                let pointsToAdd = 0;
+
+                if (submission.Example) {
+                    pointsToAdd += 10; // Add 10 points if Example exists
+                }
+
+                if (submission.Photo) {
+                    pointsToAdd += 15; // Add 15 points if Photo exists
+                }
+
+                if (submission.Refer) {
+                    pointsToAdd += 15; // Add 15 points if Refer exists
+                }
+
+                // Step 4: Call the updateTraineeScore function to update the score
+                const newScore = await updateTraineeScore(TraineeID, pointsToAdd);
+
+                // Step 5: After score update, change the Approved field to 1
+                const updateQuery = `UPDATE submissions SET Approved = 1 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
+                await Qexecution.queryExecute(updateQuery, [TraineeID, TrainingID, Date]);
+
+                // Optionally, you can log the updated score here if needed:
+                console.log(`TraineeID ${TraineeID} score updated to ${newScore}`);
+            } else if (submission.Approved === null) {
+                // Approved is NULL, don't add points, return "No submission present"
+                return res.status(201).send({ message: `No submission present for TraineeID ${TraineeID} on the provided date.` });
+            } else {
+                // Approved is already 1, return "Already approved"
+                return res.status(201).send({ message: "Already approved" });
+            }
+        }
+
+        // Step 6: Return a success response after processing all trainees
+        res.status(200).send({ message: "Submissions approved and scores updated." });
+
+    } catch (error) {
+        console.error("Error in approve function:", error.message);
+        res.status(500).send({ message: "An error occurred while approving submissions." });
+    }
+};
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
@@ -596,6 +682,31 @@ exports.getTraineesForTraining = async (req, res) => {
             message: "Error retrieving trainees",
             error: err.message,
         });
+    }
+};
+
+exports.getSubmissionsOfTrainee = async (req, res) => {
+    const { TrainingID, TraineeID } = req.params;
+
+    const SQL1 = `
+        SELECT Date, Example, Refer, Photo
+        FROM submissions 
+        WHERE TrainingID = ? AND TraineeID = ? 
+        ORDER BY Date;
+    `;
+
+    try {
+        // Execute the query using your database execution function
+        const submissions = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID]);
+
+        if (submissions.length === 0) {
+            return res.status(201).send({ message: 'No submissions found for the given TraineeID and TrainingID.' });
+        }
+
+        return res.status(200).send(submissions);
+    } catch (error) {
+        console.error("Error fetching submissions:", error.message);
+        return res.status(500).send({ message: "An error occurred while fetching submissions." });
     }
 };
 
