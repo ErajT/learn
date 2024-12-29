@@ -65,6 +65,8 @@ const ChecklistContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  align-item:center;
+  text-align:center;
 
   @media (max-width: 768px) {
     max-width: 100%;
@@ -143,7 +145,7 @@ const UploadContainer = styled.div`
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
 `;
 
@@ -322,7 +324,11 @@ const Application = () => {
           <UploadContainer>
             <UploadSection>
               <h3>Photo</h3>
-              <input type="file" onChange={(e) => setPhotoFile(e.target.files[0])} />
+              <input 
+                  type="file" 
+                  accept=".jpg,.jpeg" 
+                  onChange={(e) => setPhotoFile(e.target.files[0])} 
+                />
               <Button onClick={handlePhotoSubmit}>Submit Photo</Button>
             </UploadSection>
             <UploadSection>

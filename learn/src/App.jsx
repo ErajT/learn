@@ -63,6 +63,7 @@ const App = () => {
     "/leaderboard",
     "/form",
     "/leaderboard/:weekId",
+    "/form",
   ];
 
   // Check if the current location matches any of the sidebar routes

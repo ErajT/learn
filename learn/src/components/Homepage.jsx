@@ -87,29 +87,42 @@ const HomePage = () => {
   const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
-    const traineeDetailsCookie = Cookies.get("traineeDetails");
-    if (traineeDetailsCookie) {
-      const parsedDetails = JSON.parse(traineeDetailsCookie);
-      setTraineeDetails({
-        name: parsedDetails.Name || "",
-        trainingName: parsedDetails.TrainingName || "",
-        companyName: parsedDetails.CompanyName || "",
-      });
-    }
-    const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
-    if (trainingID) {
-      axios
-        .get(`http://localhost:2000/admin/getMaterial/${trainingID}`)
-        .then((response) => {
+    const fetchDataAndSubscribe = async () => {
+      // Fetch trainee details
+      const traineeDetailsCookie = Cookies.get("traineeDetails");
+      if (traineeDetailsCookie) {
+        const parsedDetails = JSON.parse(traineeDetailsCookie);
+        setTraineeDetails({
+          name: parsedDetails.Name || "",
+          trainingName: parsedDetails.TrainingName || "",
+          companyName: parsedDetails.CompanyName || "",
+        });
+      }
+  
+      // Fetch training materials
+      const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
+      if (trainingID) {
+        try {
+          const response = await axios.get(`http://localhost:2000/admin/getMaterial/${trainingID}`);
           if (response.data.status === "success") {
             setMaterials(response.data.materials);
           }
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error fetching materials:", error);
-        });
-    }
+        }
+      }
+  
+      // Subscribe for push notifications
+      if ("serviceWorker" in navigator) {
+        console.log("called");
+        await subscribeForPushNotifications(JSON.parse(traineeDetailsCookie)?.TraineeID);
+      }
+    };
+  
+    fetchDataAndSubscribe();
   }, []);
+  
+
 
   const handleViewFile = (base64File) => {
     const byteCharacters = atob(base64File);
@@ -128,6 +141,49 @@ const HomePage = () => {
     const blobURL = URL.createObjectURL(blob);
     window.open(blobURL, '_blank');
   };
+
+  async function subscribeForPushNotifications(traineeID) {
+    try {
+      console.log(traineeID);
+      console.log("Registering service worker...");
+      const register = await navigator.serviceWorker.register("/worker.js", {
+        scope: "/",
+      });
+      console.log("Service Worker Registered...");
+  
+      console.log("Subscribing to push notifications...");
+      const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          "BJthRQ5myDgc7OSXzPCMftGw-n16F7zQBEN7EUD6XxcfTTvrLGWSIG7y_JxiWtVlCFua0S8MTB5rPziBqNx1qIo"
+        ),
+      });
+  
+      console.log("Subscription successful!", subscription);
+  
+      // Send subscription to backend
+      const response = await axios.post("http://localhost:2000/leaderboard/saveSubscription", {
+        "subscription": subscription,
+        "traineeID": traineeID
+      });
+      // await axios.post("/api/subscribe", subscription);
+      console.log("Subscription object sent to backend.");
+    } catch (error) {
+      console.error("Failed to subscribe for push notifications:", error);
+    }
+  }
+  
+  function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+  
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
 
   return (
     <Container>

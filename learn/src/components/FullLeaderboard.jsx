@@ -27,10 +27,20 @@ const Title = styled.h1`
   color: #2b6777;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
   margin-bottom: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align:center;
 
   @media (max-width: 768px) {
     font-size: 2.5rem;
     margin-bottom: 40px;
+    display: flex;
+    flex-direction: row;
+    left: 50%;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
