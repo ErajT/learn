@@ -1,16 +1,16 @@
 // copy this from branch muneer after work is done
 
-const mysql = require('mysql2');
+const mysql = require('mysql');
 //Database Connection
 
 const connection=mysql.createPool({
     connectionLimit: 6,
-    host: "127.0.0.1",
-    user: "root",
-    password: "root",
-    database: "learn",
+    host: "qec-db-3.mysql.database.azure.com",
+    user: "qecproject",
+    password: "software22NED",
+    database: "newschema",
     port: 3306,
-    ssl: false
+    ssl: true
 })
 connection.getConnection((err,connection)=>{
     if (err){
