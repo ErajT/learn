@@ -237,9 +237,9 @@ const Login = () => {
         
         }
         
-        setTimeout(() => {
-          window.location.href = "/Home"; // Redirect on success
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.href = "/Home"; // Redirect on success
+        // }, 1500);
       }
       else if(position == "admin")
       {
