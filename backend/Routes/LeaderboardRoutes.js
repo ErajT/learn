@@ -35,4 +35,11 @@ router.route("/getFullLeaderboard/:TrainingID")
 router.route("/getDetails/:email")
     .get(LeaderboardHandler.getDetails)
 
+router.route('/subscribe')
+    .get(LeaderboardHandler.subscribe);
+
+router.route('/saveSubscription')
+    .post(LeaderboardHandler.saveSubscription);
+
+
 module.exports = router

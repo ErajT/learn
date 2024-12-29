@@ -1,4 +1,5 @@
 const Qexecution = require("./query");
+const webpush = require("web-push");
 
 // Utility function to get the current date and day number
 const getCurrentDateAndDay = () => {
@@ -487,3 +488,86 @@ exports.getDetails = async (req, res) => {
         });
     }
 };
+
+exports.saveSubscription = async (req,res) => {
+    const {traineeID, subscription} = req.body;
+    const SQL1 = "UPDATE trainee SET Endpoint = ? WHERE TraineeID=?";
+    try{
+
+        const subs = JSON.stringify(subscription);
+        const response = await Qexecution.queryExecute(SQL1, [subs, traineeID]);
+        // console.log(traineeID, " subscription is: ", subscription.endpoint)
+        res.status(200).send({
+            status: "success",
+            message: "Subscription saved successfully."
+        });
+    } catch (err) {
+        // console.error("Error fetching all trainees:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error saving subscription.",
+            error: err.message,
+        });
+    }
+};
+
+// VAPID keys (ensure these match your configuration)
+const publicVapidKey =
+  "BJthRQ5myDgc7OSXzPCMftGw-n16F7zQBEN7EUD6XxcfTTvrLGWSIG7y_JxiWtVlCFua0S8MTB5rPziBqNx1qIo";
+const privateVapidKey = "3KzvKasA2SoCxsp0iIG_o9B0Ozvl1XDwI63JRKNIWBM";
+
+// Set VAPID details
+webpush.setVapidDetails(
+  "mailto:test@test.com",
+  publicVapidKey,
+  privateVapidKey
+);
+
+
+exports.subscribe = async (req, res) => {
+  const SQL1 = "SELECT TraineeID, TrainingID, Endpoint from trainee"; // Your SQL query to get subscription details
+
+  try {
+    // Execute the SQL query to get the list of subscriptions
+    const response = await Qexecution.queryExecute(SQL1);
+    console.log(response); // This will log the response to help with debugging
+
+    // Create payload for the notification
+    const payload = JSON.stringify({ title: "Push Test", message: "Hello from the server!" });
+
+    // Check if the response is an array and contains data
+    if (Array.isArray(response) && response.length > 0) {
+      // Loop through each response object (each trainee's data)
+      for (let i = 0; i < response.length; i++) {
+        const trainee = response[i];
+
+        // Skip the trainee if the endpoint is null or undefined
+        if (!trainee.Endpoint) {
+          console.warn(`Skipping trainee ${trainee.TraineeID} due to missing endpoint.`);
+          continue;
+        }
+
+        const subscription = JSON.parse(trainee.Endpoint);
+
+        try {
+          // Send notification to each trainee's endpoint
+          await webpush.sendNotification(subscription, payload);
+          console.log(`Notification sent to trainee ${trainee.TraineeID} successfully.`);
+        } catch (error) {
+          console.error(`Error sending notification to trainee ${trainee.TraineeID}:`, error);
+        }
+      }
+
+      // Send success response after processing all subscriptions
+      res.status(201).json({ message: "Notifications sent to all valid trainees." });
+    } else {
+      res.status(400).json({ message: "No trainee subscriptions found." });
+    }
+
+  } catch (error) {
+    console.error("Error fetching subscriptions or sending notifications:", error);
+    res.status(500).json({ message: "Failed to send notifications.", error: error.message });
+  }
+};
+
+

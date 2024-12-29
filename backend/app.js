@@ -75,4 +75,17 @@ cron.schedule('30 22 * * 5', async () => {
   }
 });
 
+cron.schedule("30 10 * * 1", async () => {
+  console.log("Cron job triggered on Sunday at 3 PM");
+
+  try {
+
+    await axios.get("http://localhost:2000/leaderboard/subscribe");
+
+    console.log("Push notification triggered successfully.");
+  } catch (error) {
+    console.error("Error triggering push notification:", error.message);
+  }
+});
+
 module.exports = app;
