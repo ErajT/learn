@@ -291,11 +291,10 @@ exports.getTraineesForTraining = async (req, res) => {
     const SQL = "SELECT * FROM Trainee WHERE TrainingID = ?";
 
     try {
-        const { id } = req.params; // Get TrainingID from request params
-        console.log(id);
+        const { TrainingID } = req.params; // Get TrainingID from request params
 
         // Execute the JOIN query
-        const result = await Qexecution.queryExecute(SQL, [id]);
+        const result = await Qexecution.queryExecute(SQL, [TrainingID]);
 
         if (result.length === 0) {
             return res.status(200).send({
