@@ -178,6 +178,8 @@ const Input = styled.input`
 `;
 
 const Application = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
   const today = new Date().toLocaleString("en-US", { weekday: "short" });
   const [currentDay, setCurrentDay] = useState(today);
@@ -215,7 +217,7 @@ const Application = () => {
       return;
     }
 
-    fetch(`http://localhost:2000/leaderboard/example`, {
+    fetch(`${backendUrl}/leaderboard/example`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText }),
@@ -243,7 +245,7 @@ const Application = () => {
       return;
     }
 
-    fetch(`http://localhost:2000/leaderboard/refer`, {
+    fetch(`${backendUrl}/leaderboard/refer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail }),
@@ -269,7 +271,7 @@ const Application = () => {
     formData.append("TraineeID", TraineeID);
     formData.append("photo", photoFile);
 
-    fetch(`http://localhost:2000/leaderboard/photo`, {
+    fetch(`${backendUrl}/leaderboard/photo`, {
       method: "POST",
       body: formData,
     })

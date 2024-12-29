@@ -19,6 +19,8 @@ import axios from "axios";
 import jsPDF from "jspdf";
 
 const TrainingPage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [trainees, setTrainees] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTrainee, setSelectedTrainee] = useState(null);
@@ -55,7 +57,7 @@ const TrainingPage = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:2000/admin/getAllTraineesForTraining/${trainingId}`
+          `${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`
         );
 
         if (response.data.status === "success") {
@@ -85,7 +87,7 @@ const TrainingPage = () => {
       const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
       const response = await axios.get(
-        `http://localhost:2000/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
+        `${backendUrl}/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
       );
 
       if (response.data.status === "success") {
@@ -117,7 +119,7 @@ const TrainingPage = () => {
     try {
       console.log(`Fetching submissions for trainee ID: ${selectedTrainee}`);
       const response = await axios.get(
-        `http://localhost:2000/admin/getSubmissionsOfTrainee/${trainingId}/${selectedTrainee}`
+        `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${selectedTrainee}`
       );
   
       console.log("Response from API:", response.data);

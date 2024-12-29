@@ -179,6 +179,8 @@ const Snackbar = styled.div`
 `;
 
 const Login = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -202,9 +204,10 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:2000/users/login", {
-        "email": email,
-        "password": password,
+      // console.log("${backendUrl}/users/login");
+      const response = await axios.post(`${backendUrl}/users/login`, {
+        email: email,
+        password: password,
       });
       const position = response.data.position;
 
@@ -220,9 +223,8 @@ const Login = () => {
           Cookies.set("position", JSON.stringify("trainee"));
         // Second API call to fetch trainee details
         const traineeDetailsResponse = await axios.get(
-          `http://localhost:2000/leaderboard/getDetails/${email}`
+          `${backendUrl}/leaderboard/getDetails/${email}`
         );
-
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie
           console.log(traineeDetailsResponse);

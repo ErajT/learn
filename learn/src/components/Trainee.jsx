@@ -25,6 +25,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const TraineePage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [trainees, setTrainees] = useState([]);
   const [newTrainee, setNewTrainee] = useState({
     name: "",
@@ -61,7 +63,7 @@ const TraineePage = () => {
         setCompanyId(parsedTraining.companyID);
 
         axios
-          .get(`http://localhost:2000/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
+          .get(`${backendUrl}/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
           .then((response) => {
             if (response.data.data) {
               setTrainees(response.data.data);
@@ -98,7 +100,7 @@ const TraineePage = () => {
     setModalOpen(false);
 
     axios
-      .post("http://localhost:2000/admin/saveTrainee", traineeData)
+      .post("${backendUrl}/admin/saveTrainee", traineeData)
       .then((response) => {
         if (response.status) {
           setTrainees((prevTrainees) => [
@@ -123,7 +125,7 @@ const TraineePage = () => {
           };
 
           axios
-            .post("http://localhost:2000/users", userData)
+            .post("${backendUrl}/users", userData)
             .then((userResponse) => {
               if (userResponse.status) {
                 setSnackbarMessage("Trainee and user account created successfully!");
@@ -190,7 +192,7 @@ const TraineePage = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:2000/admin/saveAllTrainees",
+          "${backendUrl}/admin/saveAllTrainees",
           requestData
         );
 
@@ -207,7 +209,7 @@ const TraineePage = () => {
             };
 
             try {
-              await axios.post("http://localhost:2000/users", userData);
+              await axios.post("${backendUrl}/users", userData);
             } catch (error) {
               console.error(`Error creating user for ${trainee.Email}:`, error);
             }

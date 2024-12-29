@@ -121,6 +121,8 @@ const FeatureBox = styled.div`
 `;
 
 const HomePage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [data, setData] = useState({
     material: null,
     trainee: null,

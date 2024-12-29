@@ -50,6 +50,7 @@ const Divider = styled(Box)`
 `;
 
 const LeaderboardPage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [weeks, setWeeks] = useState([]);
   const [leaderboards, setLeaderboards] = useState(null); // State for leaderboards data
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const LeaderboardPage = () => {
     const fetchWeeks = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:2000/admin/getweeks/${trainingID}`
+          `${backendUrl}/admin/getweeks/${trainingID}`
         );
 
         if (response.data.status === "success") {
@@ -100,7 +101,7 @@ const LeaderboardPage = () => {
       }
 
       const response = await axios.get(
-        `http://localhost:2000/admin/getAllLeaderboards/${trainingID}`
+        `${backendUrl}/admin/getAllLeaderboards/${trainingID}`
       );
 
       if (response.data.status === "success") {

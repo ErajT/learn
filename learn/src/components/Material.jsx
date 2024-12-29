@@ -20,6 +20,8 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const MaterialPage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [description, setDescription] = useState("");
@@ -31,7 +33,7 @@ const MaterialPage = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const [trainingId, setTrainingId] = useState(null);
 
-  const MAX_MATERIALS = 9;
+  const MAX_MATERIALS = 6;
 
   useEffect(() => {
     const selectedTraining = Cookies.get("selectedTraining");
@@ -47,7 +49,7 @@ const MaterialPage = () => {
   const fetchMaterials = async (trainingId) => {
     try {
       const response = await fetch(
-        `http://localhost:2000/admin/getMaterial/${trainingId}`,
+        `${backendUrl}/admin/getMaterial/${trainingId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -89,7 +91,7 @@ const MaterialPage = () => {
     formData.append("material", file);
 
     try {
-      const response = await fetch("http://localhost:2000/admin/addMaterial", {
+      const response = await fetch("${backendUrl}/admin/addMaterial", {
         method: "POST",
         body: formData,
       });

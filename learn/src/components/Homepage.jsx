@@ -79,6 +79,8 @@ const StyledCard = styled(Card)`
 
 
 const HomePage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [traineeDetails, setTraineeDetails] = useState({
     name: "",
     trainingName: "",
@@ -103,7 +105,7 @@ const HomePage = () => {
       const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
       if (trainingID) {
         try {
-          const response = await axios.get(`http://localhost:2000/admin/getMaterial/${trainingID}`);
+          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`);
           if (response.data.status === "success") {
             setMaterials(response.data.materials);
           }
@@ -162,7 +164,7 @@ const HomePage = () => {
       console.log("Subscription successful!", subscription);
   
       // Send subscription to backend
-      const response = await axios.post("http://localhost:2000/leaderboard/saveSubscription", {
+      const response = await axios.post("${backendUrl}/leaderboard/saveSubscription", {
         "subscription": subscription,
         "traineeID": traineeID
       });
