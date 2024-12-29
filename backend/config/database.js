@@ -1,4 +1,3 @@
-// copy this from branch muneer after work is done
 
 const mysql = require('mysql2');
 //Database Connection
