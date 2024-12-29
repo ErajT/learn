@@ -178,7 +178,7 @@ const Input = styled.input`
 `;
 
 const Application = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
   const today = new Date().toLocaleString("en-US", { weekday: "short" });

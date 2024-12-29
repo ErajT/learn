@@ -98,7 +98,7 @@ const Snackbar = styled.div`
 `;
 
 const ResetPass = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
   const { token } = useParams(); // Extract token from URL
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

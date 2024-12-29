@@ -44,7 +44,7 @@ const LoginButton = styled(Button)(({ inSection1 }) => ({
 }));
 
 const App = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [navbarTransparent, setNavbarTransparent] = useState(true);
 
   const sectionRefs = useRef([]);

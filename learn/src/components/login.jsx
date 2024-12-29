@@ -179,7 +179,7 @@ const Snackbar = styled.div`
 `;
 
 const Login = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  const backendUrl = "https://learn-2ptu.vercel.app/";  // Use this in API calls
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -204,7 +204,7 @@ const Login = () => {
     }
 
     try {
-      // console.log("${backendUrl}/users/login");
+      console.log(`${backendUrl}/users/login`);
       const response = await axios.post(`${backendUrl}/users/login`, {
         email: email,
         password: password,
@@ -222,16 +222,17 @@ const Login = () => {
         {
           Cookies.set("position", JSON.stringify("trainee"));
         // Second API call to fetch trainee details
+        console.log(`${backendUrl}/leaderboard/getDetails/${email}`);
         const traineeDetailsResponse = await axios.get(
           `${backendUrl}/leaderboard/getDetails/${email}`
         );
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie
           console.log(traineeDetailsResponse);
-          Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data.data[0]), {
-            expires: 7, // Cookie will expire in 7 days
-            secure: true, // Ensure secure cookie usage in HTTPS
-          });
+          // Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data.data[0]), {
+          //   expires: 7, // Cookie will expire in 7 days
+          //   secure: true, // Ensure secure cookie usage in HTTPS
+          // });
 
           setSnackbarMessage("Details fetched and stored successfully!");
           setSnackbarSeverity("success");

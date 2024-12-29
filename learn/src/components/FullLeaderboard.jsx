@@ -131,7 +131,7 @@ const Message = styled.div`
 `;
 
 const FullLeaderboard = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [message, setMessage] = useState(null);
