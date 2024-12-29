@@ -7,7 +7,9 @@ const updateTraineeScore = async (TraineeID, pointsToAdd) => {
         const currentScore = currentScoreResult.length ? currentScoreResult[0].Score : 0; // Default to 0 if score is null
         
         // Calculate the new score by adding the new points to the old score
-        const newScore = (currentScore || 0) + pointsToAdd;
+        const newScore = parseInt(currentScore || 0) + pointsToAdd;
+
+        console.log("new score is ", currentScore);
 
         // Update the trainee's score in the database
         await Qexecution.queryExecute("UPDATE Trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
@@ -598,19 +600,23 @@ exports.approve = async (req, res) => {
     try {
         // Step 1: Loop through all the TraineeIDs
         for (const TraineeID of TraineeIDs) {
+            console.log(TraineeID);
             // Step 2: Query the submissions table for each TraineeID, TrainingID, and Date
             const submissionQuery = `SELECT * FROM submissions WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
             const submissionResult = await Qexecution.queryExecute(submissionQuery, [TraineeID, TrainingID, Date]);
 
             if (submissionResult.length === 0) {
-                return res.status(400).send({ message: `No submission found for TraineeID ${TraineeID} on the provided date.` });
+                // No submission found for this trainee, skip to the next one
+                console.log(`No submission present for TraineeID ${TraineeID} on the provided date.`);
+                continue;
             }
 
             const submission = submissionResult[0];
+            console.log(submission);
 
-            // Step 3: Check if the submission is approved, or if it is NULL
-            if (submission.Approved === 0) {
-                // Approved is 0, proceed to check for points and update score
+            // Step 3: Check the current approval status
+            if (submission.Approved === 0 || submission.Approved === null) {
+                // Not approved yet, calculate points and update the score
                 let pointsToAdd = 0;
 
                 if (submission.Example) {
@@ -625,32 +631,32 @@ exports.approve = async (req, res) => {
                     pointsToAdd += 15; // Add 15 points if Refer exists
                 }
 
-                // Step 4: Call the updateTraineeScore function to update the score
+                console.log(pointsToAdd);
+
+                // Update trainee score
                 const newScore = await updateTraineeScore(TraineeID, pointsToAdd);
 
-                // Step 5: After score update, change the Approved field to 1
+                // Update the Approved field in the submissions table
                 const updateQuery = `UPDATE submissions SET Approved = 1 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
                 await Qexecution.queryExecute(updateQuery, [TraineeID, TrainingID, Date]);
 
-                // Optionally, you can log the updated score here if needed:
                 console.log(`TraineeID ${TraineeID} score updated to ${newScore}`);
-            } else if (submission.Approved === null) {
-                // Approved is NULL, don't add points, return "No submission present"
-                return res.status(201).send({ message: `No submission present for TraineeID ${TraineeID} on the provided date.` });
-            } else {
-                // Approved is already 1, return "Already approved"
-                return res.status(201).send({ message: "Already approved" });
+            } else if (submission.Approved === 1) {
+                // Submission is already approved, skip this trainee
+                console.log(`Submission for TraineeID ${TraineeID} is already approved.`);
+                continue;
             }
         }
 
-        // Step 6: Return a success response after processing all trainees
-        res.status(200).send({ message: "Submissions approved and scores updated." });
+        // Step 4: Return a success response after processing all trainees
+        res.status(200).send({ message: "Submissions processed successfully." });
 
     } catch (error) {
         console.error("Error in approve function:", error.message);
         res.status(500).send({ message: "An error occurred while approving submissions." });
     }
 };
+
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees

@@ -9,6 +9,7 @@ const connection=mysql.createPool({
     database: "newschema",
     port: 3306,
     ssl: false
+    ssl: false
 })
 connection.getConnection((err,connection)=>{
     if (err){
