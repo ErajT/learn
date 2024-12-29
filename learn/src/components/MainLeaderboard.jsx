@@ -341,34 +341,47 @@ const Leaderboard = () => {
             {topThree.map((trainee, index) => {
               const podiumStyles = [
                 {
-                  order: 2, // Position 1 in the center
-                  bgColor: "linear-gradient(135deg, #ffe066, #ffcc00)",
-                  height: "300px",
-                  medal: "🥇",
-                  medalColor: "#ffcc00",
-                },
-                {
                   order: 1, // Position 2 to the left
                   bgColor: "linear-gradient(135deg, #d9d9d9, #b0b0b0)",
                   height: "250px",
+                  tabletHeight: "200px",
+                  mobileHeight: "150px",
+                  smallHeight: "120px",
                   medal: "🥈",
                   medalColor: "#b0b0b0",
+                },
+                {
+                  order: 2, // Position 1 in the center
+                  bgColor: "linear-gradient(135deg, #ffe066, #ffcc00)",
+                  height: "300px",
+                  tabletHeight: "250px",
+                  mobileHeight: "200px",
+                  smallHeight: "150px",
+                  medal: "🥇",
+                  medalColor: "#ffcc00",
                 },
                 {
                   order: 3, // Position 3 to the right
                   bgColor: "linear-gradient(135deg, #cd7f32, #a45a29)",
                   height: "200px",
+                  tabletHeight: "175px",
+                  mobileHeight: "125px",
+                  smallHeight: "100px",
                   medal: "🥉",
                   medalColor: "#cd7f32",
                 },
               ];
+              
 
-              const { order, bgColor, height, medal, medalColor } = podiumStyles[index];
+              const { order, bgColor, height, medal, medalColor, tabletHeight, mobileHeight, smallHeight } = podiumStyles[index];
               return (
                 <Podium
                   key={index}
                   bgColor={bgColor}
                   height={height}
+                  tabletHeight={tabletHeight}
+                  smallHeight={smallHeight}
+                  mobileHeight={mobileHeight}
                   style={{ order }}
                 >
                   <Medal bgColor={medalColor}>{medal}</Medal>
