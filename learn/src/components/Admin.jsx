@@ -7,6 +7,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie'; // Import js-cookie
 
 const TrainingManager = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [openModal, setOpenModal] = useState(false);
   const [trainings, setTrainings] = useState([]);
   const [newTraining, setNewTraining] = useState({
@@ -21,7 +22,7 @@ const TrainingManager = () => {
 
   useEffect(() => {
     // Fetch the trainings when the component mounts
-    axios.get('http://localhost:2000/admin/getAllTrainings')
+    axios.get('${backendUrl}/admin/getAllTrainings')
       .then(response => {
         if (response.data.status === "success") {
           const fetchedTrainings = response.data.trainings.map(training => ({
@@ -47,7 +48,7 @@ const TrainingManager = () => {
     if (newTraining.trainer && newTraining.companyName && newTraining.topic && newTraining.date && newTraining.description) {
       try {
         // First, post the new training
-        const response = await axios.post('http://localhost:2000/admin/addTraining', {
+        const response = await axios.post('${backendUrl}/admin/addTraining', {
           companyName: newTraining.companyName,
           TrainerName: newTraining.trainer,
           Topic: newTraining.topic,
@@ -57,7 +58,7 @@ const TrainingManager = () => {
 
         if (response.data.status === "success") {
           // After successfully adding the training, fetch the updated list
-          axios.get('http://localhost:2000/admin/getAllTrainings')
+          axios.get('${backendUrl}/admin/getAllTrainings')
             .then(response => {
               if (response.data.status === "success") {
                 const fetchedTrainings = response.data.trainings.map(training => ({

@@ -11,14 +11,14 @@ let app = express();
 
 // Middleware to enable CORS
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Adjust the origin as needed
+  res.setHeader('Access-Control-Allow-Origin', 'https://a887-116-90-103-244.ngrok-free.app'); // Adjust the origin as needed
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from frontend application
+  origin: 'https://a887-116-90-103-244.ngrok-free.app', // Allow requests from frontend application
   credentials: true // Allow credentials (cookies) to be included with requests
 }));
 
@@ -75,7 +75,7 @@ cron.schedule('30 22 * * 5', async () => {
   }
 });
 
-cron.schedule("42 22 * * 0", async () => {
+cron.schedule("49 22 * * 0", async () => {
   console.log("Cron job triggered on Sunday at 3 PM");
 
   try {

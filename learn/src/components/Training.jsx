@@ -121,10 +121,14 @@ const FeatureBox = styled.div`
 `;
 
 const HomePage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [data, setData] = useState({
     material: null,
     trainee: null,
     leaderboard: null,
+    submision: null,
+    
   });
 
   useEffect(() => {
@@ -142,6 +146,11 @@ const HomePage = () => {
       },
       leaderboard: {
         title: "Leaderboard",
+        description: "Check the leaderboard rankings.",
+        image: "https://img.freepik.com/free-photo/african-man-black-suit_1157-45560.jpg?t=st=1734983083~exp=1734986683~hmac=53d0da30c9949e740c0ef138c6c6c1dbfe5cecb533e05407d327b30fca820438&w=740",
+      },
+      submission: {
+        title: "submission",
         description: "Check the leaderboard rankings.",
         image: "https://img.freepik.com/free-photo/african-man-black-suit_1157-45560.jpg?t=st=1734983083~exp=1734986683~hmac=53d0da30c9949e740c0ef138c6c6c1dbfe5cecb533e05407d327b30fca820438&w=740",
       },

@@ -274,6 +274,8 @@ const Snackbar = styled.div`
 
 // Main Leaderboard Component
 const Leaderboard = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [topThree, setTopThree] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
@@ -295,7 +297,7 @@ const Leaderboard = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:2000/leaderboard/getTopThree/${trainingID}`
+          `${backendUrl}/leaderboard/getTopThree/${trainingID}`
         );
         if (response.data.status === "success") {
           if (response.data.topThree?.length > 0) {

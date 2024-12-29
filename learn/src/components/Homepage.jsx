@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
+import { Visibility } from "@mui/icons-material";
 
 const Container = styled.div`
   padding: 0 40px;
@@ -62,7 +63,24 @@ const UserInfo = styled.div`
   }
 `;
 
+const StyledCard = styled(Card)`
+  border-radius: 24px !important; /* Increased radius for smoother corners */
+  background: linear-gradient(to right, #e1eef6, #ffffff); /* Gradient for normal state */
+  padding: 16px; /* Inner padding for better spacing */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+
+  &:hover {
+    transform: translateY(-10px); /* Slightly more elevation on hover */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+    background: linear-gradient(to right, #e1eef6, #ffffff); /* Keep the gradient consistent */
+  }
+`;
+
+
 const HomePage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [traineeDetails, setTraineeDetails] = useState({
     name: "",
     trainingName: "",
@@ -87,7 +105,7 @@ const HomePage = () => {
       const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
       if (trainingID) {
         try {
-          const response = await axios.get(`http://localhost:2000/admin/getMaterial/${trainingID}`);
+          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`);
           if (response.data.status === "success") {
             setMaterials(response.data.materials);
           }
@@ -146,7 +164,7 @@ const HomePage = () => {
       console.log("Subscription successful!", subscription);
   
       // Send subscription to backend
-      const response = await axios.post("http://localhost:2000/leaderboard/saveSubscription", {
+      const response = await axios.post("${backendUrl}/leaderboard/saveSubscription", {
         "subscription": subscription,
         "traineeID": traineeID
       });
@@ -185,30 +203,60 @@ const HomePage = () => {
         </UserInfo>
       </UserInfoBox>
 
-      <Grid container spacing={4} style={{ marginTop: "40px", textAlign: "center" }}>
-        {materials.length > 0 ? (
-          materials.map((material, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card elevation={3} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Title: {material.Title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" paragraph>
-                    Description: {material.Description}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleViewFile(material.File)}
-                  >
-                    View {material.Title}
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
+      <Grid container spacing={4} style={{ marginTop: "40px", textAlign: "center"}}>
+      {materials.length > 0 ? (
+        materials.map((material, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <StyledCard elevation={3} style={{background: "linear-gradient(to right, #e1eef6, #ffffff)" }}>
+              <CardContent style={{background: "linear-gradient(to right, #e1eef6, #ffffff)" }}>
+                <Typography
+                  variant="h5"
+                  // gutterBottom
+                  style={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    color: "#2b6777", 
+                    /* Darker color for better readability */
+                  }}
+                >
+                  Title:{material.Title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  // color="textSecondary"
+                  paragraph
+                  style={{
+                    textAlign: "justify",
+                    marginBottom: "16px",
+                    lineHeight: 1.6, /* Better line spacing */
+                    color:"#2b6777",
+                    fontWeight:"bold",
+                    paddingBottom:"15px"
+                  }}
+                >
+                  Description:{material.Description}
+                </Typography>
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#2b6777",
+                    color: "#fff",
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                    borderRadius: "20px",
+                    padding: "8px 16px",
+                  }}
+                  startIcon={<Visibility style={{ color: "#fff" }} />}
+                  onClick={() => handleViewFile(material.File)}
+                >
+                  View File
+                </Button>
+              </CardContent>
+            </StyledCard>
+          </Grid>
+        ))
+      ) : (
+
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
               No materials available for this training.

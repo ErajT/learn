@@ -98,6 +98,7 @@ const Snackbar = styled.div`
 `;
 
 const ResetPass = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const { token } = useParams(); // Extract token from URL
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -131,7 +132,7 @@ const ResetPass = () => {
     try {
         console.log("api not hit yet");
       const response = await axios.patch(
-        `http://localhost:2000/users/resetPassword/${token}`,  // Send token in URL
+        `${backendUrl}/users/resetPassword/${token}`,  // Send token in URL
         { updatedPassword: password }
       );
 

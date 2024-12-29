@@ -82,6 +82,8 @@ const GeneratePDFButton = styled(Button)`
 `;
 
 const DetailedLeaderboard = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const { weekId } = useParams(); // Get the weekId from URL parameters
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -99,7 +101,7 @@ const DetailedLeaderboard = () => {
       // Fetch leaderboard data from the API using weekId and trainingId
       const fetchLeaderboardData = async () => {
         try {
-          const response = await fetch(`http://localhost:2000/admin/getFullLeaderboard/${trainingId}/${weekId}`);
+          const response = await fetch(`${backendUrl}/admin/getFullLeaderboard/${trainingId}/${weekId}`);
           if (response.ok) {
             const data = await response.json();
             console.log(data);

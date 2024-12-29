@@ -20,6 +20,8 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const MaterialPage = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [description, setDescription] = useState("");
@@ -47,7 +49,7 @@ const MaterialPage = () => {
   const fetchMaterials = async (trainingId) => {
     try {
       const response = await fetch(
-        `http://localhost:2000/admin/getMaterial/${trainingId}`,
+        `${backendUrl}/admin/getMaterial/${trainingId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -66,6 +68,7 @@ const MaterialPage = () => {
     }
   };
 
+ 
   const handleUpload = async () => {
     if (materials.length >= MAX_MATERIALS) {
       setSnackbarMessage(`Upload limit of ${MAX_MATERIALS} materials reached.`);
@@ -88,20 +91,22 @@ const MaterialPage = () => {
     formData.append("material", file);
 
     try {
-      const response = await fetch("http://localhost:2000/admin/addMaterial", {
+      const response = await fetch("${backendUrl}/admin/addMaterial", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         const addedMaterial = await response.json();
-        setMaterials([addedMaterial, ...materials]);
         setSnackbarMessage("Material uploaded successfully!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
         setNewMaterial("");
         setDescription("");
         setFile(null);
+
+        // Refetch materials to show the updated list
+        fetchMaterials(trainingId);
       } else {
         const errorResponse = await response.json();
         setSnackbarMessage(errorResponse.message || "Upload failed.");
@@ -197,6 +202,7 @@ const MaterialPage = () => {
               sx={{
                 color: "#2b6777",
                 margin: "0 auto",
+                display: "block",
                 backgroundColor: "rgba(43, 103, 119, 0.1)",
                 "&:hover": {
                   backgroundColor: "rgba(43, 103, 119, 0.2)",
@@ -278,9 +284,11 @@ const MaterialPage = () => {
                       sx={{
                         color: "#2b6777",
                         fontWeight: "bold",
+                        
+
                       }}
                     >
-                      {material.Title}
+                      Title:{material.Title}
                     </Typography>
                     <IconButton
                       color="error"
@@ -293,7 +301,7 @@ const MaterialPage = () => {
                     variant="body2"
                     sx={{ color: "#777777", mb: 2, textAlign: "center" }}
                   >
-                    {material.Description}
+                    Description:{material.Description}
                   </Typography>
                   <Button
                     variant="contained"

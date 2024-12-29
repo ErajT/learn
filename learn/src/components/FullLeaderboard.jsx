@@ -131,6 +131,8 @@ const Message = styled.div`
 `;
 
 const FullLeaderboard = () => {
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -149,7 +151,7 @@ const FullLeaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:2000/leaderboard/getFullLeaderboard/${trainingID}`
+          `${backendUrl}/leaderboard/getFullLeaderboard/${trainingID}`
         );
 
         if (response.data.status === "success") {
