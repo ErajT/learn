@@ -343,7 +343,7 @@ const Leaderboard = () => {
       ) : (
         <>
           <PodiumContainer>
-            {topThree.map((trainee, index) => {
+          {[topThree[1], topThree[0], topThree[2]].map((trainee, index) => {
               const podiumStyles = [
                 {
                   order: 1, // Position 2 to the left

@@ -96,14 +96,14 @@ const Sidebar = () => {
         <NavItem to="/home" title="Home">
           <FaHome />
         </NavItem>
-        <NavItem to="/fullLeaderboard" title="Full Leaderboard">
-          <FaTrophy />
+        <NavItem to="/form" title="Form">
+          <FaWpforms />
         </NavItem>
         <NavItem to="/mainleaderboard" title="Main Leaderboard">
           <FaChartBar />
         </NavItem>
-        <NavItem to="/form" title="Form">
-          <FaWpforms />
+        <NavItem to="/fullLeaderboard" title="Full Leaderboard">
+          <FaTrophy />
         </NavItem>
       </NavItems>
       <LogoutButton onClick={handleLogout} title="Logout">

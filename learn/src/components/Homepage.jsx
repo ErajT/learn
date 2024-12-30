@@ -23,7 +23,7 @@ const UserInfoBox = styled.div`
   gap: 40px;
   height: 250px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1000px) {
     background: url('/back1.png') no-repeat center center;
     background-size: cover;
     gap: 20px;

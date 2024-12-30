@@ -368,13 +368,13 @@ const TraineePage = () => {
             mt: 1,
         }}
     >
-        <Typography>Password: </Typography>
+        {/* <Typography>Password: </Typography>
         <IconButton onClick={() => togglePasswordVisibility(index)}>
             {passwordVisible[index] ? <VisibilityOffIcon /> : <VisibilityIcon />}
         </IconButton>
         <Typography sx={{ ml: 1 }}>
             {passwordVisible[index] ? trainee.password : "••••••••"}
-        </Typography>
+        </Typography> */}
     </Box>
           </Paper>
         ))}

@@ -21,7 +21,8 @@ const UserInfoBox = styled.div`
   gap: 40px;
   height: 250px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1000px) {
+    background: url('/back1.png');
     gap: 20px;
     height: auto;
     flex-direction: column;
@@ -47,7 +48,7 @@ const UserInfo = styled.div`
 
   @media (max-width: 768px) {
     h2 {
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
     p {
       font-size: 1rem;
@@ -56,9 +57,9 @@ const UserInfo = styled.div`
 `;
 
 const FeatureBoxesContainer = styled.div`
-  margin-top: 80px;
+  margin-top: 40px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   padding: 0;
 
@@ -79,49 +80,62 @@ const FeatureBox = styled.div`
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
-  background-image: ${({ image }) => `url(${image})`};
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 250px;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-  color: #fff;
+  justify-content: flex-start;
+  align-items: center;
+  height:200px;
+  color: #000; /* Pitch black text */
+  text-decoration: none; /* No underline for text */
+  height: auto;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
   }
 
+  img {
+    width: 80%; /* Full width of the box */
+    max-height: 150px; /* Adjust to maintain uniformity */
+    border-radius: 8px;
+    margin-bottom: 15px;
+    object-fit: cover; /* Scale and crop to fit */
+  }
+
   h3 {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 10px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: #000; /* Pitch black text */
+    text-decoration:none;
   }
 
   p {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: #000; /* Pitch black text */
+    text-decoration:none;
   }
 
   @media (max-width: 768px) {
-    height: 250px;
     padding: 15px;
+
     h3 {
       font-size: 1.2rem;
     }
     p {
       font-size: 0.9rem;
     }
+    img {
+      max-height: 100px;
+    }
   }
 `;
 
+
 const HomePage = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
+  const [TrainingName, setTrainingName] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
 
   const [data, setData] = useState({
     material: null,
@@ -137,22 +151,22 @@ const HomePage = () => {
       material: {
         title: "Material",
         description: "Explore materials and resources.",
-        image: "https://img.freepik.com/free-photo/daily-life-business-people-office_53876-47111.jpg",
+        image: "https://cdn.pixabay.com/photo/2013/07/13/01/18/pdf-155498_640.png",
       },
       trainee: {
         title: "Trainee",
         description: "View and manage trainees.",
-        image: "https://img.freepik.com/free-photo/teacher-smart-instructor-grey-suit-classroom-with-computer-whiteboard-holding-notes_140725-163389.jpg?t=st=1734982721~exp=1734986321~hmac=0ed247c91deb73a55d73d744f37819b27f4bd9a4dac36358df7a382c195424fe&w=740",
+        image: "https://img.freepik.com/free-vector/seminar-concept-illustration_114360-7855.jpg",
       },
       leaderboard: {
         title: "Leaderboard",
         description: "Check the leaderboard rankings.",
-        image: "https://img.freepik.com/free-photo/african-man-black-suit_1157-45560.jpg?t=st=1734983083~exp=1734986683~hmac=53d0da30c9949e740c0ef138c6c6c1dbfe5cecb533e05407d327b30fca820438&w=740",
+        image: "https://cdn3d.iconscout.com/3d/premium/thumb/leaderboard-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--winner-podium-trophy-seo-pack-business-illustrations-4034317.png",
       },
       submission: {
-        title: "submission",
-        description: "Check the leaderboard rankings.",
-        image: "https://img.freepik.com/free-photo/african-man-black-suit_1157-45560.jpg?t=st=1734983083~exp=1734986683~hmac=53d0da30c9949e740c0ef138c6c6c1dbfe5cecb533e05407d327b30fca820438&w=740",
+        title: "Submission",
+        description: "Check the trainee submissions.",
+        image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
       },
     });
 
@@ -160,6 +174,10 @@ const HomePage = () => {
     const selectedTraining = Cookies.get('selectedTraining');
     if (selectedTraining) {
       console.log("Selected Training:", JSON.parse(selectedTraining));
+      const selectedTraining1 = JSON.parse(selectedTraining);
+      setTrainingName(selectedTraining1.name);
+      setCompanyName(selectedTraining1.company);
+
     } else {
       console.log("No selected training cookie found.");
     }
@@ -169,21 +187,21 @@ const HomePage = () => {
     <Container>
       <UserInfoBox>
         <UserInfo>
-          <h2>John Doe</h2>
-          <p>Software Engineer</p>
-          <p>john.doe@example.com</p>
+          <h2>{TrainingName}</h2>
+          <h2>{companyName}</h2>
         </UserInfo>
       </UserInfoBox>
       <FeatureBoxesContainer>
-        {Object.keys(data).map((key) => (
-          <Link key={key} to={`/${key}`}>
-            <FeatureBox image={data[key]?.image}>
-              <h3>{data[key]?.title}</h3>
-              <p>{data[key]?.description}</p>
-            </FeatureBox>
-          </Link>
-        ))}
-      </FeatureBoxesContainer>
+  {Object.keys(data).map((key) => (
+    <Link key={key} to={`/${key}`} style={{ textDecoration: "none" }}>
+      <FeatureBox>
+        <img src={data[key]?.image} alt={data[key]?.title} />
+        <h3>{data[key]?.title}</h3>
+        <p>{data[key]?.description}</p>
+      </FeatureBox>
+    </Link>
+  ))}
+</FeatureBoxesContainer>
     </Container>
   );
 };

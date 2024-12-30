@@ -48,7 +48,7 @@ const TrainingManager = () => {
     if (newTraining.trainer && newTraining.companyName && newTraining.topic && newTraining.date && newTraining.description) {
       try {
         // First, post the new training
-        const response = await axios.post('${backendUrl}/admin/addTraining', {
+        const response = await axios.post( `${backendUrl}/admin/addTraining`, {
           companyName: newTraining.companyName,
           TrainerName: newTraining.trainer,
           Topic: newTraining.topic,
@@ -138,10 +138,10 @@ const TrainingManager = () => {
           margin: "50px auto",
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         
-          "@media (max-width: 768px)": {
+          "@media (max-width: 1000px)": {
             backgroundImage: "url('/back1.png')",
             gap: "20px",
-            height: "auto",
+            height: 250,
             flexDirection: "column",
             padding: "1px",
             width: "auto",
