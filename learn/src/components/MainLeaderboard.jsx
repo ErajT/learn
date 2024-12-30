@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 
 // Animations
+
 const backgroundAnimation = keyframes`
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -23,12 +24,14 @@ const pulseEffect = keyframes`
 
 // Main Container
 const LeaderboardContainer = styled.div`
-  background: #f9f9f9;
+  // background: #f9f9f9;
   background-size: 400% 400%;
   animation: ${backgroundAnimation} 15s ease infinite;
   color: #ffffff;
   text-align: center;
-  padding: 30px;
+  // padding: 30px;
+  padding: 0 30px;
+  margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

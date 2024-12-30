@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
   text-align: center;
-  background-color: #f9f9f9;
+  // background-color: #f9f9f9;
   min-height: 100vh;
   padding: 20px;
   color: #333;

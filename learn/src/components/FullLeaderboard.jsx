@@ -5,7 +5,7 @@ import Cookies from "js-cookie"; // Add js-cookie for cookie handling
 
 // Styled Components
 const LeaderboardContainer = styled.div`
-  background-color: #ffffff;
+  // background-color: #ffffff;
   color: #ffffff;
   width: 100%;
   height: 100vh;
