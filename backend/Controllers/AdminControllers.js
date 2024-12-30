@@ -658,15 +658,15 @@ exports.approve = async (req, res) => {
 };
 
 
-exports.getTraineesForTraining = async (req, res) => {
+exports.getTraineesForTraining1 = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
     const SQL = "SELECT TraineeID, Name FROM Trainee WHERE TrainingID = ?";
 
     try {
-        const { id } = req.params; // Get TrainingID from request params
+        const { TrainingID } = req.params; // Get TrainingID from request params
 
         // Execute the JOIN query
-        const result = await Qexecution.queryExecute(SQL, [id]);
+        const result = await Qexecution.queryExecute(SQL, [TrainingID]);
 
         if (result.length === 0) {
             return res.status(400).send({

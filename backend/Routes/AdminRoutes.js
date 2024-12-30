@@ -40,8 +40,8 @@ router.route('/getFullLeaderboard/:TrainingID/:WeekNumber')
 router.route('/getSubmissionsBasedOnDate/:TrainingID/:TraineeID/:Date')
     .get(AdminHandler.getSubmissionsBasedOnDate);
 
-router.route('/getAllTraineesForTraining/:id')
-    .get(AdminHandler.getTraineesForTraining);
+router.route('/getAllTraineesForTraining/:TrainingID')
+    .get(AdminHandler.getTraineesForTraining1);
 
 router.route('/approve')
     .post(AdminHandler.approve);

@@ -77,7 +77,7 @@ cron.schedule('30 22 * * 5', async () => {
   }
 });
 
-cron.schedule("49 22 * * 0", async () => {
+cron.schedule("20 13 * * 1", async () => {
   console.log("Cron job triggered on Sunday at 3 PM");
 
   try {
