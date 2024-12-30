@@ -6,7 +6,7 @@ import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 
 const Container = styled.div`
-  padding: 0 40px;
+  padding: 0 30px;
   margin: 0 auto;
 `;
 
@@ -30,7 +30,7 @@ const UserInfoBox = styled.div`
     height: auto;
     flex-direction: column;
     padding: 1px;
-    margin: 10px 20px 10px 10px;
+    // margin: 10px 20px 10px 10px;
     width: auto;
   }
 `;
@@ -55,10 +55,10 @@ const UserInfo = styled.div`
 
   @media (max-width: 768px) {
     h2 {
-      font-size: 1rem;
+      font-size: 1.3rem;
     }
     p {
-      font-size: 1rem;
+      font-size: 1.3rem;
     }
   }
 `;

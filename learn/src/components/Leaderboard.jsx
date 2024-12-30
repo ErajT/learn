@@ -50,13 +50,12 @@ const Divider = styled(Box)`
 `;
 
 const LeaderboardPage = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [weeks, setWeeks] = useState([]);
-  const [leaderboards, setLeaderboards] = useState(null); // State for leaderboards data
+  const [leaderboards, setLeaderboards] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get the TrainingID from the cookie
     const traineeDetailsCookie = Cookies.get("selectedTraining");
     const trainingID = JSON.parse(traineeDetailsCookie)?.trainingID;
 
@@ -65,11 +64,10 @@ const LeaderboardPage = () => {
       return;
     }
 
-    // Fetch weeks for the given TrainingID
     const fetchWeeks = async () => {
       try {
         const response = await axios.get(
-          `${backendUrl}/admin/getweeks/${trainingID}`
+          `http://localhost:2000/admin/getweeks/${trainingID}`
         );
 
         if (response.data.status === "success") {
@@ -88,8 +86,6 @@ const LeaderboardPage = () => {
   const handleBoxClick = (weekId) => {
     navigate(`/leaderboard/${weekId}`);
   };
-
-  // Function to fetch leaderboards data
   const fetchLeaderboards = async () => {
     try {
       const traineeDetailsCookie = Cookies.get("selectedTraining");
@@ -101,7 +97,7 @@ const LeaderboardPage = () => {
       }
 
       const response = await axios.get(
-        `${backendUrl}/admin/getAllLeaderboards/${trainingID}`
+        `http://localhost:2000/admin/getAllLeaderboards/${trainingID}`
       );
 
       if (response.data.status === "success") {
@@ -114,50 +110,52 @@ const LeaderboardPage = () => {
     }
   };
 
-  // Function to generate PDF when clicked
   const generatePDF = async () => {
-    // Fetch leaderboards when generating PDF
     await fetchLeaderboards();
-
+  
     const doc = new jsPDF();
   
-    doc.setFontSize(18);
-    doc.text("Leaderboard Data", 20, 20);
+    doc.setFontSize(22);
+    doc.text("Leaderboard Data", 80, 20);
   
     if (leaderboards && leaderboards.length > 0) {
-      let yOffset = 30; // Start offset for the first piece of data
+      let yOffset = 30;
+      leaderboards.forEach((leaderboard, leaderboardIndex) => {
+        const boxX = 20;
+        const boxY = yOffset;
+        const boxWidth = 170;
+        const boxHeight = 10 + leaderboard.leaderboardDetails.length * 8 + 25; 
   
-      leaderboards.forEach((leaderboard) => {
-        // Add leaderboard title and week information
-        doc.setFontSize(14);
-        doc.text(`Week ${leaderboard.WeekNumber} (${leaderboard.WeekDates})`, 20, yOffset);
-        yOffset += 10;
-  
-        // Loop through the leaderboard details
+        doc.setDrawColor(0); 
+        doc.roundedRect(boxX, boxY, boxWidth, boxHeight, 10, 10, 'D'); 
+        doc.setFontSize(17);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Week ${leaderboard.WeekNumber}`, boxX + 10, boxY + 15);
+        doc.text(`(${leaderboard.WeekDates})`, boxX + 30, boxY +15);
+
+        let rowYOffset = boxY + 25; 
         leaderboard.leaderboardDetails.forEach((detail, idx) => {
           doc.setFontSize(12);
-          doc.text(`${idx + 1}. ${detail.Name}: ${detail.Score}`, 20, yOffset);
-          yOffset += 8;
-  
-          // Ensure we don't overflow the page
-          if (yOffset > 270) {
+          doc.setTextColor(0, 0, 0);
+          doc.text(`${idx + 1}. ${detail.Name}: ${detail.Score}`, boxX + 10, rowYOffset);
+          rowYOffset += 8; 
+          if (rowYOffset > 270) {
             doc.addPage();
-            yOffset = 20;
+            rowYOffset = 20; 
           }
         });
-  
-        // Add extra space between leaderboards
-        yOffset += 10;
+        yOffset = rowYOffset + 10; 
+        if (leaderboardIndex < leaderboards.length - 1) {
+          yOffset += 20; 
+        }
       });
     } else {
       doc.setFontSize(12);
       doc.text("No leaderboard data available.", 20, yOffset);
     }
-  
-    // Save the generated PDF
     doc.save("leaderboards.pdf");
   };
-
+  
   return (
     <Container>
       <Title variant="h4">Leaderboard Weeks</Title>

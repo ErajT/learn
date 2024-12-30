@@ -229,10 +229,10 @@ const Login = () => {
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie
           console.log(traineeDetailsResponse);
-          // Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data.data[0]), {
-          //   expires: 7, // Cookie will expire in 7 days
-          //   secure: true, // Ensure secure cookie usage in HTTPS
-          // });
+          Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data.data[0]), {
+            expires: 7, // Cookie will expire in 7 days
+            secure: true, // Ensure secure cookie usage in HTTPS
+          });
 
           setSnackbarMessage("Details fetched and stored successfully!");
           setSnackbarSeverity("success");
@@ -240,9 +240,9 @@ const Login = () => {
         
         }
         
-        // setTimeout(() => {
-        //   window.location.href = "/Home"; // Redirect on success
-        // }, 1500);
+        setTimeout(() => {
+          window.location.href = "/Home"; // Redirect on success
+        }, 1500);
       }
       else if(position == "admin")
       {

@@ -58,7 +58,7 @@ const TrainingManager = () => {
 
         if (response.data.status === "success") {
           // After successfully adding the training, fetch the updated list
-          axios.get('${backendUrl}/admin/getAllTrainings')
+          axios.get(`${backendUrl}/admin/getAllTrainings`)
             .then(response => {
               if (response.data.status === "success") {
                 const fetchedTrainings = response.data.trainings.map(training => ({
@@ -122,15 +122,32 @@ const TrainingManager = () => {
       <Box
         component="header"
         sx={{
-  backgroundImage: "url('/back.png')",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  height: 250,
-  borderRadius: 2,
-  marginBottom: 4,
-  marginTop: 8, // Adds gap from the top
-  position: "relative",
-}}
+          backgroundImage: "url('/back.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: 250,
+          borderRadius: 2,
+          marginBottom: 4,
+          marginTop: 8, 
+          position: "relative",
+          padding: "40px",
+          display: "flex",
+          alignItems: "center",
+          gap: "40px",
+          width: "100%",
+          margin: "50px auto",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        
+          "@media (max-width: 768px)": {
+            backgroundImage: "url('/back1.png')",
+            gap: "20px",
+            height: "auto",
+            flexDirection: "column",
+            padding: "1px",
+            width: "auto",
+          }
+        }}
+        
       >
         <Box
           sx={{
