@@ -1,8 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
-import { FaFileAlt } from "react-icons/fa"; 
+import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt, FaPeopleCarry, FaPeopleArrows, FaFolderMinus } from "react-icons/fa";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -94,21 +93,9 @@ const Sidebar = () => {
   return (
     <SidebarContainer>
       <NavItems>
-        <NavItem to="/home" title="Home">
+        <NavItem to="/admin" title="Home">
           <FaHome />
         </NavItem>
-        <NavItem to="/fullLeaderboard" title="Full Leaderboard">
-          <FaTrophy />
-        </NavItem>
-        <NavItem to="/mainleaderboard" title="Main Leaderboard">
-          <FaChartBar />
-        </NavItem>
-        <NavItem to="/form" title="Form">
-          <FaWpforms />
-        </NavItem>   
-<NavItem to="/submissiont" title="Submissions">
-  <FaFileAlt /> {/* Replace the old icon with the new one */}
-</NavItem>
       </NavItems>
       <LogoutButton onClick={handleLogout} title="Logout">
         <FaSignOutAlt />

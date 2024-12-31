@@ -3,6 +3,8 @@ import { Routes, Route, useLocation, matchPath } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
+import AdminSidebar from "./components/AdminSidebar";
+import AdminSide from "./components/AdminSide";
 import Homepage from "./components/Homepage";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
@@ -11,6 +13,7 @@ import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
 import Submission from "./components/Submission";
+import Submissiont from "./components/Submissiont";
 import Trainee from "./components/Trainee";
 import Login from "./components/login";
 import ForgotPass from "./components/ForgotPass";
@@ -56,19 +59,34 @@ const App = () => {
     "/home",
     "/mainleaderboard",
     "/fullLeaderboard",
-    "/admin",
+    "/form",
+    "/submissiont",
+  ];
+
+  const AdminSidebarRoutes = [
     "/training",
     "/material",
     "/trainee",
     "/leaderboard",
-    "/form",
-    "/leaderboard/:weekId",
-    "/form",
-    "/submission"
+    "/submission",
+    "/leaderboard/:weekId"
   ];
+
+  const AdminSideRoutes = [
+    "/admin",
+  ]
 
   // Check if the current location matches any of the sidebar routes
   const showSidebar = sidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
+
+   // Check if the current location matches any of the sidebar routes
+   const showAdminSidebar = AdminSidebarRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
+
+  const showAdminSide = AdminSideRoutes.some((route) =>
     matchPath(route, location.pathname)
   );
 
@@ -76,8 +94,10 @@ const App = () => {
     <>
       <GlobalStyle />
       <AppContainer>
-        {showSidebar && <Sidebar />}
-        <Content showSidebar={showSidebar}>
+        {showSidebar && <Sidebar /> }
+        {showAdminSidebar && <AdminSidebar />}
+        {showAdminSide && <AdminSide/>}
+        <Content showSidebar={showSidebar || showAdminSidebar || showAdminSide}>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
@@ -92,6 +112,7 @@ const App = () => {
               <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
               <Route path="/mainLeaderboard" element={<MainLeaderboard />} />
               <Route path="/form" element={<Application />} />
+              <Route path="/submissiont" element={<Submissiont />} />
             </Route>
 
             {/* Grouping Admin-Specific Routes */}
@@ -113,5 +134,7 @@ const App = () => {
     </>
   );
 };
+
+
 
 export default App;
