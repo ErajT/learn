@@ -60,10 +60,7 @@ const App = () => {
     "/mainleaderboard",
     "/fullLeaderboard",
     "/form",
-<<<<<<< HEAD
-=======
     "/submissiont",
->>>>>>> faf4633c825e8056eb4f642ab453744732a61977
   ];
 
   const AdminSidebarRoutes = [
