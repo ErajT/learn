@@ -118,7 +118,7 @@ const TrainingManager = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: "#f8f9fa", minHeight: "100vh", padding: 3 }}>
+    <Box sx={{minHeight: "100vh", padding: 3 }}>
       <Box
         component="header"
         sx={{
@@ -128,20 +128,21 @@ const TrainingManager = () => {
           height: 250,
           borderRadius: 2,
           marginBottom: 4,
-          marginTop: 8, 
+          marginTop: 4, 
           position: "relative",
           padding: "40px",
           display: "flex",
           alignItems: "center",
           gap: "40px",
           width: "100%",
-          margin: "50px auto",
+          margin: "20px auto",
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         
           "@media (max-width: 768px)": {
             backgroundImage: "url('/back1.png')",
+            backgroundSize: "cover",
             gap: "20px",
-            height: "auto",
+            height: "250",
             flexDirection: "column",
             padding: "1px",
             width: "auto",
@@ -152,7 +153,7 @@ const TrainingManager = () => {
         <Box
           sx={{
             position: "absolute",
-            top: "70%",
+            top: "50%",
             left: "2%",
             color: "white",
           }}

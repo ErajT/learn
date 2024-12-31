@@ -12,6 +12,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import { useTheme } from '@mui/material/styles';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -21,6 +22,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 
 const TrainingPage = () => {
+  const theme = useTheme();
   const backendUrl = "http://localhost:2000"; // Use this in API calls
 
   const [trainees, setTrainees] = useState([]);
@@ -88,7 +90,6 @@ const TrainingPage = () => {
     setSnackbarSeverity("info");
     setSnackbarOpen(true);
   };
-
   const fetchSubmission = async (traineeId) => {
     try {
       const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
@@ -120,52 +121,61 @@ const TrainingPage = () => {
     const binary = String.fromCharCode.apply(null, byteArray);
     return window.btoa(binary);
   };
-  const fetchAllSubmissionsForTrainee = async () => {
-    if (!selectedTrainee) {
-      setSnackbarMessage("No trainee selected.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return;
-    }
-  
+
+  const generatePdfForTrainee = async (traineeId,Name) => {
     try {
       const response = await axios.get(
-        `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${selectedTrainee}`
+        `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`
       );
-  
+
       if (Array.isArray(response.data) && response.data.length > 0) {
-        console.log('Submissions from second API:', response.data); 
         const doc = new jsPDF();
-        doc.setFontSize(18);
-        doc.text("Trainee Submissions", 10, 10);
-        
-        let yPosition = 30; 
-        response.data.forEach((submission, index) => {
-          const boxHeight = 80; 
-          const boxWidth = 180; 
-          const imageWidth = 70; 
-          const imageHeight = 60; 
-          doc.setDrawColor(0); 
-          doc.setFillColor(240, 240, 240); 
-          doc.rect(10, yPosition, boxWidth, boxHeight, "FD");
-          doc.setFontSize(12);
-          doc.text(`Submission ${index + 1}:`, 15, yPosition + 10);
-          doc.text(`Date: ${submission.Date || "N/A"}`, 15, yPosition + 20);
-          doc.text(`Example: ${submission.Example || "N/A"}`, 15, yPosition + 30);
-          doc.text(`Reference: ${submission.Refer || "N/A"}`, 15, yPosition + 40);
-          if (submission.Photo && submission.Photo.data) {
-            const base64Image = `data:image/jpeg;base64,${convertBytesToBase64(submission.Photo.data)}`;
-            doc.text(`photo:`,-70 + boxWidth , yPosition + 12);
-            doc.addImage(base64Image, "JPEG", -70 + boxWidth, yPosition + 15, imageWidth, imageHeight); // Position image to the right
-          }
-          yPosition += boxHeight + 10;
-  
-          if (yPosition > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            yPosition = 30; 
-          }
-        });
-        doc.save("trainee-submissions.pdf");
+doc.setFontSize(22);
+// doc.text("Trainee Submissions for ", 10, 10);
+doc.text(`All Submissions for ${Name || "N/A"}`, 52,19);
+
+let yPosition = 30;
+
+response.data.forEach((submission, index) => {
+  const boxHeight = 80; 
+  const boxWidth = 180;
+  const imageWidth = 70;
+  const imageHeight = 60;
+
+  doc.setDrawColor(0);
+  doc.setFillColor(240, 240, 240);
+  doc.rect(10, yPosition, boxWidth, boxHeight, "FD");
+  doc.setFontSize(12);
+  // doc.text(`Date: ${Name || "N/A"}`, 15, yPosition + );
+  doc.text(`Submission ${index + 1}:`, 15, yPosition + 10);
+  doc.text(`Date: ${submission.Date || "N/A"}`, 15, yPosition + 20);
+  const exampleText = `Example: ${submission.Example || "N/A"}`;
+  const wrappedExample = doc.splitTextToSize(exampleText, 90); 
+  doc.text(wrappedExample, 15, yPosition + 30);
+  const exampleHeight = doc.getTextDimensions(wrappedExample).h;
+  const referenceYPosition = yPosition + 30 + exampleHeight + 5; 
+  const referenceText = `Reference: ${submission.Refer || "N/A"}`;
+  const wrappedReference = doc.splitTextToSize(referenceText, 90); 
+  doc.text(wrappedReference, 15, referenceYPosition);
+
+  if (submission.Photo && submission.Photo.data) {
+    const base64Image = `data:image/jpeg;base64,${convertBytesToBase64(submission.Photo.data)}`;
+    doc.addImage(base64Image, "JPEG", 110, yPosition + 15, imageWidth, imageHeight);
+  }
+
+  const referenceHeight = doc.getTextDimensions(wrappedReference).h;
+  const dynamicBoxHeight = Math.max(boxHeight, exampleHeight + referenceHeight + 50); 
+
+  yPosition += dynamicBoxHeight + 10;
+
+  if (yPosition > doc.internal.pageSize.height - 50) {
+    doc.addPage();
+    yPosition = 30;
+  }
+});
+
+
+        doc.save(`trainee-${traineeId}-submissions.pdf`);
         setSnackbarMessage("PDF generated successfully!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
@@ -230,7 +240,7 @@ const TrainingPage = () => {
       const response = await axios.post(`${backendUrl}/admin/approve`, requestBody);
 
       if (response.status === 200 && response.data?.message) {
-        setSnackbarMessage(response.data.message);
+        setSnackbarMessage("Approved");
         setSnackbarSeverity("success");
       } else {
         setSnackbarMessage("Failed to approve trainees.");
@@ -249,26 +259,64 @@ const TrainingPage = () => {
   <Box
     sx={{
       padding: "20px",
-      backgroundColor: "#f9fcff",
+      // backgroundColor: "#f9fcff",
       borderRadius: "12px",
       boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
-      width: "100%", // Full width
+      width: "100%", 
       margin: "0 auto",
     }}
   >
     <Typography
-      variant="h4"
-      sx={{
-        textAlign: "center",
-        color: "#2b6777",
-        fontWeight: "bold",
-        marginBottom: "20px",
-      }}
-    >
-      Training Details
-    </Typography>
+  variant="h3"
+  sx={{
+    textAlign: "center",
+    color: "#2b6777",
+    fontWeight: "bold",
+    marginBottom: "20px",
+    marginTop: "20px",
+    fontSize: {
+      xs: "1.8rem", 
+      sm: "2.3rem",   
+      md: "2.8rem", 
+      lg: "3rem",   
+    },
+  }}
+>
+  Training Details
+</Typography>
 
-    <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", marginBottom: "20px" }}>
+
+
+    <DateCalendar
+  disableFuture
+  value={selectedDate}
+  onChange={handleDateChange}
+  sx={{
+    marginBottom: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    width: "100%",
+    maxWidth: "400px", 
+    margin: "0 auto", 
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: "300px", 
+      fontSize: "0.9rem", 
+    },
+    [theme.breakpoints.down("xs")]: {
+      maxWidth: "250px", 
+      fontSize: "0.8rem",
+    },
+  }}
+/>
+
+
+    {error && (
+      <Typography color="error" sx={{ marginBottom: "10px" }}>
+        {error}
+      </Typography>
+    )}
+     <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", marginBottom: "30px",marginTop:"20px" }}>
       <Button
         variant="contained"
         color="primary"
@@ -283,17 +331,20 @@ const TrainingPage = () => {
         Approve
       </Button>
       <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectAllChecked}
-              onChange={handleSelectAll} 
-              color="primary"
-            />
-          }
-          label="Select All"
-        />
-        <Button
+      <Button
+  variant="contained"
+  color="primary"
+  onClick={handleSelectAll}
+  sx={{
+    backgroundColor: "#2b6777",
+    "&:hover": {
+      backgroundColor: "#1b4d56",
+    },
+  }}
+>
+  {selectAllChecked ? "Unselect All" : "Select All"}
+</Button>
+        {/* <Button
           variant="outlined"
           color="primary"
           onClick={handleDeselectAll}
@@ -306,27 +357,9 @@ const TrainingPage = () => {
           }}
         >
           Deselect All
-        </Button>
+        </Button> */}
       </Box>
     </Box>
-
-    <DateCalendar
-      disableFuture
-      value={selectedDate}
-      onChange={handleDateChange}
-      sx={{
-        marginBottom: "20px",
-        backgroundColor: "#ffffff",
-        borderRadius: "8px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-    />
-
-    {error && (
-      <Typography color="error" sx={{ marginBottom: "10px" }}>
-        {error}
-      </Typography>
-    )}
 
     <Grid container spacing={3}>
       {trainees.map((trainee) => (
@@ -345,6 +378,7 @@ const TrainingPage = () => {
                 transform: "scale(1.03)",
               },
             }}
+            data-traineeid={trainee.TraineeID}
           >
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <FormControlLabel
@@ -430,7 +464,8 @@ const TrainingPage = () => {
               variant="contained"
               color="primary"
               disabled={!selectedDate}
-              onClick={() => fetchAllSubmissionsForTrainee(trainee.TraineeID)}
+              // onClick={() => fetchAllSubmissionsForTrainee(trainee.TraineeID)}
+              onClick={() => generatePdfForTrainee(trainee.TraineeID,trainee.Name)}
               sx={{
                 marginTop: "16px",
                 backgroundColor: "#2b6777",

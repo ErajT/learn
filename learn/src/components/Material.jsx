@@ -91,7 +91,7 @@ const MaterialPage = () => {
     formData.append("material", file);
 
     try {
-      const response = await fetch("${backendUrl}/admin/addMaterial", {
+      const response = await fetch(`${backendUrl}/admin/addMaterial`, {
         method: "POST",
         body: formData,
       });

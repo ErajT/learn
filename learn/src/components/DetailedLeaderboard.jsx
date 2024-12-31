@@ -141,8 +141,8 @@ const DetailedLeaderboard = () => {
     let verticalOffset = 50;
     leaderboardData.forEach((player) => {
       doc.text(`${player.rank}`, 20, verticalOffset);
-      doc.text(player.name, 60, verticalOffset);
-      doc.text(player.score.toString(), 160, verticalOffset);
+      doc.text(player.Name, 60, verticalOffset);
+      doc.text(player.Score.toString(), 160, verticalOffset);
       doc.line(20, verticalOffset + 2, 190, verticalOffset + 2);
       verticalOffset += 10;
     });
