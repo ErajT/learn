@@ -27,7 +27,7 @@ const TrainingPage = () => {
 
   const [trainees, setTrainees] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTrainee, setSelectedTrainee] = useState(null);
+  const [traineeDetails, settraineeDetails] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [error, setError] = useState("");
   const [trainingId, setTrainingId] = useState(null);
@@ -43,9 +43,10 @@ const TrainingPage = () => {
   useEffect(() => {
     const selectedTrainingCookie = Cookies.get("selectedTraining");
     if (selectedTrainingCookie) {
-      const selectedTraining = JSON.parse(selectedTrainingCookie);
-      if (selectedTraining?.trainingID) {
-        setTrainingId(selectedTraining.trainingID);
+      const traineeDetails = JSON.parse(selectedTrainingCookie);
+      if (traineeDetails?.trainingID) {
+        settraineeDetails(traineeDetails.trainingID);
+        console.log(traineeDetails.trainingID);
       } else {
         setError("Invalid training data in cookies.");
       }

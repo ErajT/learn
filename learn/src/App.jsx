@@ -13,6 +13,7 @@ import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
 import Submission from "./components/Submission";
+import Submissiont from "./components/Submissiont";
 import Trainee from "./components/Trainee";
 import Login from "./components/login";
 import ForgotPass from "./components/ForgotPass";
@@ -59,6 +60,10 @@ const App = () => {
     "/mainleaderboard",
     "/fullLeaderboard",
     "/form",
+<<<<<<< HEAD
+=======
+    "/submissiont",
+>>>>>>> faf4633c825e8056eb4f642ab453744732a61977
   ];
 
   const AdminSidebarRoutes = [
@@ -110,6 +115,7 @@ const App = () => {
               <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
               <Route path="/mainLeaderboard" element={<MainLeaderboard />} />
               <Route path="/form" element={<Application />} />
+              <Route path="/submissiont" element={<Submissiont />} />
             </Route>
 
             {/* Grouping Admin-Specific Routes */}

@@ -71,6 +71,27 @@ const ChecklistContainer = styled.div`
   @media (max-width: 768px) {
     max-width: 100%;
     padding: 15px;
+    // margin
+  }
+`;
+const ImageContainer = styled.div`
+  position: absolute;
+  top: ${({ smallScreen }) => (smallScreen ? "30px" : "30%")};
+  left: ${({ smallScreen }) => (smallScreen ? "5px" : "auto")};
+  right: ${({ smallScreen }) => (smallScreen ? "auto" : "180px")};
+  transform: ${({ smallScreen }) => (smallScreen ? "none" : "translateY(-50%)")};
+  z-index: 10;
+
+  img {
+    max-width: ${({ smallScreen }) => (smallScreen ? "120px" : "200px")};
+    max-height: ${({ smallScreen }) => (smallScreen ? "140px" : "200px")};
+  }
+
+  @media (max-width: 768px) {
+    top: 90px;
+    left: 190px;
+    right: auto;
+    transform: none;
   }
 `;
 
@@ -195,6 +216,16 @@ const Application = () => {
   const [referenceEmail, setReferenceEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+
+useEffect(() => {
+  const handleResize = () => {
+    setIsSmallScreen(window.innerWidth <= 768);
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   const cookieData = Cookies.get("traineeDetails");
   const { TrainingID, TraineeID } = cookieData ? JSON.parse(cookieData) : {};
@@ -299,6 +330,9 @@ const Application = () => {
           </DayButton>
         ))}
       </DaySelector>
+      <ImageContainer smallScreen={isSmallScreen}>
+        <img src="/form1.png" alt="Checklist Illustration" />
+      </ImageContainer>
       <ChecklistContainer>
         {tasks[today].map((task, index) => (
           <ChecklistItem key={index}>
@@ -327,10 +361,10 @@ const Application = () => {
             <UploadSection>
               <h3>Photo</h3>
               <input 
-                  type="file" 
-                  accept=".jpg,.jpeg" 
-                  onChange={(e) => setPhotoFile(e.target.files[0])} 
-                />
+                type="file" 
+                accept=".jpg,.jpeg" 
+                onChange={(e) => setPhotoFile(e.target.files[0])} 
+              />
               <Button onClick={handlePhotoSubmit}>Submit Photo</Button>
             </UploadSection>
             <UploadSection>
@@ -359,5 +393,5 @@ const Application = () => {
     </AppContainer>
   );
 };
-
 export default Application;
+

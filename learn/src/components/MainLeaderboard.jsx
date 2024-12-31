@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import styled, { keyframes } from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
-
+import { Link } from 'react-router-dom';
 // Animations
 
 const backgroundAnimation = keyframes`
@@ -396,7 +396,11 @@ const Leaderboard = () => {
               );
             })}
           </PodiumContainer>;
-          <NextButton>Full Leaderboard</NextButton>
+          <NextButton>
+  <Link to="/fullLeaderboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+    Full Leaderboard
+  </Link>
+</NextButton>
         </>
       )}
       {snackbarMessage && (

@@ -65,11 +65,13 @@ const FeatureBoxesContainer = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    // height:auto;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     margin-top: 40px;
+    // height:;
   }
 `;
 
@@ -96,7 +98,7 @@ const FeatureBox = styled.div`
 
   img {
     width: 80%; /* Full width of the box */
-    max-height: 150px; /* Adjust to maintain uniformity */
+    max-height: 150; /* Adjust to maintain uniformity */
     border-radius: 8px;
     margin-bottom: 15px;
     object-fit: cover; /* Scale and crop to fit */
@@ -126,7 +128,7 @@ const FeatureBox = styled.div`
       font-size: 0.9rem;
     }
     img {
-      max-height: 100px;
+      max-height: 150px;
     }
   }
 `;
