@@ -7,7 +7,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie'; // Import js-cookie
 
 const TrainingManager = () => {
-  const backendUrl = "https://backend-snowy-delta.vercel.app/";  // Use this in API calls
+  const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [openModal, setOpenModal] = useState(false);
   const [trainings, setTrainings] = useState([]);
   const [newTraining, setNewTraining] = useState({
