@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt, FaPeopleCarry, FaPeopleArrows, FaFolderMinus } from "react-icons/fa";
+import { FaHome, FaFileAlt, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt, FaPeopleCarry, FaPeopleArrows, FaFolderMinus } from "react-icons/fa";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -106,7 +106,7 @@ const Sidebar = () => {
           <FaChartBar />
         </NavItem>
         <NavItem to="/submission" title="Submissions">
-          <FaWpforms />
+          <FaFileAlt />
         </NavItem>
       </NavItems>
       <LogoutButton onClick={handleLogout} title="Logout">

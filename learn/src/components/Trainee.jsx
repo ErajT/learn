@@ -231,9 +231,9 @@ const TraineePage = () => {
     event.target.value = "";
   };
 
-  const handleDeleteTrainee = (index) => {
-    setTrainees(trainees.filter((_, i) => i !== index));
-  };
+  // const handleDeleteTrainee = (index) => {
+  //   setTrainees(trainees.filter((_, i) => i !== index));
+  // };
 
   const togglePasswordVisibility = (index) => {
     setPasswordVisible((prevState) => ({
@@ -348,12 +348,12 @@ const TraineePage = () => {
               textAlign: "center",
             }}
           >
-            <IconButton
+            {/* <IconButton
               onClick={() => handleDeleteTrainee(index)}
               sx={{ position: "absolute", top: 10, right: 10 }}
             >
               <DeleteIcon />
-            </IconButton>
+            </IconButton> */}
             <PersonIcon sx={{ fontSize: 50, mb: 2 }} />
             <Typography variant="h6" sx={{ wordBreak: "break-word" }}>
               {trainee.Name}

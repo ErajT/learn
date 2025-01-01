@@ -105,9 +105,6 @@ const Sidebar = () => {
         </NavItem>
         <NavItem to="/fullLeaderboard" title="Full Leaderboard">
           <FaTrophy />
-        </NavItem>
-        <NavItem to="/form" title="Form">
-          <FaWpforms />
         </NavItem>   
           <NavItem to="/submissiont" title="Submissions">
             <FaFileAlt /> {/* Replace the old icon with the new one */}

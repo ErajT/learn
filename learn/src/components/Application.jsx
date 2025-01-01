@@ -362,7 +362,7 @@ useEffect(() => {
               <h3>Photo</h3>
               <input 
                 type="file" 
-                accept=".jpg,.jpeg" 
+                accept=".jpeg" 
                 onChange={(e) => setPhotoFile(e.target.files[0])} 
               />
               <Button onClick={handlePhotoSubmit}>Submit Photo</Button>

@@ -130,8 +130,8 @@ const LeaderboardPage = () => {
         doc.roundedRect(boxX, boxY, boxWidth, boxHeight, 10, 10, 'D'); 
         doc.setFontSize(17);
         doc.setTextColor(0, 0, 0);
-        doc.text(`Week ${leaderboard.WeekNumber}`, boxX + 10, boxY + 15);
-        doc.text(`(${leaderboard.WeekDates})`, boxX + 30, boxY +15);
+        doc.text(`Week ${leaderboard.WeekNumber} `, boxX + 10, boxY + 15);
+        doc.text(`(${leaderboard.WeekDates})`, boxX + 32, boxY +15);
 
         let rowYOffset = boxY + 25; 
         leaderboard.leaderboardDetails.forEach((detail, idx) => {

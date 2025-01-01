@@ -202,7 +202,7 @@ exports.generateLeaderboard = async (req, res) => {
     `;
 
     const getLastLeaderboardSQL = `
-        SELECT LeaderboardID, WeekDates
+        SELECT LeaderboardID, WeekDates, WeekNumber
         FROM Leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
@@ -238,7 +238,9 @@ exports.generateLeaderboard = async (req, res) => {
 
             // Get the last leaderboard details for the training (including the week dates)
             const lastLeaderboardResult = await Qexecution.queryExecute(getLastLeaderboardSQL, [TrainingID]);
+            console.log("last is ", lastLeaderboardResult);
             const lastLeaderboardID = lastLeaderboardResult[0]?.LeaderboardID || 0;
+            console.log("id is ",lastLeaderboardID);
             const lastWeekDates = lastLeaderboardResult[0]?.WeekDates;
 
             // If a leaderboard for the current week already exists, skip this training

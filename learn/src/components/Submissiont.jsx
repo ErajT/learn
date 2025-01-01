@@ -41,12 +41,12 @@ const TrainingPage = () => {
   const [selectAllChecked, setSelectAllChecked] = useState(false);
 
   useEffect(() => {
-    const selectedTrainingCookie = Cookies.get("selectedTraining");
+    const selectedTrainingCookie = Cookies.get("traineeDetails");
     if (selectedTrainingCookie) {
       const traineeDetails = JSON.parse(selectedTrainingCookie);
-      if (traineeDetails?.trainingID) {
-        settraineeDetails(traineeDetails.trainingID);
-        console.log(traineeDetails.trainingID);
+      if (traineeDetails?.TrainingID) {
+        setTrainingId(traineeDetails.TrainingID);
+        console.log("training id is",traineeDetails.TrainingID);
       } else {
         setError("Invalid training data in cookies.");
       }
@@ -63,6 +63,7 @@ const TrainingPage = () => {
       }
 
       try {
+        // console.log(`${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`);
         const response = await axios.get(
           `${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`
         );
@@ -86,7 +87,7 @@ const TrainingPage = () => {
     setSelectedDate(newDate);
     setError("");
     setSubmission(null);
-    setSelectedTrainee(null);
+    setSelectedTrainees(null);
     setSnackbarMessage("Date selected successfully.");
     setSnackbarSeverity("info");
     setSnackbarOpen(true);
@@ -125,6 +126,7 @@ const TrainingPage = () => {
 
   const generatePdfForTrainee = async (traineeId,Name) => {
     try {
+      console.log(`${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`);
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`
       );
@@ -142,6 +144,7 @@ response.data.forEach((submission, index) => {
   const boxWidth = 180;
   const imageWidth = 70;
   const imageHeight = 60;
+  console.log(submission);
 
   doc.setDrawColor(0);
   doc.setFillColor(240, 240, 240);
@@ -149,7 +152,7 @@ response.data.forEach((submission, index) => {
   doc.setFontSize(12);
   // doc.text(`Date: ${Name || "N/A"}`, 15, yPosition + );
   doc.text(`Submission ${index + 1}:`, 15, yPosition + 10);
-  doc.text(`Date: ${submission.Date || "N/A"}`, 15, yPosition + 20);
+  doc.text(`Date: ${submission.Date ? submission.Date.substring(0, 10) : "N/A"}`, 15, yPosition + 20);
   const exampleText = `Example: ${submission.Example || "N/A"}`;
   const wrappedExample = doc.splitTextToSize(exampleText, 90); 
   doc.text(wrappedExample, 15, yPosition + 30);
@@ -192,68 +195,7 @@ response.data.forEach((submission, index) => {
     }
   };
 
-  const handleSelectTrainee = (traineeId) => {
-    setSelectedTrainees((prevSelected) =>
-      prevSelected.includes(traineeId)
-        ? prevSelected.filter((id) => id !== traineeId)
-        : [...prevSelected, traineeId]
-    );
-  };
-  const handleDeselectAll = () => {
-    setSelectedTrainees([]); 
-    setSelectAllChecked(false); 
-  };
-  
 
-  const handleSelectAll = () => {
-    if (selectAllChecked) {
-      setSelectedTrainees([]);
-    } else {
-      setSelectedTrainees(trainees.map((trainee) => trainee.TraineeID));
-    }
-    setSelectAllChecked(!selectAllChecked);
-  };
-
-  const handleApprove = async () => {
-    if (!selectedDate) {
-      setSnackbarMessage("Please select a date.");
-      setSnackbarSeverity("warning");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if (selectedTrainees.length === 0) {
-      setSnackbarMessage("Please select at least one trainee.");
-      setSnackbarSeverity("warning");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-
-    const requestBody = {
-      TrainingID: trainingId,
-      TraineeIDs: selectedTrainees,
-      Date: formattedDate,
-    };
-
-    try {
-      const response = await axios.post(`${backendUrl}/admin/approve`, requestBody);
-
-      if (response.status === 200 && response.data?.message) {
-        setSnackbarMessage("Approved");
-        setSnackbarSeverity("success");
-      } else {
-        setSnackbarMessage("Failed to approve trainees.");
-        setSnackbarSeverity("error");
-      }
-    } catch (err) {
-      setSnackbarMessage("An error occurred while approving trainees.");
-      setSnackbarSeverity("error");
-    } finally {
-      setSnackbarOpen(true);
-    }
-  };
 
   return (
    <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -299,7 +241,7 @@ response.data.forEach((submission, index) => {
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     width: "100%",
     maxWidth: "400px", 
-    margin: "0 auto", 
+    // margin: "0 auto", 
     [theme.breakpoints.down("sm")]: {
       maxWidth: "300px", 
       fontSize: "0.9rem", 
@@ -317,50 +259,6 @@ response.data.forEach((submission, index) => {
         {error}
       </Typography>
     )}
-     <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", marginBottom: "30px",marginTop:"20px" }}>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleApprove}
-        sx={{
-          backgroundColor: "#2b6777",
-          "&:hover": {
-            backgroundColor: "#1b4d56",
-          },
-        }}
-      >
-        Approve
-      </Button>
-      <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-      <Button
-  variant="contained"
-  color="primary"
-  onClick={handleSelectAll}
-  sx={{
-    backgroundColor: "#2b6777",
-    "&:hover": {
-      backgroundColor: "#1b4d56",
-    },
-  }}
->
-  {selectAllChecked ? "Unselect All" : "Select All"}
-</Button>
-        {/* <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleDeselectAll}
-          sx={{
-            marginLeft: "10px",
-            color: "#2b6777",
-            "&:hover": {
-              backgroundColor: "#f4f7fa",
-            },
-          }}
-        >
-          Deselect All
-        </Button> */}
-      </Box>
-    </Box>
 
     <Grid container spacing={3}>
       {trainees.map((trainee) => (
@@ -385,8 +283,6 @@ response.data.forEach((submission, index) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={selectedTrainees.includes(trainee.TraineeID)}
-                    onChange={() => handleSelectTrainee(trainee.TraineeID)}
                     color="primary"
                   />
                 }
@@ -394,7 +290,7 @@ response.data.forEach((submission, index) => {
               />
               <IconButton
                 onClick={() => {
-                  setSelectedTrainee(trainee.TraineeID);
+                  setSelectedTrainees(trainee.TraineeID);
                   fetchSubmission(trainee.TraineeID);
                   setPdfEnabled(true);
                 }}
@@ -410,7 +306,7 @@ response.data.forEach((submission, index) => {
               </IconButton>
             </Box>
 
-            {selectedTrainee === trainee.TraineeID && submission && (
+            {selectedTrainees === trainee.TraineeID && submission && (
               <Box
                 sx={{
                   marginTop: "16px",

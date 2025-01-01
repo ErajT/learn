@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -59,10 +60,18 @@ const MaterialPage = () => {
       if (response.ok) {
         const data = await response.json();
         console.log(data.materials);
-        setMaterials(data.materials || []); // Gracefully handle empty data
+      
+        // Add id to each material starting from 1
+        const materialsWithId = (data.materials || []).map((material, index) => ({
+          ...material,
+          id: index + 1, // Start id from 1
+        }));
+      
+        setMaterials(materialsWithId); // Gracefully handle empty data
       } else {
         setMaterials([]);
       }
+      
     } catch (error) {
       console.error("Error fetching materials:", error);
     }
@@ -126,14 +135,43 @@ const MaterialPage = () => {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    setMaterials(materials.filter((m) => m.id !== materialToDelete.id));
+  
+const confirmDelete = async () => {
+  if (!materialToDelete || !trainingId) return;
+
+  try {
+    console.log(materialToDelete);
+    const response = await axios.get(
+      `${backendUrl}/admin/deleteMaterial/${trainingId}/${materialToDelete.id}`,
+    );
+
+    if (response.status === 200) {
+      setMaterials(materials.filter((m) => m.id !== materialToDelete.id));
+      setDeleteDialogOpen(false);
+      setMaterialToDelete(null);
+      setSnackbarMessage("Material deleted successfully.");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+      // Refetch materials to show the updated list
+      fetchMaterials(trainingId);
+    } else {
+      setSnackbarMessage(response.data?.message || "Failed to delete material.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  } catch (error) {
+    console.error("Error deleting material:", error);
+    setSnackbarMessage(
+      error.response?.data?.message || "Failed to delete material. Please try again."
+    );
+    setSnackbarSeverity("error");
+    setSnackbarOpen(true);
+  } finally {
     setDeleteDialogOpen(false);
     setMaterialToDelete(null);
-    setSnackbarMessage("Material deleted successfully.");
-    setSnackbarSeverity("success");
-    setSnackbarOpen(true);
-  };
+  }
+};
 
   const cancelDelete = () => {
     setDeleteDialogOpen(false);

@@ -148,7 +148,7 @@ response.data.forEach((submission, index) => {
   doc.setFontSize(12);
   // doc.text(`Date: ${Name || "N/A"}`, 15, yPosition + );
   doc.text(`Submission ${index + 1}:`, 15, yPosition + 10);
-  doc.text(`Date: ${submission.Date || "N/A"}`, 15, yPosition + 20);
+  doc.text(`Date: ${submission.Date ? submission.Date.substring(0, 10) : "N/A"}`, 15, yPosition + 20);
   const exampleText = `Example: ${submission.Example || "N/A"}`;
   const wrappedExample = doc.splitTextToSize(exampleText, 90); 
   doc.text(wrappedExample, 15, yPosition + 30);

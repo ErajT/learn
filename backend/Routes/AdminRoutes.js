@@ -49,4 +49,7 @@ router.route('/approve')
 router.route('/getSubmissionsOfTrainee/:TrainingID/:TraineeID')
     .get(AdminHandler.getSubmissionsOfTrainee);
 
+router.route('/deleteMaterial/:TrainingID/:MaterialNumber')
+    .get(AdminHandler.deleteMaterial);
+
 module.exports = router

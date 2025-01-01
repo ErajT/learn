@@ -703,6 +703,7 @@ exports.getSubmissionsOfTrainee = async (req, res) => {
     try {
         // Execute the query using your database execution function
         const submissions = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID]);
+        console.log(submissions);
 
         if (submissions.length === 0) {
             return res.status(201).send({ message: 'No submissions found for the given TraineeID and TrainingID.' });
@@ -714,4 +715,105 @@ exports.getSubmissionsOfTrainee = async (req, res) => {
         return res.status(500).send({ message: "An error occurred while fetching submissions." });
     }
 };
+
+// API to Delete Material for a Training
+exports.deleteMaterial = async (req, res) => {
+    const { TrainingID, MaterialNumber } = req.params; // Expecting TrainingID and MaterialNumber (e.g., M1, M2, etc.)
+
+    if (!TrainingID || !MaterialNumber) {
+        return res.status(400).send({
+            status: "fail",
+            message: "TrainingID and MaterialNumber are required.",
+        });
+    }
+
+    // Map MaterialNumber to the respective column names
+    const materialColumns = ['M1_File', 'M2_File', 'M3_File', 'M4_File', 'M5_File', 'M6_File'];
+    const titleColumns = ['M1_Title', 'M2_Title', 'M3_Title', 'M4_Title', 'M5_Title', 'M6_Title'];
+    const descColumns = ['M1_Description', 'M2_Description', 'M3_Description', 'M4_Description', 'M5_Description', 'M6_Description'];
+
+    // Determine the column index based on the MaterialNumber
+    const materialIndex = parseInt(MaterialNumber) - 1; // For example, M1 => 0, M2 => 1, etc.
+    console.log("index is ",materialIndex);
+
+    // Ensure MaterialNumber is valid
+    if (materialIndex < 0 || materialIndex >= materialColumns.length) {
+        return res.status(400).send({
+            status: "fail",
+            message: "Invalid MaterialNumber provided.",
+        });
+    }
+
+    const deleteMaterialSQL = `
+        SELECT * FROM Material WHERE TrainingID = ?
+    `;
+
+    try {
+        // Get the existing material record
+        const existingMaterial = await Qexecution.queryExecute(deleteMaterialSQL, [TrainingID]);
+
+        if (existingMaterial.length === 0) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No material record found for the given TrainingID.",
+            });
+        }
+
+        // Check if the material exists in the specified column
+        if (!existingMaterial[0][materialColumns[materialIndex]]) {
+            return res.status(404).send({
+                status: "fail",
+                message: `Material ${MaterialNumber} does not exist.`,
+            });
+        }
+
+        // SQL query to delete the material by setting it to null
+        const deleteMaterialQuery = `
+            UPDATE Material
+            SET
+                ${materialColumns[materialIndex]} = NULL,
+                ${titleColumns[materialIndex]} = NULL,
+                ${descColumns[materialIndex]} = NULL
+            WHERE TrainingID = ?
+        `;
+        await Qexecution.queryExecute(deleteMaterialQuery, [TrainingID]);
+
+        // Shift the materials to fill the gap left by the deleted material
+        for (let i = materialIndex; i < materialColumns.length - 1; i++) {
+            const shiftMaterialSQL = `
+                UPDATE Material
+                SET
+                    ${materialColumns[i]} = ${materialColumns[i + 1]},
+                    ${titleColumns[i]} = ${titleColumns[i + 1]},
+                    ${descColumns[i]} = ${descColumns[i + 1]}
+                WHERE TrainingID = ?
+            `;
+            await Qexecution.queryExecute(shiftMaterialSQL, [TrainingID]);
+        }
+
+        // Set the last material (M6) as null after shifting
+        const lastMaterialSQL = `
+            UPDATE Material
+            SET
+                ${materialColumns[materialColumns.length - 1]} = NULL,
+                ${titleColumns[titleColumns.length - 1]} = NULL,
+                ${descColumns[descColumns.length - 1]} = NULL
+            WHERE TrainingID = ?
+        `;
+        await Qexecution.queryExecute(lastMaterialSQL, [TrainingID]);
+
+        return res.status(200).send({
+            status: "success",
+            message: `Material ${MaterialNumber} deleted successfully and other materials shifted.`,
+        });
+    } catch (err) {
+        console.error("Error deleting material:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error deleting material.",
+            error: err.message,
+        });
+    }
+};
+
 

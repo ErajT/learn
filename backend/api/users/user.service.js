@@ -4,8 +4,8 @@ const Qexecution = require('./../../Controllers/query')
 module.exports= {
     create: (data,callBack)=>{
         pool.query(
-            `insert into registration(email,password,position,id) values(?,?,?,?)`,
-            [data.email,data.password,data.position,data.id],
+            `insert into registration(email,password,position,id, Allowed) values(?,?,?,?)`,
+            [data.email,data.password,data.position,data.id, 0],
             (error,results)=>{
                 if(error){
                     return callBack(error)
@@ -15,9 +15,9 @@ module.exports= {
         )
     },
     getUserByEmail: async (email,callBack)=>{
-        const SQL= "SELECT * FROM registration where email= ?";
+        const SQL= "SELECT * FROM registration where email= ? AND Allowed = ?";
         try{
-            const result=await Qexecution.queryExecute(SQL,[email]);
+            const result=await Qexecution.queryExecute(SQL,[email, 1]);
             return callBack(null,result[0]);
         }catch(err){
             return callBack(err);
