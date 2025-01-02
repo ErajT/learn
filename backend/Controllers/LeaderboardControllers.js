@@ -527,49 +527,57 @@ webpush.setVapidDetails(
 
 
 exports.subscribe = async (req, res) => {
-  const SQL1 = "SELECT TraineeID, TrainingID, Endpoint from trainee"; // Your SQL query to get subscription details
-
-  try {
-    // Execute the SQL query to get the list of subscriptions
-    const response = await Qexecution.queryExecute(SQL1);
-    // console.log(response); // This will log the response to help with debugging
-
-    // Create payload for the notification
-    const payload = JSON.stringify({ title: "Push Test", message: "Hello from the server!" });
-
-    // Check if the response is an array and contains data
-    if (Array.isArray(response) && response.length > 0) {
-      // Loop through each response object (each trainee's data)
-      for (let i = 0; i < response.length; i++) {
-        const trainee = response[i];
-
-        // Skip the trainee if the endpoint is null or undefined
-        if (!trainee.Endpoint) {
-          console.warn(`Skipping trainee ${trainee.TraineeID} due to missing endpoint.`);
-          continue;
-        }
-
-        const subscription = JSON.parse(trainee.Endpoint);
-
-        try {
-          // Send notification to each trainee's endpoint
-          await webpush.sendNotification(subscription, payload);
-          console.log(`Notification sent to trainee ${trainee.TraineeID} successfully.`);
-        } catch (error) {
-          console.error(`Error sending notification to trainee ${trainee.TraineeID}:`, error);
-        }
-      }
-
-      // Send success response after processing all subscriptions
-      res.status(201).json({ message: "Notifications sent to all valid trainees." });
-    } else {
-      res.status(400).json({ message: "No trainee subscriptions found." });
+    const { TrainingID, message } = req.body; // Extract message from the request body
+    if (!message) {
+      return res.status(400).json({ message: "Message is required in the request body." });
     }
-
-  } catch (error) {
-    console.error("Error fetching subscriptions or sending notifications:", error);
-    res.status(500).json({ message: "Failed to send notifications.", error: error.message });
-  }
-};
+  
+    const SQL1 = "SELECT TraineeID, TrainingID, Endpoint FROM trainee WHERE TrainingID=?";
+    const SQL2 = "SELECT Topic FROM Training WHERE TrainingID = ?"; // Query to get the training name
+  
+    try {
+      // Execute the SQL query to get the list of subscriptions
+      const traineeList = await Qexecution.queryExecute(SQL1, [TrainingID]);
+  
+      // Check if the response is an array and contains data
+      if (Array.isArray(traineeList) && traineeList.length > 0) {
+        for (let i = 0; i < traineeList.length; i++) {
+          const trainee = traineeList[i];
+  
+          // Skip the trainee if the endpoint is null or undefined
+          if (!trainee.Endpoint) {
+            console.warn(`Skipping trainee ${trainee.TraineeID} due to missing endpoint.`);
+            continue;
+          }
+  
+          // Get the training name for the current trainee
+          const trainingNameResult = await Qexecution.queryExecute(SQL2, [trainee.TrainingID]);
+          const trainingName = trainingNameResult?.[0]?.Topic || "Training Notification";
+  
+          // Create the payload
+          const payload = JSON.stringify({ title: trainingName, message });
+  
+          const subscription = JSON.parse(trainee.Endpoint);
+  
+          try {
+            // Send notification to each trainee's endpoint
+            await webpush.sendNotification(subscription, payload);
+            console.log(`Notification sent to trainee ${trainee.TraineeID} successfully.`);
+          } catch (error) {
+            console.error(`Error sending notification to trainee ${trainee.TraineeID}:`, error);
+          }
+        }
+  
+        // Send success response after processing all subscriptions
+        res.status(201).json({ message: "Notifications sent to all valid trainees." });
+      } else {
+        res.status(400).json({ message: "No trainee subscriptions found." });
+      }
+    } catch (error) {
+      console.error("Error fetching subscriptions or sending notifications:", error);
+      res.status(500).json({ message: "Failed to send notifications.", error: error.message });
+    }
+  };
+  
 
 
