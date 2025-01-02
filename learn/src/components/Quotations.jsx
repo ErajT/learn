@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
+import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
 
 const Container = styled.div`
   padding: 30px;
@@ -75,31 +77,65 @@ const Button = styled.button`
 
 const Quotations = () => {
   const [quotation, setQuotation] = useState("");
+  const [trainingID, setTrainingID] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const selectedTrainingCookie = Cookies.get("selectedTraining");
     if (selectedTrainingCookie) {
       const selectedTraining = JSON.parse(selectedTrainingCookie);
+      console.log(selectedTraining);
+      setTrainingID(selectedTraining.trainingID); // Assuming TrainingID is stored in the cookie
       console.log("Selected Training:", selectedTraining);
     } else {
       console.log("No selected training found in cookies.");
     }
   }, []);
 
-  const handleSendQuotation = (e) => {
+  const handleSendQuotation = async (e) => {
     e.preventDefault();
     if (quotation.trim() === "") {
-      alert("Quotation cannot be empty!");
+      setSnackbarMessage("Quotation cannot be empty!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
 
-    // Placeholder for sending quotation logic
-    console.log("Sending quotation:", quotation);
+    if (!trainingID) {
+      setSnackbarMessage("TrainingID not found. Please select a training.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:2000/leaderboard/subscribe", {
+        TrainingID: trainingID,
+        message: quotation,
+      });
+
+      console.log("API Response:", response.data);
+      setSnackbarMessage("Quotation sent successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error sending quotation:", error);
+      setSnackbarMessage("Failed to send quotation. Please try again.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
 
     // Clear the input field
     setQuotation("");
+  };
 
-    alert("Quotation sent to participants!");
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
   };
 
   return (
@@ -115,6 +151,16 @@ const Quotations = () => {
         />
         <Button type="submit">Send to Participants</Button>
       </Form>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
