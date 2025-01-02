@@ -4,15 +4,30 @@ const Qexecution = require('./../../Controllers/query')
 module.exports= {
     create: (data,callBack)=>{
         pool.query(
-            `insert into registration(email,password,position,id, Allowed) values(?,?,?,?)`,
-            [data.email,data.password,data.position,data.id, 0],
-            (error,results)=>{
-                if(error){
-                    return callBack(error)
+            `select * from registration where email = ?`,
+            [data.email],
+            (error, results) => {
+                if (error) {
+                    return callBack(error);
                 }
-                return callBack(null,results)
+                if (results.length > 0) {
+                    // Email already exists
+                    return callBack(null, results);
+                } else {
+                    // Insert the new user
+                    pool.query(
+                        `insert into registration(email, password, position, id, Allowed) values(?,?,?,?,?)`,
+                        [data.email, data.password, data.position, data.id, 0],
+                        (error, results) => {
+                            if (error) {
+                                return callBack(error);
+                            }
+                            return callBack(null, results );
+                        }
+                    );
+                }
             }
-        )
+        );        
     },
     getUserByEmail: async (email,callBack)=>{
         const SQL= "SELECT * FROM registration where email= ? AND Allowed = ?";

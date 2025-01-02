@@ -37,7 +37,7 @@ app.use('/admin', AdminRouter);
 const cron = require('node-cron');
 const axios = require('axios');
 
-cron.schedule('15 19 * * 2', async () => {
+cron.schedule('30 15 * * 5', async () => {
   try {
     const response = await axios.post('http://localhost:2000/leaderboard/generate');
 
@@ -77,7 +77,7 @@ cron.schedule('30 22 * * 5', async () => {
   }
 });
 
-cron.schedule("20 13 * * 1", async () => {
+cron.schedule("10 15 * * 3", async () => {
   console.log("Cron job triggered on Sunday at 3 PM");
 
   try {

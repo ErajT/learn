@@ -532,7 +532,7 @@ exports.subscribe = async (req, res) => {
   try {
     // Execute the SQL query to get the list of subscriptions
     const response = await Qexecution.queryExecute(SQL1);
-    console.log(response); // This will log the response to help with debugging
+    // console.log(response); // This will log the response to help with debugging
 
     // Create payload for the notification
     const payload = JSON.stringify({ title: "Push Test", message: "Hello from the server!" });
