@@ -94,6 +94,7 @@ const HomePage = () => {
       const traineeDetailsCookie = Cookies.get("traineeDetails");
       if (traineeDetailsCookie) {
         const parsedDetails = JSON.parse(traineeDetailsCookie);
+        console.log(parsedDetails);
         setTraineeDetails({
           name: parsedDetails.Name || "",
           trainingName: parsedDetails.TrainingName || "",
@@ -192,7 +193,7 @@ const HomePage = () => {
       <UserInfoBox>
         <UserInfo>
           <p>
-            <label>Name:</label> {traineeDetails.name}
+            <label>Participant's Name:</label> {traineeDetails.name}
           </p>
           <p>
             <label>Training Name:</label> {traineeDetails.trainingName}

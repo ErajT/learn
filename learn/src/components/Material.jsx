@@ -278,6 +278,7 @@ const confirmDelete = async () => {
             />
             <Input
               type="file"
+              accept="application/pdf"
               onChange={(e) => setFile(e.target.files[0])}
               sx={{ mb: 2 }}
             />

@@ -322,7 +322,7 @@ useEffect(() => {
 
   return (
     <AppContainer>
-      <Title>Weekly Checklist</Title>
+      <Title>Weekly Learning Checklist</Title>
       <DaySelector>
         {days.map((day) => (
           <DayButton key={day} active={day === today} disabled={day !== today}>

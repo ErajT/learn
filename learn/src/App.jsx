@@ -5,7 +5,9 @@ import Landing from "./components/Landing";
 import Sidebar from "./components/Sidebar";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminSide from "./components/AdminSide";
+import Side from "./components/Side";
 import Homepage from "./components/Homepage";
+import ParticipantHome from "./components/ParticipantHome";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
 import Application from "./components/Application";
@@ -74,7 +76,11 @@ const App = () => {
 
   const AdminSideRoutes = [
     "/admin",
-  ]
+  ];
+
+  const SideRoutes = [
+    "/ParticipantHome",
+  ];
 
   // Check if the current location matches any of the sidebar routes
   const showSidebar = sidebarRoutes.some((route) =>
@@ -90,6 +96,10 @@ const App = () => {
     matchPath(route, location.pathname)
   );
 
+  const showSide = SideRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
+
   return (
     <>
       <GlobalStyle />
@@ -97,7 +107,8 @@ const App = () => {
         {showSidebar && <Sidebar /> }
         {showAdminSidebar && <AdminSidebar />}
         {showAdminSide && <AdminSide/>}
-        <Content showSidebar={showSidebar || showAdminSidebar || showAdminSide}>
+        {showSide && <Side/>}
+        <Content showSidebar={showSidebar || showAdminSidebar || showAdminSide || showSide}>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
@@ -108,6 +119,7 @@ const App = () => {
 
             {/* Protected Routes for trainee */}
             <Route element={<RoleAuthorizer allowedRole="trainee" />}>
+            <Route path="/ParticipantHome" element={<ParticipantHome />} />
               <Route path="/home" element={<Homepage />} />
               <Route path="/fullLeaderboard" element={<FullLeaderboard />} />
               <Route path="/mainLeaderboard" element={<MainLeaderboard />} />

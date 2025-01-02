@@ -228,8 +228,8 @@ const Login = () => {
         );
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie
-          console.log(traineeDetailsResponse);
-          Cookies.set("traineeDetails", JSON.stringify(traineeDetailsResponse.data.data[0]), {
+          console.log(traineeDetailsResponse.data.data);
+          Cookies.set("traineeDetails1", JSON.stringify(traineeDetailsResponse.data.data), {
             expires: 7, // Cookie will expire in 7 days
             secure: true, // Ensure secure cookie usage in HTTPS
           });
@@ -241,7 +241,7 @@ const Login = () => {
         }
         
         setTimeout(() => {
-          window.location.href = "/Home"; // Redirect on success
+          window.location.href = "/ParticipantHome"; // Redirect on success
         }, 1500);
       }
       else if(position == "admin")
