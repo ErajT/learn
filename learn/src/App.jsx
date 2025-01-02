@@ -11,6 +11,7 @@ import ParticipantHome from "./components/ParticipantHome";
 import MainLeaderboard from "./components/MainLeaderboard";
 import FullLeaderboard from "./components/FullLeaderboard";
 import Application from "./components/Application";
+import Quotations from "./components/Quotations";
 import Admin from "./components/Admin";
 import Training from "./components/Training";
 import Material from "./components/Material";
@@ -71,7 +72,8 @@ const App = () => {
     "/trainee",
     "/leaderboard",
     "/submission",
-    "/leaderboard/:weekId"
+    "/leaderboard/:weekId",
+    "/quotation"
   ];
 
   const AdminSideRoutes = [
@@ -136,6 +138,7 @@ const App = () => {
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
               <Route path="/submission" element={<Submission />} />
+              <Route path="/quotation" element={<Quotations />} />
             </Route>
 
             {/* Catch-all Route */}
