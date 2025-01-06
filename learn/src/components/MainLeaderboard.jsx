@@ -3,6 +3,10 @@ import styled, { keyframes } from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { Link } from 'react-router-dom';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
 // Animations
 
 const backgroundAnimation = keyframes`
@@ -45,7 +49,7 @@ const LeaderboardContainer = styled.div`
 
 // Title
 const Title = styled.h1`
-  font-size: 5rem;
+  font-size: 4rem;
   font-weight: 700;
   color: #2b6777;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
@@ -273,6 +277,19 @@ const Snackbar = styled.div`
     }
   }
 `;
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 
 // Main Leaderboard Component
@@ -336,6 +353,9 @@ const Leaderboard = () => {
   }
 
   return (
+    <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles />
     <LeaderboardContainer>
       <Title>🏆 Leaderboard Podium</Title>
       {message === "No leaderboard found for the given training." ? (
@@ -409,6 +429,7 @@ const Leaderboard = () => {
         </Snackbar>
       )}
     </LeaderboardContainer>
+    </ThemeProvider>
   );
 };
 

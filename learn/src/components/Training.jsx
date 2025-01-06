@@ -2,6 +2,24 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Cookies from 'js-cookie'; // Import js-cookie
+// import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const Container = styled.div`
   padding: 0 40px;
@@ -86,7 +104,7 @@ const FeatureBox = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height:200px;
+  height:170px;
   color: #000; /* Pitch black text */
   text-decoration: none; /* No underline for text */
   height: auto;
@@ -98,7 +116,7 @@ const FeatureBox = styled.div`
 
   img {
     width: 80%; /* Full width of the box */
-    max-height: 150; /* Adjust to maintain uniformity */
+    max-height: 120; /* Adjust to maintain uniformity */
     border-radius: 8px;
     margin-bottom: 15px;
     object-fit: cover; /* Scale and crop to fit */
@@ -186,11 +204,14 @@ const HomePage = () => {
   }, []);
 
   return (
+    <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalStyles />
     <Container>
       <UserInfoBox>
         <UserInfo>
-          <h2>{TrainingName}</h2>
-          <h2>{companyName}</h2>
+          <h3>Training Name: {TrainingName}</h3>
+          <h3>Company Name: {companyName}</h3>
         </UserInfo>
       </UserInfoBox>
       <FeatureBoxesContainer>
@@ -205,6 +226,7 @@ const HomePage = () => {
   ))}
 </FeatureBoxesContainer>
     </Container>
+    </ThemeProvider>
   );
 };
 

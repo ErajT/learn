@@ -2,6 +2,23 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Cookies from "js-cookie"; // Add js-cookie for cookie handling
+// import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 // Styled Components
 const LeaderboardContainer = styled.div`
@@ -22,7 +39,7 @@ const LeaderboardContainer = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 700;
   color: #2b6777;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
@@ -181,6 +198,9 @@ const FullLeaderboard = () => {
   const MAX_SCORE = 385;
 
   return (
+     <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles />
     <LeaderboardContainer>
       <Title>Consolidated Leaderboard</Title>
       {message ? (
@@ -200,6 +220,7 @@ const FullLeaderboard = () => {
         ))
       )}
     </LeaderboardContainer>
+    </ThemeProvider>
   );
 };
 

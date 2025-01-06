@@ -20,6 +20,24 @@ import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import axios from "axios";
 import jsPDF from "jspdf";
+import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const TrainingPage = () => {
   const theme = useTheme();
@@ -255,6 +273,9 @@ response.data.forEach((submission, index) => {
   };
 
   return (
+    <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <GlobalStyles />
    <LocalizationProvider dateAdapter={AdapterDayjs}>
   <Box
     sx={{
@@ -267,7 +288,7 @@ response.data.forEach((submission, index) => {
     }}
   >
     <Typography
-  variant="h3"
+  variant="h2"
   sx={{
     textAlign: "center",
     color: "#2b6777",
@@ -280,6 +301,8 @@ response.data.forEach((submission, index) => {
       md: "2.8rem", 
       lg: "3rem",   
     },
+    // fontFamily: "'anah', sans-serif",
+    fontFamily: "Anaheim, Arial, sans-serif",
   }}
 >
   Submission Details
@@ -521,6 +544,7 @@ response.data.forEach((submission, index) => {
     </Modal>
   </Box>
 </LocalizationProvider>
+</ThemeProvider>
   
   );
 };

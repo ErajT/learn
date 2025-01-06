@@ -5,6 +5,24 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'js-cookie'; // Import js-cookie
+import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const TrainingManager = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
@@ -118,6 +136,9 @@ const TrainingManager = () => {
   };
 
   return (
+     <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <GlobalStyles />
     <Box sx={{minHeight: "100vh", padding: 3 }}>
       <Box
         component="header"
@@ -158,64 +179,64 @@ const TrainingManager = () => {
             color: "white",
           }}
         >
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h3" fontWeight="bold">
             Training Manager
           </Typography>
         </Box>
       </Box>
-      <Box
-        display="flex"
-        flexWrap="wrap"
-        gap={2}
-        sx={{
-          justifyContent: "start",
-        }}
-      >
         <Box
+          display="flex"
+          flexWrap="wrap"
+          gap={2}
           sx={{
-            flex: "0 1 calc(20% - 16px)",
-            minWidth: 200,
-            height: 250,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "2px dashed #ccc",
-            borderRadius: 2,
-            cursor: "pointer",
-            transition: "all 0.3s",
-            backgroundColor: "white",
-            "&:hover": {
-              backgroundColor: "#f0f4ff",
-              borderColor: "#3f51b5",
-            },
+            justifyContent: "start",
           }}
-          onClick={handleOpenModal}
         >
-          <AddCircleOutlineIcon
-            sx={{ fontSize: 50, color: "#3f51b5", marginBottom: 1 }}
-          />
-          <Typography variant="h6" color="#3f51b5">
-            Create Training
-          </Typography>
-        </Box>
-        {trainings.map((training, index) => (
           <Box
-            key={index}
             sx={{
               flex: "0 1 calc(20% - 16px)",
-              minWidth: 200,
+              minWidth: 220,
               height: 250,
-              position: "relative",
-              backgroundColor: "white",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              border: "2px dashed #ccc",
               borderRadius: 2,
-              overflow: "hidden",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+              transition: "all 0.3s",
+              backgroundColor: "white",
               "&:hover": {
-                transform: "scale(1.05)",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                backgroundColor: "#f0f4ff",
+                borderColor: "#3f51b5",
               },
+            }}
+            onClick={handleOpenModal}
+          >
+            <AddCircleOutlineIcon
+              sx={{ fontSize: 50, color: "#3f51b5", marginBottom: 1 }}
+            />
+            <Typography variant="h5" color="#3f51b5">
+              Create Training
+            </Typography>
+          </Box>
+          {trainings.map((training, index) => (
+            <Box
+              key={index}
+              sx={{
+                flex: "0 1 calc(20% - 16px)",
+                minWidth: 220,
+                height: 250,
+                position: "relative",
+                backgroundColor: "white",
+                borderRadius: 2,
+                overflow: "hidden",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                },
             }}
             onClick={() => handleTrainingClick(training)} // Save details on click
           >
@@ -230,16 +251,16 @@ const TrainingManager = () => {
                   padding: 2,
                 }}
               >
-                <Typography variant="h6" fontWeight="bold" textAlign="center">
+                <Typography variant="h5" fontWeight="bold" textAlign="center">
                   {training.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center">
+                <Typography variant="body2" color="text.secondary" textAlign="center" fontSize="1.1rem">
                   Company: {training.company}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center">
+                <Typography variant="body2" color="text.secondary" textAlign="center"  fontSize="1.1rem">
                   Trainer: {training.trainer}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center">
+                <Typography variant="body2" color="text.secondary" textAlign="center"  fontSize="1.1rem">
                   Date: {training.date}
                 </Typography>
               </Box>
@@ -366,6 +387,7 @@ const TrainingManager = () => {
         </DialogActions>
       </Dialog>
     </Box>
+    </ThemeProvider>
   );
 };
 

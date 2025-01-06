@@ -37,7 +37,7 @@ app.use('/admin', AdminRouter);
 const cron = require('node-cron');
 const axios = require('axios');
 
-cron.schedule('15 19 * * 2', async () => {
+cron.schedule('30 15 * * 5', async () => {
   try {
     const response = await axios.post('http://localhost:2000/leaderboard/generate');
 
@@ -74,19 +74,6 @@ cron.schedule('30 22 * * 5', async () => {
     console.log('API triggered successfully:', response.data);
   } catch (error) {
     console.error('Error triggering API:', error.message);
-  }
-});
-
-cron.schedule("20 13 * * 1", async () => {
-  console.log("Cron job triggered on Sunday at 3 PM");
-
-  try {
-
-    await axios.get("http://localhost:2000/leaderboard/subscribe");
-
-    console.log("Push notification triggered successfully.");
-  } catch (error) {
-    console.error("Error triggering push notification:", error.message);
   }
 });
 

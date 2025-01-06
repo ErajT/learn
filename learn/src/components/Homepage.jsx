@@ -4,6 +4,22 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const Container = styled.div`
   padding: 0 30px;
@@ -94,6 +110,7 @@ const HomePage = () => {
       const traineeDetailsCookie = Cookies.get("traineeDetails");
       if (traineeDetailsCookie) {
         const parsedDetails = JSON.parse(traineeDetailsCookie);
+        console.log(parsedDetails);
         setTraineeDetails({
           name: parsedDetails.Name || "",
           trainingName: parsedDetails.TrainingName || "",
@@ -192,7 +209,7 @@ const HomePage = () => {
       <UserInfoBox>
         <UserInfo>
           <p>
-            <label>Name:</label> {traineeDetails.name}
+            <label>Participant's Name:</label> {traineeDetails.name}
           </p>
           <p>
             <label>Training Name:</label> {traineeDetails.trainingName}

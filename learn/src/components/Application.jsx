@@ -3,6 +3,23 @@ import styled from "styled-components";
 import { Snackbar, Alert } from "@mui/material";
 import Cookies from "js-cookie";
 
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
+
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
   text-align: center;
@@ -18,8 +35,9 @@ const AppContainer = styled.div`
 
 const Title = styled.h1`
   margin: 20px 0;
-  font-size: 2rem;
+  font-size: 3rem;
   color: #2b6777;
+  fontFamily: "Anaheim, Arial, sans-serif",
 
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -76,7 +94,7 @@ const ChecklistContainer = styled.div`
 `;
 const ImageContainer = styled.div`
   position: absolute;
-  top: ${({ smallScreen }) => (smallScreen ? "30px" : "30%")};
+  top: ${({ smallScreen }) => (smallScreen ? "40px" : "35%")};
   left: ${({ smallScreen }) => (smallScreen ? "5px" : "auto")};
   right: ${({ smallScreen }) => (smallScreen ? "auto" : "180px")};
   transform: ${({ smallScreen }) => (smallScreen ? "none" : "translateY(-50%)")};
@@ -321,8 +339,11 @@ useEffect(() => {
   };
 
   return (
+     <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles />
     <AppContainer>
-      <Title>Weekly Checklist</Title>
+      <Title>Weekly Learning Checklist</Title>
       <DaySelector>
         {days.map((day) => (
           <DayButton key={day} active={day === today} disabled={day !== today}>
@@ -391,6 +412,7 @@ useEffect(() => {
         </Alert>
       </Snackbar>
     </AppContainer>
+    </ThemeProvider>
   );
 };
 export default Application;

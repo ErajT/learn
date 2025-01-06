@@ -23,7 +23,24 @@ import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 const TraineePage = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
 
@@ -250,6 +267,9 @@ const TraineePage = () => {
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
   return (
+    <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalStyles />
     <Box
       sx={{
         padding: { xs: 2, sm: 4, md: 6 },
@@ -259,7 +279,7 @@ const TraineePage = () => {
       }}
     >
       <Typography
-        variant="h3"
+        variant="h2"
         sx={{
           textAlign: "center",
           fontWeight: "bold",
@@ -424,6 +444,7 @@ const TraineePage = () => {
         </Alert>
       </Snackbar>
     </Box>
+    </ThemeProvider>
   );
 };
 

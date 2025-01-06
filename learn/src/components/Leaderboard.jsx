@@ -5,6 +5,24 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"; // Import js-cookie to get cookies
 import axios from "axios"; // Import axios for making API calls
 import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
+// import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
+
 
 const Container = styled(Box)`
   background: linear-gradient(135deg, #f3f4f6, #e9ecef);
@@ -25,6 +43,7 @@ const Title = styled(Typography)`
   border-bottom: 3px solid #2b6777;
   padding-bottom: 10px;
   padding-top: 30px;
+  
 `;
 
 const WeekBox = styled(Box)`
@@ -157,8 +176,12 @@ const LeaderboardPage = () => {
   };
   
   return (
+    <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalStyles />
+    
     <Container>
-      <Title variant="h4">Leaderboard Weeks</Title>
+      <Title variant="h2">Leaderboard Weeks</Title>
       <Divider />
       <Grid container spacing={3} justifyContent="center">
         {weeks.map((week) => (
@@ -170,7 +193,7 @@ const LeaderboardPage = () => {
                 style={{
                   fontWeight: "bold",
                   letterSpacing: "1px",
-                  fontSize: "1.2rem",
+                  fontSize: "1.3rem",
                 }}
               >
                 {`Week ${week}`}
@@ -182,11 +205,12 @@ const LeaderboardPage = () => {
       <Button
         variant="contained"
         onClick={generatePDF}
-        style={{ marginTop: "20px", marginBottom: "20px",background:"#2b6777",font:'1rem'}}
+        style={{ marginTop: "20px", marginBottom: "20px",background:"#2b6777",font:'1.3rem'}}
       >
         Generate PDF
       </Button>
     </Container>
+    </ThemeProvider>
   );
 };
 
