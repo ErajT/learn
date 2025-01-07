@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
+// import Cookies from "js-cookie";
 import {
   Box,
   Typography,
@@ -20,6 +22,22 @@ import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import axios from "axios";
 import jsPDF from "jspdf";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const TrainingPage = () => {
   const theme = useTheme();
@@ -198,6 +216,9 @@ response.data.forEach((submission, index) => {
 
 
   return (
+     <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles />
    <LocalizationProvider dateAdapter={AdapterDayjs}>
   <Box
     sx={{
@@ -216,13 +237,14 @@ response.data.forEach((submission, index) => {
     color: "#2b6777",
     fontWeight: "bold",
     marginBottom: "20px",
-    marginTop: "20px",
+    marginTop: "40px",
     fontSize: {
-      xs: "1.8rem", 
-      sm: "2.3rem",   
-      md: "2.8rem", 
-      lg: "3rem",   
+      xs: "2rem", 
+      sm: "2.5rem",   
+      md: "3rem", 
+      lg: "3.2rem",   
     },
+    // fontFamily: "Anaheim, Arial, sans-serif",
   }}
 >
   Submission Details
@@ -317,11 +339,13 @@ response.data.forEach((submission, index) => {
                 }}
               >
                 <Typography
-                  variant="h6"
+                  variant="h9"
                   sx={{
                     color: "#2b6777",
                     fontWeight: "bold",
                     marginBottom: "8px",
+                    fontFamily: "Anaheim, Arial, sans-serif",
+
                   }}
                 >
                   Submission Details
@@ -418,6 +442,7 @@ response.data.forEach((submission, index) => {
     </Modal>
   </Box>
 </LocalizationProvider>
+</ThemeProvider>
   
   );
 };

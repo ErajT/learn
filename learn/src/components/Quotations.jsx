@@ -3,6 +3,24 @@ import styled from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
+// import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const Container = styled.div`
   padding: 30px;

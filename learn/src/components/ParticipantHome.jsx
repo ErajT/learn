@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
+// import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const Container = styled.div`
   padding: 0 30px;
@@ -117,6 +135,9 @@ const HomePage = () => {
   };
 
   return (
+    <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalStyles />
     <Container>
       <UserInfoBox>
         <UserInfo>
@@ -136,6 +157,7 @@ const HomePage = () => {
         ))}
       </TrainingsGrid>
     </Container>
+    </ThemeProvider>
   );
 };
 

@@ -19,6 +19,23 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import styled from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Anaheim, Arial, sans-serif",
+  },
+});
+
+// Inject @font-face rule
+const GlobalStyles = styled("style")(() => ({
+  "@font-face": {
+    fontFamily: "Anaheim",
+    src: "url('/Anaheim.ttf') format('truetype')",
+  },
+}));
 
 const MaterialPage = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
@@ -202,6 +219,9 @@ const confirmDelete = async () => {
   };
 
   return (
+    <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalStyles />
     <Box
       sx={{
         padding: 4,
@@ -211,12 +231,13 @@ const confirmDelete = async () => {
       }}
     >
       <Typography
-        variant="h3"
+        variant="h2"
         sx={{
           textAlign: "center",
           fontWeight: "bold",
           mb: 6,
           textShadow: "2px 2px 5px rgba(0, 0, 0, 0.1)",
+          fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
         }}
       >
         Material Management
@@ -251,7 +272,7 @@ const confirmDelete = async () => {
             </IconButton>
 
             <Typography
-              variant="h6"
+              variant="h5"
               fontWeight="bold"
               textAlign="center"
               mb={3}
@@ -290,6 +311,7 @@ const confirmDelete = async () => {
                 fontWeight: "bold",
                 backgroundColor: "#2b6777",
                 color: "white",
+                fontSize:"1.1rem",
                 "&:hover": { backgroundColor: "#225866" },
               }}
             >
@@ -319,7 +341,7 @@ const confirmDelete = async () => {
                 >
                   <Box display="flex" justifyContent="space-between" mb={2}>
                     <Typography
-                      variant="h6"
+                      variant="h5"
                       sx={{
                         color: "#2b6777",
                         fontWeight: "bold",
@@ -338,7 +360,7 @@ const confirmDelete = async () => {
                   </Box>
                   <Typography
                     variant="body2"
-                    sx={{ color: "#777777", mb: 2, textAlign: "center" }}
+                    sx={{ color: "#777777", mb: 2, textAlign: "center",fontSize:"1.3rem" }}
                   >
                     Description:{material.Description}
                   </Typography>
@@ -393,6 +415,7 @@ const confirmDelete = async () => {
         </Alert>
       </Snackbar>
     </Box>
+    </ThemeProvider>
   );
 };
 

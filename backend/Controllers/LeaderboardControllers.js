@@ -219,6 +219,11 @@ exports.generateLeaderboard = async (req, res) => {
         INSERT INTO Leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
+    
+    const resetSQL = `
+        UPDATE Trainee SET Score = 0
+        WHERE TrainingID = ?
+    `;
 
     try {
         // Fetch all TrainingIDs
@@ -290,6 +295,8 @@ exports.generateLeaderboard = async (req, res) => {
                 rankingString,
                 scoresString,
             ]);
+
+            await Qexecution.queryExecute(resetSQL, [TrainingID]);
 
             results.push({
                 TrainingID,

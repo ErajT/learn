@@ -361,7 +361,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { styled, keyframes } from "@mui/system";
+import { styled, keyframes, fontSize } from "@mui/system";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -403,10 +403,9 @@ const fadeInLeft = keyframes`
     transform: translateX(0);
   }
 `;
-
 const parallax = keyframes`
   0% { background-position: center top; }
-  100% { background-position: center bottom; }
+  // 100% { background-position: center bottom; }
 `;
 
 // Full-height section with dynamic background image and parallax effect
@@ -419,11 +418,57 @@ const FullHeightSection = styled("section")(() => ({
   position: "relative",
   animation: `${parallax} 10s ease-in-out infinite alternate`,
   backgroundAttachment: "fixed", // This ensures the parallax effect works well
-  "@media (max-width: 768px)": {
+  display: "flex", // Flexbox to position content easily
+  justifyContent: "center", // Horizontally center content
+  alignItems: "center", // Vertically center content
+  color: "#fff", // Default font color for text
+  textAlign: "center", // Center align text
+  "@media (max-width: 1200px)": {
     backgroundImage: `url(/main1.png)`,
     animation: `${parallax} 5s ease-in-out infinite alternate`,
   },
 }));
+const TextBox = styled("div")(() => ({
+  position: "absolute", // Position the text box relative to the section
+  left: "5%", // Default left position for large screens
+  top: "60%", // Default top position (vertically centered for large screens)
+  transform: "translateY(-50%)", // Adjust for vertical centering
+  padding: "20px 40px", // Spacing inside the box
+  borderRadius: "8px", // Rounded corners
+  fontSize: "2rem", // Font size for better visibility
+  fontWeight: "600", // Thicker font weight
+  maxWidth: "40%", // Prevent the box from being too wide
+  height: "auto", // Allow height to adjust based on content
+  maxHeight: "80vh", // Maximum height to ensure it doesn't overflow the screen
+  overflow: "hidden", // Hide any content that exceeds max height
+
+  // Media queries for responsiveness
+  "@media (max-width: 1024px)": {
+    left: "10%", // Center the text box horizontally on smaller screens
+    top: "10%", // Move the text box to the top
+    transform: "none", // Remove transform to prevent centering
+    maxWidth: "90%", // Wider box for smaller screens
+    fontSize: "2.3rem", // Adjust font size for medium screens
+  },
+
+  "@media (max-width: 650px)": {
+    left: "10%", // Center the text box horizontally on smaller screens
+    top: "10%", // Move the text box to the top
+    transform: "none", // Remove transform to prevent centering
+    maxWidth: "90%", // Wider box for smaller screens
+    fontSize: "1.3rem", // Smaller font size for better readability on smaller screens
+  },
+
+  "@media (max-width: 380px)": {
+    left: "10%", // Keep the text box aligned
+    top: "10%", // Position the text box near the top
+    transform: "none", // No vertical centering on smaller screens
+    maxWidth: "90%", // Take up more width for very small screens
+    fontSize: "1rem", // Smaller font size for very small screens
+  },
+}));
+
+
 
 
 // Styled components
@@ -576,9 +621,16 @@ const App = () => {
           )}
         </Toolbar>
       </Navbar>
+      <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} >
+      <TextBox>
+        {/* <h1>Welcome to Our Website</h1> */}
+        <p>Track your growth, inspire others, and rise to the top! Showcase how you apply training concepts, compete on a dynamic leaderboard, and explore a hub of shared ideas. Generate personalized PDFs and turn every submission into a step toward success
+      </p>
+      </TextBox>
+    </FullHeightSection>
 
       {/* <Section id="section1" ref={(el) => (sectionRefs.current[0] = el)} /> */}
-      <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} />
+      {/* <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} /> */}
 
 
       {["section2", "section3"].map((id, index) => (
@@ -632,7 +684,7 @@ const App = () => {
   <SectionContent>
     <SectionHeading>What Clients Need</SectionHeading>
     <Grid container spacing={4}>
-      {["Box 1", "Box 2", "Box 3"].map((box, index) => (
+      {["Trainees can document their training application through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
         <Grid item xs={12} sm={4} key={index}>
           <Card
             sx={{
@@ -679,7 +731,7 @@ const App = () => {
             >
               {box}
             </Typography>
-            <Typography
+            {/* <Typography
               sx={{
                 fontSize: "0.95rem", // Adjusted description font size slightly
                 textAlign: "center",
@@ -687,7 +739,7 @@ const App = () => {
               }}
             >
               Brief description for {box}.
-            </Typography>
+            </Typography> */}
           </Card>
         </Grid>
       ))}
