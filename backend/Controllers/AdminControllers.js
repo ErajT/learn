@@ -703,11 +703,26 @@ exports.getSubmissionsOfTrainee = async (req, res) => {
     try {
         // Execute the query using your database execution function
         const submissions = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID]);
-        console.log(submissions);
+        // console.log(submissions);
 
         if (submissions.length === 0) {
             return res.status(201).send({ message: 'No submissions found for the given TraineeID and TrainingID.' });
         }
+
+        // Convert all dates to UTC string format and add one day
+        submissions.forEach(submission => {
+            // console.log(submission.Date);
+            
+            // Create a new Date object from the current date
+            const date = new Date(submission.Date);
+            
+            // Add one day (24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
+            date.setDate(date.getDate() + 1);
+            
+            // Convert the modified date to UTC string format
+            submission.Date = date.toISOString();
+        });
+
 
         return res.status(200).send(submissions);
     } catch (error) {

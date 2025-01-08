@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert,Box,Typography } from "@mui/material";
 // import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
@@ -26,6 +26,7 @@ const Container = styled.div`
   padding: 30px;
   margin: 0 auto;
   max-width: 800px;
+  max-height:1000px;
 `;
 
 const Heading = styled.h1`
@@ -92,6 +93,25 @@ const Button = styled.button`
     width: 100%;
   }
 `;
+const Footer = styled("footer")(() => ({
+  // backgroundColor: "#2b6777",
+  color: "#2b6777",
+  padding: "20px 0",
+  textAlign: "center",
+  position: "sticky", // Makes the footer sticky at the bottom of the viewport
+  bottom: 0,
+  zIndex: 10,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}));
+
+const Logo = styled("img")(() => ({
+  height: "40px",
+  margin: "0 10px",
+}));
+
+
 
 const Quotations = () => {
   const [quotation, setQuotation] = useState("");
@@ -179,7 +199,17 @@ const Quotations = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <Footer>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
+        <Logo src="/form.png" alt="Logo 1" />
+        <Typography variant="body2">
+          © 2024 Your Company. All rights reserved.
+        </Typography>
+        <Logo src="/lap.png" alt="Logo 2" />
+      </Box>
+    </Footer>
     </Container>
+    
   );
 };
 

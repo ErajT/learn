@@ -11,34 +11,73 @@ const theme = createTheme({
 });
 
 const Container = styled.div`
-  padding: 0 10px; /* Left and right margin set to 10px */
+  padding: 0;
   margin: 0 auto;
-   margin-right:20px;
-   margin-left:20px
 `;
 
-const UserInfoBox = styled.div`
+const UserInfoBanner = styled.div`
   background: url('/back.png') no-repeat center center;
   background-size: cover;
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 140vh;
-  margin: 20px auto 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 90vw;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   gap: 40px;
   height: 250px;
-  margin-right:20px;
-   margin-left:20px
 
   @media (max-width: 1000px) {
     background: url('/back1.png') no-repeat center center;
     background-size: cover;
-    gap: 20px;
-    height: auto;
     flex-direction: column;
-    padding: 10px;
+    width: 85vw;
+    padding: 20px;
+    height: auto; /* Adjust height dynamically */
+  }
+
+  @media (max-width: 768px) {
+    gap: 20px; /* Reduce gap for smaller screens */
+    width: 75vw;
+    padding: 15px;
+  }
+`;
+
+const TrainingsGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping to a new row when space is unavailable */
+  gap: 20px; /* Spacing between boxes */
+  margin-top: 10px;
+  padding-left: 10px;
+  justify-content: flex-start; /* Align boxes to the left */
+`;
+
+const TrainingBox = styled.div`
+  background: linear-gradient(to bottom, #ffffff, #e1eef6);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2b6777;
+  height: 200px;
+  width: 250px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    height: 220px;
+    width: 220px;
+    font-size: 1.2rem;
   }
 `;
 
@@ -46,49 +85,52 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 10px;
   color: #fff;
   padding: 20px;
 
   p {
-    margin: 10px;
-    font-size: 1.5rem;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+
+    label {
+      font-weight: normal;
+      color: #ddd;
+    }
   }
 
   @media (max-width: 768px) {
     p {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
   }
 `;
 
-const TrainingsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const TrainingBox = styled.div`
-  background: linear-gradient(to bottom, #ffffff, #e1eef6);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+const PageWrapper = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 1.2rem;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 20px;
+`;
+const Title = styled.h2`
+  font-size: 3rem;
   font-weight: bold;
   color: #2b6777;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
+  margin-bottom: 5px;
+  text-align: center; /* Centers the title horizontally */
+  width: 100%; /* Ensures the title takes up full width */
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  @media (max-width: 768px) {
+    font-size: 2rem; /* Reduces font size on smaller screens */
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.5rem; /* Further reduce font size on very small screens */
   }
 `;
+
 
 const HomePage = () => {
   const [trainings, setTrainings] = useState([]);
@@ -131,7 +173,7 @@ const HomePage = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container>
-        <UserInfoBox>
+        <UserInfoBanner>
           <UserInfo>
             <p>
               <label>Participant's Name:</label> {traineeDetails.name}
@@ -140,14 +182,18 @@ const HomePage = () => {
               <label>Company Name:</label> {traineeDetails.companyName}
             </p>
           </UserInfo>
-        </UserInfoBox>
-        <TrainingsGrid>
-          {trainings.map((training, index) => (
-            <TrainingBox key={index} onClick={() => handleTrainingClick(training)}>
-              {training.TrainingName}
-            </TrainingBox>
-          ))}
-        </TrainingsGrid>
+        </UserInfoBanner>
+
+        <PageWrapper>
+          <Title>Choose Training</Title> {/* Title at the top of the grid */}
+          <TrainingsGrid>
+            {trainings.map((training, index) => (
+              <TrainingBox key={index} onClick={() => handleTrainingClick(training)}>
+                <div>{training.TrainingName}</div>
+              </TrainingBox>
+            ))}
+          </TrainingsGrid>
+        </PageWrapper>
       </Container>
     </ThemeProvider>
   );

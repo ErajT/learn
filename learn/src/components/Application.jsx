@@ -25,11 +25,12 @@ const AppContainer = styled.div`
   text-align: center;
   // background-color: #f9f9f9;
   min-height: 100vh;
+  // min-width: 100vw;
   padding: 20px;
   color: #333;
 
   @media (max-width: 768px) {
-    padding: 10px;
+    // padding: 10px;
   }
 `;
 
@@ -105,13 +106,43 @@ const ImageContainer = styled.div`
     max-height: ${({ smallScreen }) => (smallScreen ? "140px" : "200px")};
   }
 
-  @media (max-width: 768px) {
-    top: 90px;
-    left: 190px;
+  @media (max-width: 1024px) {
+    top: 70px;
+    left: 50px;
     right: auto;
     transform: none;
+
+    img {
+      max-width: 150px;
+      max-height: 180px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    top: 90px;
+    left: 40px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 130px;
+      max-height: 160px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    top: 280px;
+    left: 240px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 120px;
+      max-height: 140px;
+    }
   }
 `;
+
 
 const ChecklistItem = styled.div`
   display: flex;

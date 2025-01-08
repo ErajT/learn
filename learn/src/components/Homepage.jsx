@@ -22,7 +22,7 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const Container = styled.div`
-  padding: 0 30px;
+  padding: 0;
   margin: 0 auto;
 `;
 
@@ -30,10 +30,10 @@ const UserInfoBox = styled.div`
   background: url('/back.png') no-repeat center center;
   background-size: cover;
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  margin: 50px auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 90vw;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   gap: 40px;
@@ -42,14 +42,19 @@ const UserInfoBox = styled.div`
   @media (max-width: 1000px) {
     background: url('/back1.png') no-repeat center center;
     background-size: cover;
-    gap: 20px;
-    height: auto;
     flex-direction: column;
-    padding: 1px;
-    // margin: 10px 20px 10px 10px;
-    width: auto;
+    width: 85vw;
+    padding: 20px;
+    height: auto; /* Adjust height dynamically */
+  }
+
+  @media (max-width: 768px) {
+    gap: 20px; /* Reduce gap for smaller screens */
+    width: 75vw;
+    padding: 15px;
   }
 `;
+
 
 const UserInfo = styled.div`
   display: flex;
