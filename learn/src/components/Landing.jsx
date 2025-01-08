@@ -648,14 +648,14 @@ const App = () => {
           md={6}
           sx={{
             animation: `${id === "section2" ? fadeInRight : fadeInLeft} 1s ease-in-out`,
-            textAlign: "center", // Ensures centered text on mobile
+            textAlign: "center", 
           }}
         >
           <ImageWrapper>
             <img
               src={id === "section2" ? "/lap.png" : "/form.png"}
               alt={`Section ${index + 2}`}
-              style={{ width: "100%", height: "auto" }} // Limits image size
+              style={{ width: "100%", height: "auto" }} 
             />
           </ImageWrapper>
         </Grid>
@@ -665,21 +665,21 @@ const App = () => {
             sx={{
               marginBottom: "20px",
               color: "#2b6777",
-              fontSize: { xs: "2rem", sm: "3rem", md: "4rem" }, // Responsive font sizes
+              fontSize: { xs: "2rem", sm: "3rem", md: "4rem" }, 
               fontWeight: "bold",
-              textAlign: { xs: "center", md: "left" }, // Center text on small screens
+              textAlign: { xs: "center", md: "left" }, 
             }}
           >
             {id === "section2" ? "Leaderboard" : "Application Form"}
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, // Adjusted font sizes
+              fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, 
               color: "#2b6777",
               fontStyle: "italic",
-              textAlign: { xs: "center", md: "left" }, // Adjust text alignment
-              maxWidth: "600px", // Prevents text from stretching too wide
-              margin: "0 auto", // Centers text block on small screens
+              textAlign: { xs: "center", md: "left" }, 
+              maxWidth: "600px", 
+              margin: "0 auto", 
             }}
           >
             {id === "section2"
