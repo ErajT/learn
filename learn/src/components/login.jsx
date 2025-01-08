@@ -204,14 +204,14 @@ const Login = () => {
     }
 
     try {
-      console.log(`${backendUrl}/users/login`);
+      // console.log(`${backendUrl}/users/login`);
       const response = await axios.post(`${backendUrl}/users/login`, {
         email: email,
         password: password,
       });
       const position = response.data.position;
 
-      console.log(response);
+      // console.log(response);
 
       if (response.status === 200) {
         setSnackbarMessage("Login successful!");
@@ -222,13 +222,13 @@ const Login = () => {
         {
           Cookies.set("position", JSON.stringify("trainee"));
         // Second API call to fetch trainee details
-        console.log(`${backendUrl}/leaderboard/getDetails/${email}`);
+        // console.log(`${backendUrl}/leaderboard/getDetails/${email}`);
         const traineeDetailsResponse = await axios.get(
           `${backendUrl}/leaderboard/getDetails/${email}`
         );
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie
-          console.log(traineeDetailsResponse.data.data);
+          // console.log(traineeDetailsResponse.data.data);
           Cookies.set("traineeDetails1", JSON.stringify(traineeDetailsResponse.data.data), {
             expires: 7, // Cookie will expire in 7 days
             secure: true, // Ensure secure cookie usage in HTTPS

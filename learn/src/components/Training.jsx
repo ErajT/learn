@@ -201,13 +201,13 @@ const HomePage = () => {
     // Retrieve the cookie value and log it to the console
     const selectedTraining = Cookies.get('selectedTraining');
     if (selectedTraining) {
-      console.log("Selected Training:", JSON.parse(selectedTraining));
+      // console.log("Selected Training:", JSON.parse(selectedTraining));
       const selectedTraining1 = JSON.parse(selectedTraining);
       setTrainingName(selectedTraining1.name);
       setCompanyName(selectedTraining1.company);
 
     } else {
-      console.log("No selected training cookie found.");
+      // console.log("No selected training cookie found.");
     }
   }, []);
 

@@ -64,7 +64,7 @@ const TrainingPage = () => {
       const traineeDetails = JSON.parse(selectedTrainingCookie);
       if (traineeDetails?.TrainingID) {
         setTrainingId(traineeDetails.TrainingID);
-        console.log("training id is",traineeDetails.TrainingID);
+        // console.log("training id is",traineeDetails.TrainingID);
       } else {
         setError("Invalid training data in cookies.");
       }
@@ -144,7 +144,7 @@ const TrainingPage = () => {
 
   const generatePdfForTrainee = async (traineeId,Name) => {
     try {
-      console.log(`${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`);
+      // console.log(`${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`);
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`
       );
@@ -162,7 +162,7 @@ response.data.forEach((submission, index) => {
   const boxWidth = 180;
   const imageWidth = 70;
   const imageHeight = 60;
-  console.log(submission);
+  // console.log(submission);
 
   doc.setDrawColor(0);
   doc.setFillColor(240, 240, 240);

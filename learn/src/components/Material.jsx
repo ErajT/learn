@@ -76,7 +76,7 @@ const MaterialPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.materials);
+        // console.log(data.materials);
       
         // Add id to each material starting from 1
         const materialsWithId = (data.materials || []).map((material, index) => ({
@@ -157,7 +157,7 @@ const confirmDelete = async () => {
   if (!materialToDelete || !trainingId) return;
 
   try {
-    console.log(materialToDelete);
+    // console.log(materialToDelete);
     const response = await axios.get(
       `${backendUrl}/admin/deleteMaterial/${trainingId}/${materialToDelete.id}`,
     );

@@ -144,7 +144,7 @@ const HomePage = () => {
       const traineeDetailsCookie = Cookies.get("traineeDetails1");
       if (traineeDetailsCookie) {
         const parsedDetails = JSON.parse(traineeDetailsCookie);
-        console.log(parsedDetails);
+        // console.log(parsedDetails);
         if (Array.isArray(parsedDetails) && parsedDetails.length > 0) {
           setTrainings(parsedDetails);
           const firstElement = parsedDetails[0];

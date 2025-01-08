@@ -435,7 +435,7 @@ const TextBox = styled("div")(() => ({
   transform: "translateY(-50%)", // Adjust for vertical centering
   padding: "20px 40px", // Spacing inside the box
   borderRadius: "8px", // Rounded corners
-  fontSize: "2rem", // Font size for better visibility
+  fontSize: "1.75rem", // Font size for better visibility
   fontWeight: "600", // Thicker font weight
   maxWidth: "40%", // Prevent the box from being too wide
   height: "auto", // Allow height to adjust based on content
@@ -443,7 +443,7 @@ const TextBox = styled("div")(() => ({
   overflow: "hidden", // Hide any content that exceeds max height
 
   // Media queries for responsiveness
-  "@media (max-width: 1024px)": {
+  "@media (max-width: 1200px)": {
     left: "10%", // Center the text box horizontally on smaller screens
     top: "10%", // Move the text box to the top
     transform: "none", // Remove transform to prevent centering
@@ -665,7 +665,7 @@ const App = () => {
                 >
                   {id === "section2" ? "Leaderboard" : "Application Form"}
                 </Typography>
-                <Typography sx={{ fontSize: "2rem", color: "#2b6777",fontStyle:"italic" }}>
+                <Typography sx={{ fontSize: "1.25rem", color: "#2b6777",fontStyle:"italic" }}>
                   {id === "section2" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
                 </Typography>
               </Grid>

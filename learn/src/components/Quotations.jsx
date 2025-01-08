@@ -124,9 +124,9 @@ const Quotations = () => {
     const selectedTrainingCookie = Cookies.get("selectedTraining");
     if (selectedTrainingCookie) {
       const selectedTraining = JSON.parse(selectedTrainingCookie);
-      console.log(selectedTraining);
+      // console.log(selectedTraining);
       setTrainingID(selectedTraining.trainingID); // Assuming TrainingID is stored in the cookie
-      console.log("Selected Training:", selectedTraining);
+      // console.log("Selected Training:", selectedTraining);
     } else {
       console.log("No selected training found in cookies.");
     }
@@ -154,7 +154,7 @@ const Quotations = () => {
         message: quotation,
       });
 
-      console.log("API Response:", response.data);
+      // console.log("API Response:", response.data);
       setSnackbarMessage("Quotation sent successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);

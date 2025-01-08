@@ -115,7 +115,7 @@ const HomePage = () => {
       const traineeDetailsCookie = Cookies.get("traineeDetails");
       if (traineeDetailsCookie) {
         const parsedDetails = JSON.parse(traineeDetailsCookie);
-        console.log(parsedDetails);
+        // console.log(parsedDetails);
         setTraineeDetails({
           name: parsedDetails.Name || "",
           trainingName: parsedDetails.TrainingName || "",
@@ -138,7 +138,7 @@ const HomePage = () => {
   
       // Subscribe for push notifications
       if ("serviceWorker" in navigator) {
-        console.log("called");
+        // console.log("called");
         await subscribeForPushNotifications(JSON.parse(traineeDetailsCookie)?.TraineeID);
       }
     };
@@ -168,7 +168,7 @@ const HomePage = () => {
 
   async function subscribeForPushNotifications(traineeID) {
     try {
-      console.log(traineeID);
+      // console.log(traineeID);
       console.log("Registering service worker...");
       const register = await navigator.serviceWorker.register("/worker.js", {
         scope: "/",

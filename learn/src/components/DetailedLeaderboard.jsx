@@ -90,8 +90,8 @@ const DetailedLeaderboard = () => {
   useEffect(() => {
     const trainingdetailscookie = Cookies.get('selectedTraining'); // Get the training ID from cookies
     const trainingId = JSON.parse(trainingdetailscookie)?.trainingID;
-    console.log(trainingId);
-    console.log(weekId);
+    // console.log(trainingId);
+    // console.log(weekId);
     if (!trainingId) {
       console.error('Training ID not found in cookies');
       return;
@@ -104,7 +104,7 @@ const DetailedLeaderboard = () => {
           const response = await fetch(`${backendUrl}/admin/getFullLeaderboard/${trainingId}/${weekId}`);
           if (response.ok) {
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             const updatedLeaderboardData = data.allTrainees.map((player, index) => ({
               ...player,
               rank: index + 1, // Dynamically assign the rank based on index

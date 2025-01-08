@@ -157,7 +157,7 @@ const FullLeaderboard = () => {
   useEffect(() => {
     const traineeDetailsCookie = Cookies.get("traineeDetails"); // Get the trainingID from cookies
     const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
-    console.log(trainingID);
+    // console.log(trainingID);
 
     if (!trainingID) {
       setMessage("Training ID not found in cookies.");

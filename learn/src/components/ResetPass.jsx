@@ -130,7 +130,7 @@ const ResetPass = () => {
     }
 
     try {
-        console.log("api not hit yet");
+        // console.log("api not hit yet");
       const response = await axios.patch(
         `${backendUrl}/users/resetPassword/${token}`,  // Send token in URL
         { updatedPassword: password }

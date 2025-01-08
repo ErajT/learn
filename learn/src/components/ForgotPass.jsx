@@ -123,7 +123,7 @@ const ForgotPass = () => {
       const response = await axios.post(`${backendUrl}/users/forgetpassword`, {
         email: email,
       });
-      console.log("api hit");
+      // console.log("api hit");
 
       if (response.status === 200) {
         setSnackbarMessage("Password reset link sent to your email!");

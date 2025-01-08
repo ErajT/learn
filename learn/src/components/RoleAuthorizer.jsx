@@ -10,9 +10,9 @@ export default function RoleAuthorizer({ allowedRole }) {
     position = position.replace(/^"|"$/g, ""); // Removes the enclosing quotes
   }
 
-  console.log( position , "RoleAuthorizer");
-  console.log(allowedRole);
-  console.log(allowedRole == position);
+  // console.log( position , "RoleAuthorizer");
+  // console.log(allowedRole);
+  // console.log(allowedRole == position);
 
 
   return (

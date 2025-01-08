@@ -120,7 +120,7 @@ const TrainingManager = () => {
   const closeDeleteDialog = () => setDeleteDialogOpen(false);
 
   const handleTrainingClick = (training) => {
-    console.log(training);
+    // console.log(training);
     // Save the training details including companyId and trainingId in a cookie
     const trainingDetails = {
       trainingID: training.trainingId, // Corrected to use the actual field name
