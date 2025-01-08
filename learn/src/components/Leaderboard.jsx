@@ -265,7 +265,7 @@ const LeaderboardPage = () => {
         Generate PDF
       </Button>
     </Container>
-    <Footer>
+    {/* <Footer>
       <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
         <Logo src="/form.png" alt="Logo 1" />
         <Typography variant="body2">
@@ -273,7 +273,7 @@ const LeaderboardPage = () => {
         </Typography>
         <Logo src="/lap.png" alt="Logo 2" />
       </Box>
-    </Footer>
+    </Footer> */}
     </ThemeProvider>
   );
 };

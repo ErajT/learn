@@ -23,7 +23,7 @@ const GlobalStyles = styled("style")(() => ({
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
   text-align: center;
-  // background-color: #f9f9f9;
+  // background-color: #fff;
   min-height: 100vh;
   // min-width: 100vw;
   padding: 20px;
@@ -106,9 +106,31 @@ const ImageContainer = styled.div`
     max-height: ${({ smallScreen }) => (smallScreen ? "140px" : "200px")};
   }
 
-  @media (max-width: 1024px) {
-    top: 70px;
-    left: 50px;
+  @media (max-width: 820px) {
+    top: 150px;
+    left: 240px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 150px;
+      max-height: 180px;
+    }
+  }
+     @media (max-width: 1040px) {
+    top: 150px;
+    left: 380px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 150px;
+      max-height: 180px;
+    }
+  }
+     @media (max-width: 1200px) {
+    top: 150px;
+    left: 700px;
     right: auto;
     transform: none;
 
@@ -119,8 +141,30 @@ const ImageContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    top: 90px;
-    left: 40px;
+    top: 150px;
+    left: 240px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 130px;
+      max-height: 160px;
+    }
+  }
+    @media (max-width: 700px) {
+    top: 200px;
+    left: 240px;
+    right: auto;
+    transform: none;
+
+    img {
+      max-width: 130px;
+      max-height: 160px;
+    }
+  }
+      @media (max-width: 725px) {
+    top: 220px;
+    left: 240px;
     right: auto;
     transform: none;
 

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { Snackbar, Alert,Box,Typography } from "@mui/material";
-// import styled from "styled-components";
+import { Snackbar, Alert, Box, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-
 
 const theme = createTheme({
   typography: {
@@ -14,19 +12,15 @@ const theme = createTheme({
   },
 });
 
-// Inject @font-face rule
-const GlobalStyles = styled("style")(() => ({
-  "@font-face": {
-    fontFamily: "Anaheim",
-    src: "url('/Anaheim.ttf') format('truetype')",
-  },
-}));
-
 const Container = styled.div`
   padding: 30px;
   margin: 0 auto;
+  width: 90%;
   max-width: 800px;
-  max-height:1000px;
+
+  @media (max-width: 480px) {
+    padding: 20px;
+  }
 `;
 
 const Heading = styled.h1`
@@ -36,18 +30,23 @@ const Heading = styled.h1`
   font-size: 2rem;
 
   @media (max-width: 768px) {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.4rem;
   }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
   background: linear-gradient(to bottom, #ffffff, #e1eef6);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
 `;
 
 const Label = styled.label`
@@ -66,6 +65,7 @@ const TextArea = styled.textarea`
   border-radius: 8px;
   resize: none;
   height: 100px;
+  width: 100%;
 
   &:focus {
     outline: none;
@@ -75,7 +75,7 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
+  padding: 12px;
   background-color: #2b6777;
   color: #fff;
   font-size: 1rem;
@@ -84,34 +84,42 @@ const Button = styled.button`
   cursor: pointer;
   align-self: center;
   transition: background-color 0.3s;
+  width: 100%;
 
   &:hover {
     background-color: #1e4c5b;
   }
+`;
 
-  @media (max-width: 768px) {
-    width: 100%;
+const Footer = styled.footer`
+  color: #2b6777;
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+`;
+
+const LogoContainer = styled(Box)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+
+const Logo = styled.img`
+  height: 40px;
+  margin: 5px;
+
+  @media (max-width: 480px) {
+    height: 30px;
   }
 `;
-const Footer = styled("footer")(() => ({
-  // backgroundColor: "#2b6777",
-  color: "#2b6777",
-  padding: "20px 0",
-  textAlign: "center",
-  position: "sticky", // Makes the footer sticky at the bottom of the viewport
-  bottom: 0,
-  zIndex: 10,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-}));
-
-const Logo = styled("img")(() => ({
-  height: "40px",
-  margin: "0 10px",
-}));
-
-
 
 const Quotations = () => {
   const [quotation, setQuotation] = useState("");
@@ -124,11 +132,7 @@ const Quotations = () => {
     const selectedTrainingCookie = Cookies.get("selectedTraining");
     if (selectedTrainingCookie) {
       const selectedTraining = JSON.parse(selectedTrainingCookie);
-      console.log(selectedTraining);
-      setTrainingID(selectedTraining.trainingID); // Assuming TrainingID is stored in the cookie
-      console.log("Selected Training:", selectedTraining);
-    } else {
-      console.log("No selected training found in cookies.");
+      setTrainingID(selectedTraining.trainingID);
     }
   }, []);
 
@@ -154,62 +158,50 @@ const Quotations = () => {
         message: quotation,
       });
 
-      console.log("API Response:", response.data);
       setSnackbarMessage("Quotation sent successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error sending quotation:", error);
       setSnackbarMessage("Failed to send quotation. Please try again.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
 
-    // Clear the input field
     setQuotation("");
   };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+  const handleCloseSnackbar = (_, reason) => {
+    if (reason === "clickaway") return;
     setSnackbarOpen(false);
   };
 
   return (
-    <Container>
-      <Heading>Send Quotation</Heading>
-      <Form onSubmit={handleSendQuotation}>
-        <Label htmlFor="quotation">Enter Quotation:</Label>
-        <TextArea
-          id="quotation"
-          value={quotation}
-          onChange={(e) => setQuotation(e.target.value)}
-          placeholder="Type your quotation here..."
-        />
-        <Button type="submit">Send to Participants</Button>
-      </Form>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-      <Footer>
-      <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
-        <Logo src="/form.png" alt="Logo 1" />
-        <Typography variant="body2">
-          © 2024 Your Company. All rights reserved.
-        </Typography>
-        <Logo src="/lap.png" alt="Logo 2" />
-      </Box>
-    </Footer>
-    </Container>
-    
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container>
+        <Heading>Send Quotation</Heading>
+        <Form onSubmit={handleSendQuotation}>
+          <Label htmlFor="quotation">Enter Quotation:</Label>
+          <TextArea
+            id="quotation"
+            value={quotation}
+            onChange={(e) => setQuotation(e.target.value)}
+            placeholder="Type your quotation here..."
+          />
+          <Button type="submit">Send to Participants</Button>
+        </Form>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </ThemeProvider>
   );
 };
 

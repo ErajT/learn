@@ -634,45 +634,64 @@ const App = () => {
 
 
       {["section2", "section3"].map((id, index) => (
-        <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
-          <SectionContent>
-            <Grid
-              container
-              spacing={4}
-              alignItems="center"
-              direction={isMobile ? "column-reverse" : id === "section3" ? "row-reverse" : "row"}
-            >
-              <Grid
-                item
-                xs={12}
-                md={6}
-                sx={{
-                  animation: `${id === "section2" ? fadeInRight : fadeInLeft} s ease-in-out`,
-                }}
-              >
-                <ImageWrapper>
-                  <img
-                    src={id === "section2" ? "/lap.png" : "/form.png"}
-                    alt={`Section ${index + 2}`}
-                    style={{ width: "100%" }}
-                  />
-                </ImageWrapper>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h4"
-                  sx={{ marginBottom: "20px", color: "#2b6777", fontSize: "4rem",fontWeight:"bold" }}
-                >
-                  {id === "section2" ? "Leaderboard" : "Application Form"}
-                </Typography>
-                <Typography sx={{ fontSize: "2rem", color: "#2b6777",fontStyle:"italic" }}>
-                  {id === "section2" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
-                </Typography>
-              </Grid>
-            </Grid>
-          </SectionContent>
-        </Section>
-      ))}
+  <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
+    <SectionContent>
+      <Grid
+        container
+        spacing={4}
+        alignItems="center"
+        direction={isMobile ? "column-reverse" : id === "section3" ? "row-reverse" : "row"}
+      >
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            animation: `${id === "section2" ? fadeInRight : fadeInLeft} 1s ease-in-out`,
+            textAlign: "center", // Ensures centered text on mobile
+          }}
+        >
+          <ImageWrapper>
+            <img
+              src={id === "section2" ? "/lap.png" : "/form.png"}
+              alt={`Section ${index + 2}`}
+              style={{ width: "100%", height: "auto" }} // Limits image size
+            />
+          </ImageWrapper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography
+            variant="h4"
+            sx={{
+              marginBottom: "20px",
+              color: "#2b6777",
+              fontSize: { xs: "2rem", sm: "3rem", md: "4rem" }, // Responsive font sizes
+              fontWeight: "bold",
+              textAlign: { xs: "center", md: "left" }, // Center text on small screens
+            }}
+          >
+            {id === "section2" ? "Leaderboard" : "Application Form"}
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, // Adjusted font sizes
+              color: "#2b6777",
+              fontStyle: "italic",
+              textAlign: { xs: "center", md: "left" }, // Adjust text alignment
+              maxWidth: "600px", // Prevents text from stretching too wide
+              margin: "0 auto", // Centers text block on small screens
+            }}
+          >
+            {id === "section2"
+              ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!"
+              : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."}
+          </Typography>
+        </Grid>
+      </Grid>
+    </SectionContent>
+  </Section>
+))}
+
 <Section
   id="section4"
   ref={(el) => (sectionRefs.current[3] = el)}
