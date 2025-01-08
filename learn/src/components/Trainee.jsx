@@ -274,6 +274,7 @@ const TraineePage = () => {
       sx={{
         padding: { xs: 2, sm: 4, md: 6 },
         minHeight: "100vh",
+        height:"auto",
         backgroundColor: "#f4f4f4",
         color: "#2b6777",
       }}

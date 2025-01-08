@@ -26,6 +26,7 @@ const Container = styled.div`
   padding: 30px;
   margin: 0 auto;
   max-width: 800px;
+  height: 100vh;
 `;
 
 const Heading = styled.h1`

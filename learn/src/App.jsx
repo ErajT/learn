@@ -302,7 +302,7 @@ const App = () => {
           </Routes>
           
           {/* Footer is always visible at the bottom */}
-          {/* <Footer leftLogo="path/to/left-logo.png" rightLogo="path/to/right-logo.png" /> */}
+          <Footer leftLogo="path/to/left-logo.png" rightLogo="path/to/right-logo.png" />
         </Content>
       </AppContainer>
     </>

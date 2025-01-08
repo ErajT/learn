@@ -24,6 +24,7 @@ const GlobalStyles = styled("style")(() => ({
 const Container = styled.div`
   padding: 0 40px;
   margin: 0 auto;
+  height: auto;
 `;
 
 const UserInfoBox = styled.div`
@@ -77,19 +78,21 @@ const UserInfo = styled.div`
 const FeatureBoxesContainer = styled.div`
   margin-top: 40px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* Three boxes in the first row */
   gap: 40px;
   padding: 0;
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-    // height:auto;
+    grid-template-columns: repeat(2, 1fr); /* Two per row on smaller screens */
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Single column layout on smaller screens */
     margin-top: 40px;
-    // height:;
+  }
+
+  & > :nth-child(4) {
+    grid-column: 2 / span 1; /* Center the first box in the second row */
   }
 `;
 
@@ -187,6 +190,11 @@ const HomePage = () => {
         title: "Submission",
         description: "Check the trainee submissions.",
         image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
+      },
+      quotations: { // Data for the fifth box
+        title: "Quotations",
+        description: "Explore motivational quotes.",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/009/458/854/small/quote-icon-logo-design-template-vector.jpg",
       },
     });
 

@@ -12,7 +12,10 @@ const StyledFooter = styled("footer")(() => ({
   justifyContent: "space-between",
   alignItems: "center",
   height:"10px",
-  marginTop: "40px", 
+  marginBottom:"0",
+  position: "sticky",
+  bottom: "0", /* Adjust the offset from the top */
+  // marginTop: "40px", 
 }));
 
 // Footer Component
