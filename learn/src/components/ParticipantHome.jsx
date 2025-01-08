@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
-// import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-
 
 const theme = createTheme({
   typography: {
@@ -12,17 +10,11 @@ const theme = createTheme({
   },
 });
 
-// Inject @font-face rule
-const GlobalStyles = styled("style")(() => ({
-  "@font-face": {
-    fontFamily: "Anaheim",
-    src: "url('/Anaheim.ttf') format('truetype')",
-  },
-}));
-
 const Container = styled.div`
-  padding: 0 30px;
+  padding: 0 10px; /* Left and right margin set to 10px */
   margin: 0 auto;
+   margin-right:20px;
+   margin-left:20px
 `;
 
 const UserInfoBox = styled.div`
@@ -31,12 +23,14 @@ const UserInfoBox = styled.div`
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  margin: 50px auto;
+  width: 140vh;
+  margin: 20px auto 0 auto;
   display: flex;
   align-items: center;
   gap: 40px;
   height: 250px;
+  margin-right:20px;
+   margin-left:20px
 
   @media (max-width: 1000px) {
     background: url('/back1.png') no-repeat center center;
@@ -44,8 +38,7 @@ const UserInfoBox = styled.div`
     gap: 20px;
     height: auto;
     flex-direction: column;
-    padding: 1px;
-    width: auto;
+    padding: 10px;
   }
 `;
 
@@ -111,7 +104,6 @@ const HomePage = () => {
         const parsedDetails = JSON.parse(traineeDetailsCookie);
         console.log(parsedDetails);
         if (Array.isArray(parsedDetails) && parsedDetails.length > 0) {
-        //   console.log(parsedDetails);
           setTrainings(parsedDetails);
           const firstElement = parsedDetails[0];
           setTraineeDetails({
@@ -126,10 +118,11 @@ const HomePage = () => {
   }, []);
 
   const handleTrainingClick = (training) => {
-    // Set the cookie with the selected training details
-    Cookies.set("traineeDetails", JSON.stringify(training), { expires: 7, secure: true,}); // Cookie expires in 1 day
+    Cookies.set("traineeDetails", JSON.stringify(training), {
+      expires: 7,
+      secure: true,
+    });
 
-    // Redirect after a delay
     setTimeout(() => {
       window.location.href = "/Home";
     }, 1500);
@@ -137,27 +130,26 @@ const HomePage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <GlobalStyles />
-    <Container>
-      <UserInfoBox>
-        <UserInfo>
-          <p>
-            <label>Participant's Name:</label> {traineeDetails.name}
-          </p>
-          <p>
-            <label>Company Name:</label> {traineeDetails.companyName}
-          </p>
-        </UserInfo>
-      </UserInfoBox>
-      <TrainingsGrid>
-        {trainings.map((training, index) => (
-          <TrainingBox key={index} onClick={() => handleTrainingClick(training)}>
-            {training.TrainingName}
-          </TrainingBox>
-        ))}
-      </TrainingsGrid>
-    </Container>
+      <CssBaseline />
+      <Container>
+        <UserInfoBox>
+          <UserInfo>
+            <p>
+              <label>Participant's Name:</label> {traineeDetails.name}
+            </p>
+            <p>
+              <label>Company Name:</label> {traineeDetails.companyName}
+            </p>
+          </UserInfo>
+        </UserInfoBox>
+        <TrainingsGrid>
+          {trainings.map((training, index) => (
+            <TrainingBox key={index} onClick={() => handleTrainingClick(training)}>
+              {training.TrainingName}
+            </TrainingBox>
+          ))}
+        </TrainingsGrid>
+      </Container>
     </ThemeProvider>
   );
 };
