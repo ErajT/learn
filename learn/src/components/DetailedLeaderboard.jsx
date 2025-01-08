@@ -7,7 +7,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
 
 const Container = styled(Box)`
-  background-color: #f5f5f5;
+  // background-color: #f5f5f5;
   min-height: 100vh;
   padding: 60px 20px;
   display: flex;
@@ -151,9 +151,23 @@ const DetailedLeaderboard = () => {
 
   return (
     <Container>
-      <Typography variant="h3" color="#2b6777" gutterBottom>
+      {/* <Typography variant="h3" color="#2b6777" gutterBottom>
         Leaderboard - Week {weekId}
-      </Typography>
+      </Typography> */}
+<Typography 
+  variant="h3" 
+  color="#2b6777" 
+  gutterBottom 
+  sx={{ 
+    fontWeight: 'bold', 
+    textAlign: 'center',
+    marginTop:'20px', 
+    fontSize: { xs: '2.4rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' }
+  }}
+>
+  Leaderboard - Week {weekId}
+</Typography>
+
       <LeaderboardContainer>
         {leaderboardData.length > 0 ? (
           leaderboardData.map((player) => (

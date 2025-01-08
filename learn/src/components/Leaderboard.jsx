@@ -25,7 +25,7 @@ const GlobalStyles = styled("style")(() => ({
 
 
 const Container = styled(Box)`
-  background: linear-gradient(135deg, #f3f4f6, #e9ecef);
+  // background: linear-gradient(135deg, #f3f4f6, #e9ecef);
   min-height: 100vh;
   padding: 40px 20px;
   display: flex;
@@ -43,8 +43,31 @@ const Title = styled(Typography)`
   border-bottom: 3px solid #2b6777;
   padding-bottom: 10px;
   padding-top: 30px;
-  
+
+  @media (max-width: 1200px) {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    padding-top: 25px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    padding-top: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    padding-top: 15px;
+  }
 `;
+
 
 const WeekBox = styled(Box)`
   background: linear-gradient(135deg, #2b6777, #4a89a1);
@@ -67,6 +90,24 @@ const Divider = styled(Box)`
   background-color: #2b6777;
   margin: 20px 0;
 `;
+const Footer = styled("footer")(() => ({
+  // backgroundColor: "#2b6777",
+  color: "#2b6777",
+  padding: "20px 0",
+  textAlign: "center",
+  position: "sticky", // Makes the footer sticky at the bottom of the viewport
+  bottom: 0,
+  zIndex: 10,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}));
+
+const Logo = styled("img")(() => ({
+  height: "40px",
+  margin: "0 10px",
+}));
+
 
 const LeaderboardPage = () => {
   const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
@@ -181,7 +222,21 @@ const LeaderboardPage = () => {
               <GlobalStyles />
     
     <Container>
-      <Title variant="h2">Leaderboard Weeks</Title>
+      {/* <Title variant="h2">Leaderboard Weeks</Title> */}
+      <Typography 
+  variant="h3" 
+  color="#2b6777" 
+  gutterBottom 
+  sx={{ 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginTop:'30px', 
+    fontSize: { xs: '2.4rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' }
+  }}
+>
+  Leaderboard Weeks
+</Typography>
+
       <Divider />
       <Grid container spacing={3} justifyContent="center">
         {weeks.map((week) => (
@@ -210,6 +265,15 @@ const LeaderboardPage = () => {
         Generate PDF
       </Button>
     </Container>
+    <Footer>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
+        <Logo src="/form.png" alt="Logo 1" />
+        <Typography variant="body2">
+          © 2024 Your Company. All rights reserved.
+        </Typography>
+        <Logo src="/lap.png" alt="Logo 2" />
+      </Box>
+    </Footer>
     </ThemeProvider>
   );
 };

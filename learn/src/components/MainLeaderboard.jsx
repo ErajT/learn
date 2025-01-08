@@ -57,7 +57,7 @@ const Title = styled.h1`
   transition: margin 0.3s ease;
 
   @media (max-width: 768px) {
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 80px;
     margin-top: -50px; /* Move upwards on small screens */
   }
@@ -65,6 +65,7 @@ const Title = styled.h1`
   @media (max-width: 480px) {
     font-size: 2.5rem;
     margin-top: -80px;
+    margin-left:0;
   }
 `;
 
@@ -79,8 +80,20 @@ const PodiumContainer = styled.div`
   margin: 0 auto;
   flex-wrap: nowrap;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 360px) {
+    gap: 5px;
   }
 `;
 
@@ -91,7 +104,7 @@ const Podium = styled.div`
   align-items: center;
   justify-content: flex-end;
   background: ${(props) => props.bgColor || "#ffffff"};
-  color: ${(props) => (props.textColor ? props.textColor : "#2b6777")};
+  color: ${(props) => props.textColor || "#2b6777"};
   width: ${(props) => props.width || "150px"};
   height: ${(props) => props.height || "300px"};
   border-radius: 15px;
@@ -107,12 +120,17 @@ const Podium = styled.div`
 
   @media (max-width: 768px) {
     width: ${(props) => props.mobileWidth || "100px"};
-    height: ${(props) => props.mobileHeight || "200px"};
+    height: ${(props) => props.mobileHeight || "220px"};
   }
 
   @media (max-width: 480px) {
     width: ${(props) => props.smallWidth || "80px"};
-    height: ${(props) => props.smallHeight || "160px"};
+    height: ${(props) => props.smallHeight || "180px"};
+  }
+
+  @media (max-width: 360px) {
+    width: ${(props) => props.extraSmallWidth || "75px"};
+    height: ${(props) => props.extraSmallHeight || "150px"};
   }
 `;
 
@@ -151,6 +169,12 @@ const Medal = styled.div`
     width: 50px;
     height: 50px;
   }
+
+  @media (max-width: 360px) {
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 // Name
@@ -172,6 +196,10 @@ const Name = styled.div`
   @media (max-width: 480px) {
     font-size: 1rem;
   }
+
+  @media (max-width: 360px) {
+    font-size: 0.9rem;
+  }
 `;
 
 // Score
@@ -190,6 +218,10 @@ const Score = styled.div`
 
   @media (max-width: 480px) {
     font-size: 0.9rem;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 0.8rem;
   }
 `;
 
@@ -371,7 +403,7 @@ const Leaderboard = () => {
                   height: "250px",
                   tabletHeight: "200px",
                   mobileHeight: "150px",
-                  smallHeight: "120px",
+                  smallHeight: "170px",
                   medal: "🥈",
                   medalColor: "#b0b0b0",
                 },
@@ -381,7 +413,7 @@ const Leaderboard = () => {
                   height: "300px",
                   tabletHeight: "250px",
                   mobileHeight: "200px",
-                  smallHeight: "150px",
+                  smallHeight: "200px",
                   medal: "🥇",
                   medalColor: "#ffcc00",
                 },
@@ -391,7 +423,7 @@ const Leaderboard = () => {
                   height: "200px",
                   tabletHeight: "175px",
                   mobileHeight: "125px",
-                  smallHeight: "100px",
+                  smallHeight: "150px",
                   medal: "🥉",
                   medalColor: "#cd7f32",
                 },
