@@ -87,8 +87,8 @@ const FeatureBoxesContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr; /* Single column layout on smaller screens */
-    margin-top: 40px;
+    grid-template-columns:  1fr !important; /* Single column layout on smaller screens */
+    // margin-top: 40px;
   }
 
   & > :nth-child(4) {
@@ -223,15 +223,15 @@ const HomePage = () => {
         </UserInfo>
       </UserInfoBox>
       <FeatureBoxesContainer>
-  {Object.keys(data).map((key) => (
-    <Link key={key} to={`/${key}`} style={{ textDecoration: "none" }}>
-      <FeatureBox>
-        <img src={data[key]?.image} alt={data[key]?.title} />
-        <h3>{data[key]?.title}</h3>
-        <p>{data[key]?.description}</p>
-      </FeatureBox>
-    </Link>
-  ))}
+        {Object.keys(data).map((key) => (
+          <Link key={key} to={`/${key}`} style={{ textDecoration: "none" }}>
+            <FeatureBox>
+              <img src={data[key]?.image} alt={data[key]?.title} />
+              <h3>{data[key]?.title}</h3>
+              <p>{data[key]?.description}</p>
+            </FeatureBox>
+          </Link>
+        ))}
 </FeatureBoxesContainer>
     </Container>
     </ThemeProvider>
