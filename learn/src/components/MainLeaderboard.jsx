@@ -28,7 +28,7 @@ const pulseEffect = keyframes`
 
 // Main Container
 const LeaderboardContainer = styled.div`
-  // background: #f9f9f9;
+  // background: #;
   background-size: 400% 400%;
   animation: ${backgroundAnimation} 15s ease infinite;
   color: #ffffff;

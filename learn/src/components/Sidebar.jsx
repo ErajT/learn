@@ -2,35 +2,54 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
-import { FaFileAlt } from "react-icons/fa"; 
+import { FaFileAlt } from "react-icons/fa";
 
+// Styled Components
 const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #2b6777;
   color: #ecf0f1;
-  width: 80px; /* Default width */
+  width: 80px;
   height: 100%;
   position: fixed;
   left: 0;
   top: 0;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 20px 0;
-  transition: width 0.3s ease, margin-right 0.3s ease; /* Smooth transition for width and margin change */
+  transition: width 0.3s ease, margin-right 0.3s ease;
 
-  /* Media query for smaller screens */
   @media (max-width: 768px) {
-    width: 60px; /* Slightly smaller width on smaller screens */
-    padding: 0px 0; /* Adjust padding to avoid excessive gap */
-    margin-right: 0; /* Remove right margin */
+    width: 60px;
   }
 
-  /* Media query for very small screens (e.g., mobile devices) */
   @media (max-width: 480px) {
-    width: 50px; /* Even smaller width */
-    padding: 0px 0; /* Adjust padding further */
-    margin-right: 0; /* Remove right margin */
+    width: 50px;
+  }
+`;
+
+const LogoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: -10px; /* Completely removes the gap between logos */
+  margin-bottom: 5px; /* Reduced bottom margin */
+`;
+
+const Logo = styled.img`
+  width: 80px;
+  height: 80px; /* Adjusted height to make logos smaller */
+  object-fit: contain;
+
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+  }
+
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
   }
 `;
 
@@ -39,16 +58,7 @@ const NavItems = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px; /* Default gap */
-  
-  /* Adjust gap for smaller screens */
-  @media (max-width: 768px) {
-    gap: 30px; /* Smaller gap on smaller screens */
-  }
-
-  @media (max-width: 480px) {
-    gap: 30px; /* Even smaller gap on very small screens */
-  }
+  gap: 30px;
 `;
 
 const NavItem = styled(NavLink)`
@@ -78,7 +88,7 @@ const LogoutButton = styled.button`
   transition: transform 0.2s;
   position: absolute;
   bottom: 20px;
-  
+
   &:hover {
     transform: scale(1.1);
   }
@@ -86,6 +96,7 @@ const LogoutButton = styled.button`
 
 const Sidebar = () => {
   const navigate = useNavigate();
+
   const handleLogout = () => {
     alert("Logged out successfully!");
     navigate("/");
@@ -93,6 +104,11 @@ const Sidebar = () => {
 
   return (
     <SidebarContainer>
+      <LogoContainer>
+        <Logo src="/Logo.png" alt="Logo 1" />
+        <Logo src="Logo.png" alt="Logo 2" />
+        <Logo src="Logo.png" alt="Logo 3" />
+      </LogoContainer>
       <NavItems>
         <NavItem to="/home" title="Home">
           <FaHome />
@@ -105,10 +121,10 @@ const Sidebar = () => {
         </NavItem>
         <NavItem to="/fullLeaderboard" title="Full Leaderboard">
           <FaTrophy />
-        </NavItem>   
-          <NavItem to="/submissiont" title="Submissions">
-            <FaFileAlt /> {/* Replace the old icon with the new one */}
-          </NavItem>
+        </NavItem>
+        <NavItem to="/submissiont" title="Submissions">
+          <FaFileAlt />
+        </NavItem>
       </NavItems>
       <LogoutButton onClick={handleLogout} title="Logout">
         <FaSignOutAlt />
