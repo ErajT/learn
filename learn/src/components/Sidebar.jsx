@@ -3,6 +3,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
+import cookie from "js-cookie";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 // Styled Components
 const SidebarContainer = styled.div`
@@ -96,11 +99,45 @@ const LogoutButton = styled.button`
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
 
-  const handleLogout = () => {
-    alert("Logged out successfully!");
-    navigate("/");
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return; // Prevent closing on clickaway
+    setSnackbarOpen(false);
   };
+
+  const handleLogout = async () => {
+    const tok = cookie.get("token");
+
+    if (!tok) {
+      alert("No token found. Please log in first.");
+      return;
+    }
+
+    try {
+      const token = JSON.parse(tok);
+      const response = await fetch("http://localhost:2000/users/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      if (response.ok) {
+        cookie.remove("token"); // Clear the token from cookies
+        setSnackbarOpen(true); // Show Snackbar
+        setTimeout(() => navigate("/"), 1500); // Redirect after 1.5s
+      } else {
+        const error = await response.json();
+        alert(`Logout failed: ${error.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("An error occurred while logging out. Please try again.");
+    }
+  };
+
 
   return (
     <SidebarContainer>
@@ -129,7 +166,17 @@ const Sidebar = () => {
       <LogoutButton onClick={handleLogout} title="Logout">
         <FaSignOutAlt />
       </LogoutButton>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
+          Logged out successfully!
+        </Alert>
+      </Snackbar>
     </SidebarContainer>
+    
   );
 };
 

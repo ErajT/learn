@@ -384,7 +384,7 @@ useEffect(() => {
 
   const handleSubmitExample = () => {
     const wordCount = exampleText.trim().split(/\s+/).length;
-    if (wordCount < 1) {
+    if (wordCount < 150) {
       setSnackbar({ open: true, message: "The example must be at least 150 words.", severity: "error" });
       return;
     }
