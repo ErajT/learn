@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
@@ -121,7 +121,7 @@ const Sidebar = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ "token":token }),
       });
 
       if (response.ok) {
