@@ -208,10 +208,13 @@ module.exports = {
     },
 
     logout: (req, res) => {
-        let token = req.headers.authorization;
-        token = token.slice(7);
-        console.log(token);
+        let {token} = req.body;
+        // If the token has a "Bearer " prefix, remove it
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7);
+        }
         const hashedtoken = crypto.createHash('sha256').update(token).digest('hex');
+        console.log("token is ",hashedtoken);
         console.log("token done");
         logout(hashedtoken,req,res);
     }
