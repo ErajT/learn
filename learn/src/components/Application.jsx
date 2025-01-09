@@ -294,9 +294,20 @@ const Input = styled.input`
 const Application = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
 
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
-  const today = new Date().toLocaleString("en-US", { weekday: "short" });
+  const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri"];
+  // Get today's index
+  const currentDayIndex = new Date().getDay(); // Returns 0 for Sunday, 1 for Monday, etc.
+
+  // Map JavaScript's weekday index (0-6) to your `days` array
+  const dayMapping = [0, 1, 2, 3, 4, 5, 6]; // Adjust if needed to match your array's order
+  const todayidx = dayMapping[currentDayIndex+1];
+  // console.log(todayidx);
+
+  // Get today's name
+  const today = days[todayidx];
+  // console.log(today);
   const [currentDay, setCurrentDay] = useState(today);
+  // console.log(currentDay);
   const [tasks, setTasks] = useState({
     [today]: [
       { text: "Applied", done: false, type: "checkbox" }
@@ -309,12 +320,25 @@ const Application = () => {
   const [referenceEmail, setReferenceEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
 useEffect(() => {
   const handleResize = () => {
     setIsSmallScreen(window.innerWidth <= 768);
   };
+    selectedDate.setDate(selectedDate.getDate());
+  
+    // Format the selected date in yyyy-mm-dd format
+    const yyyy = selectedDate.getFullYear();
+    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(selectedDate.getDate()).padStart(2, '0');
+    const formattedDate = `${dd}-${mm}-${yyyy}`;
+  
+    // Update state with the formatted date
+    setSelectedDate(formattedDate);
+    console.log(formattedDate);
 
   window.addEventListener("resize", handleResize);
   return () => window.removeEventListener("resize", handleResize);
@@ -322,6 +346,30 @@ useEffect(() => {
 
   const cookieData = Cookies.get("traineeDetails");
   const { TrainingID, TraineeID } = cookieData ? JSON.parse(cookieData) : {};
+
+
+  const handleDayClick = (index) => {
+    // Calculate the difference between today and the selected day index
+    const difference = index - todayidx;
+  
+    // Calculate the selected date based on the difference
+    const selectedDateObj = new Date();
+    selectedDateObj.setDate(selectedDateObj.getDate() + difference);
+  
+    // Format the selected date in yyyy-mm-dd format
+    const yyyy = selectedDateObj.getFullYear();
+    const mm = String(selectedDateObj.getMonth() + 1).padStart(2, '0');
+    const dd = String(selectedDateObj.getDate()).padStart(2, '0');
+    const formattedDate = `${dd}-${mm}-${yyyy}`;
+  
+    // Update state with the formatted date
+    setSelectedDate(formattedDate);
+  
+    console.log(`Selected Date: ${selectedDate}`);
+  };
+  
+  
+
 
   const handleCheckboxChange = (taskIndex) => {
     if (taskIndex === 0) {
@@ -344,7 +392,7 @@ useEffect(() => {
     fetch(`${backendUrl}/leaderboard/example`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText }),
+      body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText, newDate: selectedDate }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -372,7 +420,7 @@ useEffect(() => {
     fetch(`${backendUrl}/leaderboard/refer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail }),
+      body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail, newDate: selectedDate }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -394,6 +442,7 @@ useEffect(() => {
     formData.append("TrainingID", TrainingID);
     formData.append("TraineeID", TraineeID);
     formData.append("photo", photoFile);
+    formData.append("newDate", selectedDate);
 
     fetch(`${backendUrl}/leaderboard/photo`, {
       method: "POST",
@@ -420,8 +469,14 @@ useEffect(() => {
     <AppContainer>
       <Title>Weekly Learning Checklist</Title>
       <DaySelector>
-        {days.map((day) => (
-          <DayButton key={day} active={day === today} disabled={day !== today}>
+        {days.map((day, index) => (
+          <DayButton key={day} active={index <= todayidx} disabled={index > todayidx+1}  
+          onClick={() => {handleDayClick(index); setSelectedDayIndex(index)}}
+          style={{
+            border: index === selectedDayIndex ? "3px solid black" : "none",
+            transition: "border 0.2s ease",
+          }}          
+        >
             {day[0]} {/* Displaying only the first letter */}
           </DayButton>
         ))}

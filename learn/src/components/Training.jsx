@@ -191,7 +191,7 @@ const HomePage = () => {
         description: "Check the trainee submissions.",
         image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
       },
-      quotations: { // Data for the fifth box
+      quotation: { // Data for the fifth box
         title: "Quotations",
         description: "Explore motivational quotes.",
         image: "https://static.vecteezy.com/system/resources/thumbnails/009/458/854/small/quote-icon-logo-design-template-vector.jpg",

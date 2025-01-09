@@ -674,7 +674,7 @@ const App = () => {
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, 
+              fontSize: { xs: "1rem", sm: "1.5rem", md: "1.75rem" }, 
               color: "#2b6777",
               fontStyle: "italic",
               textAlign: { xs: "center", md: "left" }, 

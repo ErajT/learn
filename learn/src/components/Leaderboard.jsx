@@ -112,6 +112,7 @@ const Logo = styled("img")(() => ({
 const LeaderboardPage = () => {
   const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [weeks, setWeeks] = useState([]);
+  const [dates, setDates] = useState([]);
   const [leaderboards, setLeaderboards] = useState(null); 
   const navigate = useNavigate();
 
@@ -132,6 +133,8 @@ const LeaderboardPage = () => {
 
         if (response.data.status === "success") {
           setWeeks(response.data.weeks || []);
+          setDates(response.data.dates || []);
+          console.log(response.data);
         } else {
           console.error("Failed to fetch weeks:", response.data.message);
         }
@@ -239,7 +242,7 @@ const LeaderboardPage = () => {
 
       <Divider />
       <Grid container spacing={3} justifyContent="center">
-        {weeks.map((week) => (
+        {weeks.map((week, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={week}>
             <WeekBox onClick={() => handleBoxClick(week)}>
               <Typography
@@ -252,6 +255,16 @@ const LeaderboardPage = () => {
                 }}
               >
                 {`Week ${week}`}
+              </Typography>
+              <Typography
+                variant="body2"
+                align="center"
+                style={{
+                  fontWeight: "normal",
+                  fontSize: "1rem",
+                }}
+              >
+                {dates[index] || "No dates available"} {/* Display the corresponding date */}
               </Typography>
             </WeekBox>
           </Grid>

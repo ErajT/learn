@@ -408,7 +408,7 @@ const TraineePage = () => {
             label="Name"
             fullWidth
             value={newTrainee.name}
-            onChange={(e) => setNewTrainee({ ...newTrainee, name: e.target.value })}
+            onChange={(e) => setNewTrainee({ ...newTrainee, name: e.target.value, password: "12345" })}
             margin="normal"
           />
           <TextField
@@ -425,13 +425,13 @@ const TraineePage = () => {
             onChange={(e) => setNewTrainee({ ...newTrainee, phone: e.target.value })}
             margin="normal"
           />
-          <TextField
+          {/* <TextField
             label="Password"
             fullWidth
             value={newTrainee.password}
             onChange={(e) => setNewTrainee({ ...newTrainee, password: e.target.value })}
             margin="normal"
-          />
+          /> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancel</Button>
