@@ -37,7 +37,7 @@ app.use('/admin', AdminRouter);
 const cron = require('node-cron');
 const axios = require('axios');
 
-cron.schedule('30 15 * * 5', async () => {
+cron.schedule('13 14 * * 4', async () => {
   try {
     const response = await axios.post('http://localhost:2000/leaderboard/generate');
 

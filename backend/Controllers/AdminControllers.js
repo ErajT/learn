@@ -479,7 +479,7 @@ exports.getMaterials = async (req, res) => {
 exports.getweeks = async (req, res) => {
     const { TrainingID } = req.params;
 
-    const SQL1 = "SELECT WeekNumber FROM leaderboard WHERE TrainingID = ?";
+    const SQL1 = "SELECT WeekNumber, WeekDates FROM leaderboard WHERE TrainingID = ?";
 
     try {
         // Execute the query to get the weeks from the database
@@ -488,11 +488,13 @@ exports.getweeks = async (req, res) => {
 
         // Extract WeekNumber from each record in the response and create a list of weeks
         const weeks = response.map(item => item.WeekNumber);
+        const dates = response.map(item => item.WeekDates);
 
         // Return the list of weeks in the response
         return res.status(200).send({
             status: "success",
             weeks: weeks,
+            dates: dates
         });
     } catch (err) {
         // Handle any errors that occur during the database operation

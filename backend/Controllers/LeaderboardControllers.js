@@ -1,17 +1,6 @@
 const Qexecution = require("./query");
 const webpush = require("web-push");
 
-// Utility function to get the current date and day number
-const getCurrentDateAndDay = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); 
-    const dd = String(today.getDate()).padStart(2, '0');
-    const newDate = `${yyyy}-${mm}-${dd}`;
-    const DayNumber = today.getDay();
-    return { newDate, DayNumber };
-};
-
 exports.getTraineeDetails = async (req, res) => {
     const SQL = "SELECT * FROM Trainee WHERE TraineeID=?";
     try {
@@ -71,12 +60,11 @@ exports.getTraineesForTraining = async (req, res) => {
 
 exports.Example = async (req, res) => {
     const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, Example) VALUES(?,?,?,?,?,?)";
+    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Example) VALUES(?,?,?,?,?)";
     const SQL3 = "UPDATE Submissions SET Options = ?, Example = ?, Approved=0 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
-        const { TrainingID, TraineeID, Example } = req.body;
-        const { newDate, DayNumber } = getCurrentDateAndDay();
+        const { TrainingID, TraineeID, Example, newDate } = req.body;
 
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
         let pointsAwarded = 10;  // Points for Example submission
@@ -87,7 +75,7 @@ exports.Example = async (req, res) => {
             await Qexecution.queryExecute(SQL3, [newOptions, Example, TraineeID, TrainingID, newDate]);
         } else {
             const newOptions = "2";
-            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, DayNumber, newDate, newOptions, Example]);
+            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, newDate, newOptions, Example]);
         }
 
         // Call the updateTraineeScore function to update the score
@@ -107,11 +95,11 @@ exports.Example = async (req, res) => {
 };
 
 exports.Photo = async (req, res) => {
-    const { TrainingID, TraineeID } = req.body;
-    const { newDate, DayNumber } = getCurrentDateAndDay();
+    const { TrainingID, TraineeID, newDate} = req.body;
+    // const { newDate, DayNumber } = getCurrentDateAndDay();
 
     const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, Photo) VALUES(?,?,?,?,?,?)";
+    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Photo) VALUES(?,?,?,?,?)";
     const SQL3 = "UPDATE Submissions SET Options = ?, Photo = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
@@ -134,7 +122,7 @@ exports.Photo = async (req, res) => {
             await Qexecution.queryExecute(SQL3, [newOptions, photoBuffer, TraineeID, TrainingID, newDate]);
         } else {
             const newOptions = "3";
-            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, DayNumber, newDate, newOptions, photoBuffer]);
+            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, newDate, newOptions, photoBuffer]);
         }
 
         // Call the updateTraineeScore function to update the score
@@ -156,12 +144,12 @@ exports.Photo = async (req, res) => {
 
 exports.Refer = async (req, res) => {
     const SQL1 = "SELECT Options, Refer FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, DayNumber, Date, Options, Refer) VALUES(?,?,?,?,?,?)";
+    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Refer) VALUES(?,?,?,?,?)";
     const SQL3 = "UPDATE Submissions SET Refer = ?, Options = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
-        const { TrainingID, TraineeID, refer } = req.body;
-        const { newDate, DayNumber } = getCurrentDateAndDay(); // Get current date and day
+        const { TrainingID, TraineeID, refer, newDate } = req.body;
+        // const { newDate, DayNumber } = getCurrentDateAndDay(); // Get current date and day
 
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
         let pointsAwarded = 15;  // Points for Refer
@@ -172,7 +160,7 @@ exports.Refer = async (req, res) => {
             await Qexecution.queryExecute(SQL3, [refer, newOptions, TraineeID, TrainingID, newDate]);
         } else {
             const newOptions = "4";
-            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, DayNumber, newDate, newOptions, refer]);
+            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, newDate, newOptions, refer]);
         }
 
         // Call the updateTraineeScore function to update the score
@@ -278,9 +266,21 @@ exports.generateLeaderboard = async (req, res) => {
 
             // Calculate the start and end dates for the leaderboard (7 days window)
             const currentDate = new Date();
-            const startDate = new Date(currentDate);
+            const startDate = new Date();
             startDate.setDate(currentDate.getDate() - 6); // Include the last 7 days
-            const weekDates = `${startDate.toISOString().split('T')[0]} - ${currentDate.toISOString().split('T')[0]}`;
+
+            // Utility function to format date as dd-mm-yyyy
+            const formatDate = (date) => {
+            const dd = String(date.getDate()).padStart(2, '0'); // Day with leading zero
+            const mm = String(date.getMonth() + 1).padStart(2, '0'); // Month with leading zero
+            const yyyy = date.getFullYear(); // Year
+            return `${dd}-${mm}-${yyyy}`;
+            };
+
+            // Format both dates
+            const weekDates = `${formatDate(startDate)} - ${formatDate(currentDate)}`;
+
+            console.log(weekDates);
 
             // Increment leaderboard ID and week number for the new leaderboard
             const newLeaderboardID = lastLeaderboardID + 1;
