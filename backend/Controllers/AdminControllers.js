@@ -9,7 +9,7 @@ const updateTraineeScore = async (TraineeID, pointsToAdd) => {
         // Calculate the new score by adding the new points to the old score
         const newScore = parseInt(currentScore || 0) + pointsToAdd;
 
-        console.log("new score is ", currentScore);
+        // console.log("new score is ", currentScore);
 
         // Update the trainee's score in the database
         await Qexecution.queryExecute("UPDATE Trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
@@ -41,7 +41,7 @@ exports.addTraining = async (req, res) => {
             // Company doesn't exist, insert it
             const resultInsertCompany = await Qexecution.queryExecute(SQL_INSERT_COMPANY, [companyName]);
             companyID = resultInsertCompany.insertId; // Get the auto-incremented CompanyID
-            console.log(companyID);
+            // console.log(companyID);
         }
 
         // Insert training
@@ -327,7 +327,7 @@ exports.addMaterial = async (req, res) => {
 
     // Check if Material exists in the request
 
-    console.log(TrainingID, Title, Description);
+    // console.log(TrainingID, Title, Description);
     if (!Material) {
         return res.status(400).send({
             status: "fail",
@@ -484,7 +484,7 @@ exports.getweeks = async (req, res) => {
     try {
         // Execute the query to get the weeks from the database
         const response = await Qexecution.queryExecute(SQL1, [TrainingID]);
-        console.log(response);
+        // console.log(response);
 
         // Extract WeekNumber from each record in the response and create a list of weeks
         const weeks = response.map(item => item.WeekNumber);
@@ -600,7 +600,7 @@ exports.approve = async (req, res) => {
     try {
         // Step 1: Loop through all the TraineeIDs
         for (const TraineeID of TraineeIDs) {
-            console.log(TraineeID);
+            // console.log(TraineeID);
             // Step 2: Query the submissions table for each TraineeID, TrainingID, and Date
             const submissionQuery = `SELECT * FROM submissions WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
             const submissionResult = await Qexecution.queryExecute(submissionQuery, [TraineeID, TrainingID, Date]);
@@ -612,7 +612,7 @@ exports.approve = async (req, res) => {
             }
 
             const submission = submissionResult[0];
-            console.log(submission);
+            // console.log(submission);
 
             // Step 3: Check the current approval status
             if (submission.Approved === 0 || submission.Approved === null) {
@@ -631,7 +631,7 @@ exports.approve = async (req, res) => {
                     pointsToAdd += 15; // Add 15 points if Refer exists
                 }
 
-                console.log(pointsToAdd);
+                // console.log(pointsToAdd);
 
                 // Update trainee score
                 const newScore = await updateTraineeScore(TraineeID, pointsToAdd);
@@ -640,10 +640,10 @@ exports.approve = async (req, res) => {
                 const updateQuery = `UPDATE submissions SET Approved = 1 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?`;
                 await Qexecution.queryExecute(updateQuery, [TraineeID, TrainingID, Date]);
 
-                console.log(`TraineeID ${TraineeID} score updated to ${newScore}`);
+                // console.log(`TraineeID ${TraineeID} score updated to ${newScore}`);
             } else if (submission.Approved === 1) {
                 // Submission is already approved, skip this trainee
-                console.log(`Submission for TraineeID ${TraineeID} is already approved.`);
+                // console.log(`Submission for TraineeID ${TraineeID} is already approved.`);
                 continue;
             }
         }
@@ -749,7 +749,7 @@ exports.deleteMaterial = async (req, res) => {
 
     // Determine the column index based on the MaterialNumber
     const materialIndex = parseInt(MaterialNumber) - 1; // For example, M1 => 0, M2 => 1, etc.
-    console.log("index is ",materialIndex);
+    // console.log("index is ",materialIndex);
 
     // Ensure MaterialNumber is valid
     if (materialIndex < 0 || materialIndex >= materialColumns.length) {

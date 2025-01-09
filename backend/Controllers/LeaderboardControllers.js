@@ -243,9 +243,9 @@ exports.generateLeaderboard = async (req, res) => {
 
             // Get the last leaderboard details for the training (including the week dates)
             const lastLeaderboardResult = await Qexecution.queryExecute(getLastLeaderboardSQL, [TrainingID]);
-            console.log("last is ", lastLeaderboardResult);
+            // console.log("last is ", lastLeaderboardResult);
             const lastLeaderboardID = lastLeaderboardResult[0]?.LeaderboardID || 0;
-            console.log("id is ",lastLeaderboardID);
+            // console.log("id is ",lastLeaderboardID);
             const lastWeekDates = lastLeaderboardResult[0]?.WeekDates;
 
             // If a leaderboard for the current week already exists, skip this training
@@ -470,11 +470,11 @@ exports.getDetails = async (req, res) => {
 
     try {
         const { email } = req.params; // Get email from request parameters
-        console.log(email);
+        // console.log(email);
 
         // Execute the query with the provided email
         const result = await Qexecution.queryExecute(SQL, [email]);
-        console.log(result);
+        // console.log(result);
 
         // Check if the result is empty
         if (result.length === 0) {
