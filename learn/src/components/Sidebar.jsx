@@ -106,8 +106,8 @@ const Sidebar = () => {
     <SidebarContainer>
       <LogoContainer>
         <Logo src="/Logo.png" alt="Logo 1" />
-        <Logo src="Logo.png" alt="Logo 2" />
-        <Logo src="Logo.png" alt="Logo 3" />
+        <Logo src="Logo1.png" alt="Logo 2" />
+        <Logo src="Logo2.png" alt="Logo 3" />
       </LogoContainer>
       <NavItems>
         <NavItem to="/home" title="Home">
