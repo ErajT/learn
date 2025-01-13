@@ -1,4 +1,5 @@
 const Qexecution = require("./query");
+const webpush = require("web-push");
 
 const updateTraineeScore = async (TraineeID, pointsToAdd) => {
     try {
@@ -177,7 +178,6 @@ exports.addManyTrainees = async (req, res) => {
         });
     }
 };
-
 
 // API to Get All Leaderboards for a Particular Training
 exports.getAllLeaderboards = async (req, res) => {
@@ -572,7 +572,7 @@ exports.getSubmissionsBasedOnDate = async (req,res) => {
     try{
         const result = await Qexecution.queryExecute(SQL1, [TrainingID, Date, TraineeID]);
         const sub = result[0];
-        // console.log(sub);
+        console.log(TrainingID, Date, TraineeID);
         if(sub){
             res.status(200).send({
                 status: "success",
@@ -659,6 +659,42 @@ exports.approve = async (req, res) => {
     }
 };
 
+exports.disapprove = async (req, res) => {
+    const { TrainingID, TraineeIDs, Date } = req.body;
+
+    try {
+        // console.log(TrainingID, TraineeIDs, Date);
+        const SQL2 = "SELECT Topic FROM Training WHERE TrainingID = ?"; // Query to get the training name
+        const res2 = await Qexecution.queryExecute(SQL2, [TrainingID]);
+        const topic = res2[0].Topic;
+        // Step 1: Loop through all the TraineeIDs
+        for (const TraineeID of TraineeIDs) {
+            // console.log(TraineeID);
+            // Step 2: Query the submissions table for each TraineeID, TrainingID, and Date
+            const SQL1 = "SELECT TraineeID, TrainingID, Endpoint FROM trainee WHERE TraineeID = ? AND TrainingID=?";
+            const res1 = await Qexecution.queryExecute(SQL1, [TraineeID, TrainingID]);
+            const Endpoint = res1[0].Endpoint;
+            const message = `Your submission for the training ${topic} for the date ${Date} has been disapproved. Kindly re submit your details. For further details, contact your administrator`;
+            const payload = JSON.stringify({ title: topic, message });
+              
+            const subscription = JSON.parse(Endpoint);
+    
+            try {
+                // Send notification to each trainee's endpoint
+                await webpush.sendNotification(subscription, payload);
+                console.log(`Notification sent to trainee ${TraineeID} successfully.`);
+            } catch (error) {
+                console.error(`Error sending notification to trainee ${TraineeID}:`, error);
+            }
+        }
+        // Step 4: Return a success response after processing all trainees
+        res.status(200).send({ message: "Submissions processed successfully." });
+
+    } catch (error) {
+        console.error("Error in approve function:", error.message);
+        res.status(500).send({ message: "An error occurred while approving submissions." });
+    }
+};
 
 exports.getTraineesForTraining1 = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
@@ -711,19 +747,23 @@ exports.getSubmissionsOfTrainee = async (req, res) => {
             return res.status(201).send({ message: 'No submissions found for the given TraineeID and TrainingID.' });
         }
 
-        // Convert all dates to UTC string format and add one day
-        submissions.forEach(submission => {
-            // console.log(submission.Date);
-            
-            // Create a new Date object from the current date
-            const date = new Date(submission.Date);
-            
-            // Add one day (24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
-            date.setDate(date.getDate() + 1);
-            
-            // Convert the modified date to UTC string format
-            submission.Date = date.toISOString();
-        });
+        // // Convert all dates to UTC string format and add one day
+        // submissions.forEach(submission => {
+        //     // Parse the date in DD-MM-YYYY format
+        //     const [day, month, year] = submission.Date.split('-').map(Number);
+        //     const date = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date
+        
+        //     // Add one day
+        //     date.setDate(date.getDate() + 1);
+        
+        //     // Convert the date back to DD-MM-YYYY format
+        //     const newDay = String(date.getDate()).padStart(2, '0');
+        //     const newMonth = String(date.getMonth() + 1).padStart(2, '0'); // Add 1 to month because it's 0-indexed
+        //     const newYear = date.getFullYear();
+        
+        //     submission.Date = `${newDay}-${newMonth}-${newYear}`;
+        // });
+        
 
 
         return res.status(200).send(submissions);
@@ -832,5 +872,107 @@ exports.deleteMaterial = async (req, res) => {
         });
     }
 };
+
+exports.getTraineesForTraining2 = async (req, res) => {
+    // Query to join Trainee and Chats tables and fetch common trainees for a specific TrainingID
+    const SQL = `
+        SELECT DISTINCT
+            t.TraineeID, 
+            t.Name 
+        FROM 
+            Trainee t
+        INNER JOIN 
+            Chats c 
+        ON 
+            t.TraineeID = c.TraineeID
+        WHERE 
+            t.TrainingID = ?
+    `;
+
+    try {
+        const { t_id } = req.params; // Get TrainingID from request params
+
+        const TrainingID = t_id;
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [TrainingID]);
+
+        if (result.length === 0) {
+            return res.status(400).send({
+                status: "fail",
+                message: "No matching trainees found for this training or invalid TrainingID",
+            });
+        }
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            data: result, // List of TraineeID and Name
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error retrieving trainees",
+            error: err.message,
+        });
+    }
+};
+
+exports.sendChat = async (req, res) => {
+
+    const SQL = "INSERT INTO Chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
+    try {
+        const { TraineeID, TrainingID, Message } = req.body; // Get TrainingID from request params
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [TraineeID, TrainingID, Message, 0]);
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            message: "Trainee chat inserted successfully"
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error inserting chat",
+            error: err.message,
+        });
+    }
+}
+
+exports.getChat = async (req,res) => {
+    // Query to join Training and Trainee tables and fetch Trainees
+    const SQL = "SELECT * FROM Chats WHERE TraineeID = ?";
+
+    try {
+        const { TraineeID } = req.params; // Get TrainingID from request params
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [TraineeID]);
+
+        if (result.length === 0) {
+            return res.status(200).send({
+                status: "success",
+                message: "No chats found for this trainee",
+            });
+        }
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            data: result, // List of TraineeID and Name
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error retrieving trainees",
+            error: err.message,
+        });
+    }
+}
 
 

@@ -1,5 +1,6 @@
 const Qexecution = require("./query");
 const webpush = require("web-push");
+const sharp = require("sharp");
 
 exports.getTraineeDetails = async (req, res) => {
     const SQL = "SELECT * FROM Trainee WHERE TraineeID=?";
@@ -94,10 +95,9 @@ exports.Example = async (req, res) => {
     }
 };
 
-exports.Photo = async (req, res) => {
-    const { TrainingID, TraineeID, newDate} = req.body;
-    // const { newDate, DayNumber } = getCurrentDateAndDay();
 
+exports.Photo = async (req, res) => {
+    const { TrainingID, TraineeID, newDate } = req.body;
     const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
     const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Photo) VALUES(?,?,?,?,?)";
     const SQL3 = "UPDATE Submissions SET Options = ?, Photo = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
@@ -111,18 +111,22 @@ exports.Photo = async (req, res) => {
             });
         }
 
-        const photoBuffer = photo.buffer;
+        // Compress the image using Sharp
+        const compressedBuffer = await sharp(photo.buffer)
+            .resize(800, 800, { fit: "inside" }) // Resize to 800x800 pixels (adjust as needed)
+            .toFormat("jpeg", { quality: 70 }) // Convert to JPEG with 70% quality
+            .toBuffer();
 
         const result1 = await Qexecution.queryExecute(SQL1, [TrainingID, TraineeID, newDate]);
-        let pointsAwarded = 15;  // Points for Photo submission
+        let pointsAwarded = 15; // Points for Photo submission
 
         if (result1.length !== 0) {
             let currentOptions = result1[0]["Options"] || "";
             const newOptions = currentOptions + ",3";
-            await Qexecution.queryExecute(SQL3, [newOptions, photoBuffer, TraineeID, TrainingID, newDate]);
+            await Qexecution.queryExecute(SQL3, [newOptions, compressedBuffer, TraineeID, TrainingID, newDate]);
         } else {
             const newOptions = "3";
-            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, newDate, newOptions, photoBuffer]);
+            await Qexecution.queryExecute(SQL2, [TraineeID, TrainingID, newDate, newOptions, compressedBuffer]);
         }
 
         // Call the updateTraineeScore function to update the score
@@ -141,6 +145,7 @@ exports.Photo = async (req, res) => {
         });
     }
 };
+
 
 exports.Refer = async (req, res) => {
     const SQL1 = "SELECT Options, Refer FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
@@ -587,4 +592,27 @@ exports.subscribe = async (req, res) => {
   };
   
 
+exports.sendChat = async (req, res) => {
+
+    const SQL = "INSERT INTO Chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
+    try {
+        const { TraineeID, TrainingID, Message } = req.body; // Get TrainingID from request params
+
+        // Execute the JOIN query
+        const result = await Qexecution.queryExecute(SQL, [TraineeID, TrainingID, Message, 1]);
+
+        // Success response with trainee data
+        res.status(200).send({
+            status: "success",
+            message: "Trainee chat inserted successfully"
+        });
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error inserting chat",
+            error: err.message,
+        });
+    }
+}
 

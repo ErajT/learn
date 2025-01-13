@@ -41,5 +41,8 @@ router.route('/subscribe')
 router.route('/saveSubscription')
     .post(LeaderboardHandler.saveSubscription);
 
+router.route('/sendChat')
+    .post(LeaderboardHandler.sendChat);
+
 
 module.exports = router

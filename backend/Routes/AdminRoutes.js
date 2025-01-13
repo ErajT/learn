@@ -46,10 +46,22 @@ router.route('/getAllTraineesForTraining/:TrainingID')
 router.route('/approve')
     .post(AdminHandler.approve);
 
+    router.route('/disapprove')
+    .post(AdminHandler.disapprove);
+
 router.route('/getSubmissionsOfTrainee/:TrainingID/:TraineeID')
     .get(AdminHandler.getSubmissionsOfTrainee);
 
 router.route('/deleteMaterial/:TrainingID/:MaterialNumber')
     .get(AdminHandler.deleteMaterial);
+
+router.route('/sendChat')
+    .post(AdminHandler.sendChat);
+
+router.route('/getTraineesForChat/:t_id')
+    .get(AdminHandler.getTraineesForTraining2);
+
+router.route('/getChat/:TraineeID')
+    .get(AdminHandler.getChat);
 
 module.exports = router
