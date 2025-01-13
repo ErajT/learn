@@ -19,6 +19,7 @@ import Material from "./components/Material";
 import Submission from "./components/Submission";
 import Submissiont from "./components/Submissiont";
 import Trainee from "./components/Trainee";
+import Chatbot from "./components/Chatbot";
 import Login from "./components/login";
 import ForgotPass from "./components/ForgotPass";
 import ResetPass from "./components/ResetPass";
@@ -77,6 +78,7 @@ const App = () => {
     "/submission",
     "/leaderboard/:weekId",
     "/quotation",
+    "/chatbot"
   ];
 
   const AdminSideRoutes = ["/admin"];
@@ -137,6 +139,7 @@ const App = () => {
               <Route path="/leaderboard/:weekId" element={<DetailedLeaderboard />} />
               <Route path="/submission" element={<Submission />} />
               <Route path="/quotation" element={<Quotations />} />
+              <Route path="/chatbot" element={<Chatbot />} />
             </Route>
 
             {/* Catch-all Route */}

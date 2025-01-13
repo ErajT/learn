@@ -115,10 +115,10 @@ const PageWrapper = styled.div`
   gap: 20px;
 `;
 const Title = styled.h2`
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #2b6777;
-  margin-bottom: 5px;
+  // margin-bottom: 5px;
   text-align: center; /* Centers the title horizontally */
   width: 100%; /* Ensures the title takes up full width */
 
