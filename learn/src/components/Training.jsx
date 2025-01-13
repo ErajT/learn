@@ -177,8 +177,8 @@ const HomePage = () => {
         image: "https://cdn.pixabay.com/photo/2013/07/13/01/18/pdf-155498_640.png",
       },
       trainee: {
-        title: "Trainee",
-        description: "View and manage trainees.",
+        title: "Participant",
+        description: "View and manage Participants.",
         image: "https://img.freepik.com/free-vector/seminar-concept-illustration_114360-7855.jpg",
       },
       leaderboard: {
@@ -188,7 +188,7 @@ const HomePage = () => {
       },
       submission: {
         title: "Submission",
-        description: "Check the trainee submissions.",
+        description: "Check the Participant submissions.",
         image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
       },
       quotation: { // Data for the fifth box

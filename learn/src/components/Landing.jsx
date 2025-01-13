@@ -703,7 +703,7 @@ const App = () => {
   <SectionContent>
     <SectionHeading>What Clients Need</SectionHeading>
     <Grid container spacing={4}>
-      {["Trainees can document their training application through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
+      {["Participants can document their training application through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
         <Grid item xs={12} sm={4} key={index}>
           <Card
             sx={{

@@ -110,7 +110,7 @@ const TrainingPage = () => {
   };
   const fetchSubmission = async (traineeId) => {
     try {
-      const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+      const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
 
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
@@ -246,7 +246,7 @@ response.data.forEach((submission, index) => {
       return;
     }
 
-    const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+    const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
 
     const requestBody = {
       TrainingID: trainingId,
@@ -266,6 +266,46 @@ response.data.forEach((submission, index) => {
       }
     } catch (err) {
       setSnackbarMessage("An error occurred while approving trainees.");
+      setSnackbarSeverity("error");
+    } finally {
+      setSnackbarOpen(true);
+    }
+  };
+  const handleDisApprove = async () => {
+    if (!selectedDate) {
+      setSnackbarMessage("Please select a date.");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (selectedTrainees.length === 0) {
+      setSnackbarMessage("Please select at least one trainee.");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
+
+    const requestBody = {
+      TrainingID: trainingId,
+      TraineeIDs: selectedTrainees,
+      Date: formattedDate,
+    };
+
+    try {
+      const response = await axios.post(`${backendUrl}/admin/disapprove`, requestBody);
+
+      if (response.status === 200 && response.data?.message) {
+        setSnackbarMessage("Disapproved");
+        setSnackbarSeverity("success");
+      } else {
+        setSnackbarMessage("Failed to approve Participants.");
+        setSnackbarSeverity("error");
+      }
+    } catch (err) {
+      setSnackbarMessage("An error occurred while approving Participants.");
       setSnackbarSeverity("error");
     } finally {
       setSnackbarOpen(true);
@@ -346,12 +386,27 @@ response.data.forEach((submission, index) => {
         onClick={handleApprove}
         sx={{
           backgroundColor: "#2b6777",
+          marginTop: "20px",
           "&:hover": {
             backgroundColor: "#1b4d56",
           },
         }}
       >
         Approve
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleDisApprove}
+        sx={{
+          backgroundColor: "#2b6777",
+          marginTop: "20px",
+          "&:hover": {
+            backgroundColor: "#1b4d56",
+          },
+        }}
+      >
+        Disapprove
       </Button>
       <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
       <Button
@@ -360,6 +415,7 @@ response.data.forEach((submission, index) => {
   onClick={handleSelectAll}
   sx={{
     backgroundColor: "#2b6777",
+    marginTop: "20px",
     "&:hover": {
       backgroundColor: "#1b4d56",
     },

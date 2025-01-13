@@ -112,7 +112,7 @@ const TrainingPage = () => {
   };
   const fetchSubmission = async (traineeId) => {
     try {
-      const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+      const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
 
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
@@ -197,12 +197,12 @@ response.data.forEach((submission, index) => {
 });
 
 
-        doc.save(`trainee-${traineeId}-submissions.pdf`);
+        doc.save(`Participant-${traineeId}-submissions.pdf`);
         setSnackbarMessage("PDF generated successfully!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
       } else {
-        setSnackbarMessage("No submissions found for this trainee.");
+        setSnackbarMessage("No submissions found for this Participant.");
         setSnackbarSeverity("warning");
         setSnackbarOpen(true);
       }

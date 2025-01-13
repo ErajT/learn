@@ -172,7 +172,7 @@ const FullLeaderboard = () => {
         );
 
         if (response.data.status === "success") {
-          if (response.data.message === "All trainees fetched successfully.") {
+          if (response.data.message === "All Participants fetched successfully.") {
             setLeaderboardData(response.data.allTrainees || []);
           } else {
             setMessage(response.data.message || "Failed to fetch leaderboard.");

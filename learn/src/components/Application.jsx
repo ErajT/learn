@@ -330,7 +330,7 @@ useEffect(() => {
   };
     selectedDate.setDate(selectedDate.getDate());
   
-    // Format the selected date in yyyy-mm-dd format
+    // Format the selected date in DD-MM-YYYY format
     const yyyy = selectedDate.getFullYear();
     const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const dd = String(selectedDate.getDate()).padStart(2, '0');
@@ -356,7 +356,7 @@ useEffect(() => {
     const selectedDateObj = new Date();
     selectedDateObj.setDate(selectedDateObj.getDate() + difference);
   
-    // Format the selected date in yyyy-mm-dd format
+    // Format the selected date in DD-MM-YYYY format
     const yyyy = selectedDateObj.getFullYear();
     const mm = String(selectedDateObj.getMonth() + 1).padStart(2, '0');
     const dd = String(selectedDateObj.getDate()).padStart(2, '0');
@@ -384,7 +384,7 @@ useEffect(() => {
 
   const handleSubmitExample = () => {
     const wordCount = exampleText.trim().split(/\s+/).length;
-    if (wordCount < 150) {
+    if (wordCount < 1) {
       setSnackbar({ open: true, message: "The example must be at least 150 words.", severity: "error" });
       return;
     }
@@ -424,11 +424,11 @@ useEffect(() => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setSnackbar({ open: true, message: "Trainee referred successfully!", severity: "success" });
+        setSnackbar({ open: true, message: "Participant referred successfully!", severity: "success" });
       })
       .catch((error) => {
-        setSnackbar({ open: true, message: "Error referring trainee.", severity: "error" });
-        console.error("Error referring trainee:", error);
+        setSnackbar({ open: true, message: "Error referring Participant.", severity: "error" });
+        console.error("Error referring Participant:", error);
       });
   };
 
@@ -522,7 +522,7 @@ useEffect(() => {
               <h3>Reference</h3>
               <Input
                 type="email"
-                placeholder="Enter trainee email"
+                placeholder="Enter Participant email"
                 value={referenceEmail}
                 onChange={(e) => setReferenceEmail(e.target.value)}
               />

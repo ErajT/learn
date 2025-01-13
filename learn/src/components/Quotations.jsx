@@ -139,7 +139,7 @@ const Quotations = () => {
   const handleSendQuotation = async (e) => {
     e.preventDefault();
     if (quotation.trim() === "") {
-      setSnackbarMessage("Quotation cannot be empty!");
+      setSnackbarMessage("Notification cannot be empty!");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
@@ -158,11 +158,11 @@ const Quotations = () => {
         message: quotation,
       });
 
-      setSnackbarMessage("Quotation sent successfully!");
+      setSnackbarMessage("Notification sent successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
-      setSnackbarMessage("Failed to send quotation. Please try again.");
+      setSnackbarMessage("Failed to send notification. Please try again.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
@@ -179,14 +179,14 @@ const Quotations = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container>
-        <Heading>Send Quotation</Heading>
+        <Heading>Send Notification</Heading>
         <Form onSubmit={handleSendQuotation}>
-          <Label htmlFor="quotation">Enter Quotation:</Label>
+          <Label htmlFor="quotation">Enter Notification:</Label>
           <TextArea
             id="quotation"
             value={quotation}
             onChange={(e) => setQuotation(e.target.value)}
-            placeholder="Type your quotation here..."
+            placeholder="Type your notificationn here..."
           />
           <Button type="submit">Send to Participants</Button>
         </Form>

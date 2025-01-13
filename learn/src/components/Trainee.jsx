@@ -288,13 +288,13 @@ const TraineePage = () => {
           fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
         }}
       >
-        Trainee Management
+        Participant Management
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
         <TextField
           variant="outlined"
-          placeholder="Search Trainee by Name"
+          placeholder="Search Participant by Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -332,7 +332,7 @@ const TraineePage = () => {
             width: { xs: "100%", sm: "auto" },
           }}
         >
-          Add Trainee
+          Add Participant
         </Button>
         <Button
           variant="contained"
@@ -402,7 +402,7 @@ const TraineePage = () => {
       </Box>
 
       <Dialog open={modalOpen} onClose={handleCloseModal} fullWidth maxWidth="sm">
-        <DialogTitle>Add New Trainee</DialogTitle>
+        <DialogTitle>Add New Participant</DialogTitle>
         <DialogContent>
           <TextField
             label="Name"
