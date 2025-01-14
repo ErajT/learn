@@ -64,4 +64,7 @@ router.route('/getTraineesForChat/:t_id')
 router.route('/getChat/:TraineeID')
     .get(AdminHandler.getChat);
 
+router.route('/disallowLogin')
+    .post(AdminHandler.disallow);
+
 module.exports = router

@@ -75,8 +75,8 @@ exports.addTrainee = async (req, res) => {
 
     // Queries
     const SQL_INSERT_TRAINEE = `
-        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const SQL_GET_TRAINEE_ID = `
         SELECT TraineeID FROM Trainee WHERE Email = ? AND PhoneNumber = ? ORDER BY TraineeID DESC LIMIT 1
@@ -91,7 +91,9 @@ exports.addTrainee = async (req, res) => {
             Email,
             PhoneNumber,
             Score,
+            1
         ]);
+        console.log("done")
 
         // Check if the insertion was successful
         if (result.affectedRows > 0) {
@@ -132,7 +134,7 @@ exports.addManyTrainees = async (req, res) => {
 
     // SQL Query to Insert Multiple Trainees
     const SQL_INSERT_MANY_TRAINEES = `
-        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score)
+        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
         VALUES ?
     `;
     const SQL_GET_TRAINEE_IDS = `
@@ -147,6 +149,7 @@ exports.addManyTrainees = async (req, res) => {
         trainee.Email,
         trainee.PhoneNumber,
         0, // Default Score to 0
+        1
     ]);
     const emails = trainees.map(trainee => trainee.Email);
     const phoneNumbers = trainees.map(trainee => trainee.PhoneNumber);
@@ -292,7 +295,7 @@ exports.getAllTrainings = async (req, res) => {
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ?";
+    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ? AND Allowed = 1";
 
     try {
         const { TrainingID } = req.params; // Get TrainingID from request params
@@ -967,6 +970,38 @@ exports.getChat = async (req,res) => {
             message: "Error retrieving trainees",
             error: err.message,
         });
+    }
+}
+
+exports.disallow = async (req,res) => {
+    const SQL1 = "UPDATE Trainee SET Allowed = 0 WHERE TraineeID = ?";
+    try{
+        const {TraineeIDs} = req.body;
+        // console.log(TraineeIDs)
+                // Validate input
+                if (!TraineeIDs || !Array.isArray(TraineeIDs)) {
+                    return res.status(400).send({
+                        status: "fail",
+                        message: "Invalid or missing TraineeIDs array",
+                    });
+                }
+        
+                // Execute the SQL query for each trainee ID
+                for (const id of TraineeIDs) {
+                    const res = await Qexecution.queryExecute(SQL1, [id]);
+                }
+
+    // Success response with trainee data
+        res.status(200).send({
+            status: "success", // List of TraineeID and Name
+        });
+        } catch (err) {
+            console.error("Error:", err.message);
+            res.status(500).send({
+                status: "fail",
+                message: "Error disallowing login of trainees",
+                error: err.message,
+            });
     }
 }
 

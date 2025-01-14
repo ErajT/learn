@@ -174,7 +174,7 @@ module.exports = {
 
     resetPwd: (req, res) => {
         const code = req.params.token;
-        console.log(code);
+        // console.log(code);
         if (code) {
             verify(code, "eraj20", (err, decoded) => {
                 if (err) {
@@ -214,8 +214,8 @@ module.exports = {
             token = token.slice(7);
         }
         const hashedtoken = crypto.createHash('sha256').update(token).digest('hex');
-        console.log("token is ",hashedtoken);
-        console.log("token done");
+        // console.log("token is ",hashedtoken);
+        // console.log("token done");
         logout(hashedtoken,req,res);
     }
 }

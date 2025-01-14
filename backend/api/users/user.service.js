@@ -17,7 +17,7 @@ module.exports= {
                     // Insert the new user
                     pool.query(
                         `insert into registration(email, password, position, id, Allowed) values(?,?,?,?,?)`,
-                        [data.email, data.password, data.position, data.id, 0],
+                        [data.email, data.password, data.position, data.id, 1],
                         (error, results) => {
                             if (error) {
                                 return callBack(error);
@@ -64,7 +64,7 @@ module.exports= {
             const result= await Qexecution.queryExecute(SQL);
             const emails= result.map(data=> data.email)
             if(emails.includes(email)) {
-                console.log('true');
+                // console.log('true');
                 const SQL2= "DELETE FROM session WHERE email=?"
                 const result2= await Qexecution.queryExecute(SQL2,[email]);
                 return;
@@ -79,7 +79,7 @@ module.exports= {
     logout: async (token,req,res)=>{
         const SQL= "DELETE FROM session WHERE token=?";
         try{
-            console.log("token: ",token)
+            // console.log("token: ",token)
             const result= await Qexecution.queryExecute(SQL,[token]);
             if(result.affectedRows===0){
                 throw Error('You aren\'t logged in' );

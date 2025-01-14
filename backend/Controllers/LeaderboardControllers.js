@@ -471,7 +471,7 @@ exports.getDetails = async (req, res) => {
         ON 
             Trainee.CompanyID = Company.CompanyID 
         WHERE 
-            Trainee.Email = ?`;
+            Trainee.Email = ? and Trainee.Allowed = 1`;
 
     try {
         const { email } = req.params; // Get email from request parameters
@@ -485,7 +485,7 @@ exports.getDetails = async (req, res) => {
         if (result.length === 0) {
             res.status(400).send({
                 status: "fail",
-                message: "No data is available",
+                message: "Login not allowed",
             });
         } else {
             res.status(200).send({
