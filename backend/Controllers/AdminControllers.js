@@ -23,12 +23,14 @@ const updateTraineeScore = async (TraineeID, pointsToAdd) => {
 };
 
 exports.addTraining = async (req, res) => {
-    const { companyName, TrainerName, Topic, Date, Description } = req.body;
+    const { companyName, TrainerName, Topic, CategoryID, Description } = req.body;
+
+    console.log(companyName, TrainerName, Topic, CategoryID, Description);
 
     // Queries
     const SQL_CHECK_COMPANY = "SELECT CompanyID FROM company WHERE Name = ?";
     const SQL_INSERT_COMPANY = "INSERT INTO company(Name) VALUES(?)";
-    const SQL_INSERT_TRAINING = "INSERT INTO training(CompanyID, TrainerName, Topic, Date, Description) VALUES(?,?,?,?,?)";
+    const SQL_INSERT_TRAINING = "INSERT INTO training(CompanyID, TrainerName, Topic, category, Description) VALUES(?,?,?,?,?)";
 
     try {
         // Check if the company exists
@@ -46,7 +48,7 @@ exports.addTraining = async (req, res) => {
         }
 
         // Insert training
-        const resultInsertTraining = await Qexecution.queryExecute(SQL_INSERT_TRAINING, [companyID, TrainerName, Topic, Date, Description]);
+        const resultInsertTraining = await Qexecution.queryExecute(SQL_INSERT_TRAINING, [companyID, TrainerName, Topic, CategoryID, Description]);
         const trainingID = resultInsertTraining.insertId; // Get the auto-incremented TrainingID
 
         res.status(200).send({
@@ -257,7 +259,7 @@ exports.getAllLeaderboards = async (req, res) => {
 // API to Get All Trainings with Company Name
 exports.getAllTrainings = async (req, res) => {
     const getAllTrainingsSQL = `
-        SELECT t.TrainingID, t.CompanyID, t.TrainerName, t.Topic, t.Date, t.Description, c.Name AS CompanyName
+        SELECT t.TrainingID, t.CompanyID, t.TrainerName, t.Topic, t.Description, c.Name AS CompanyName
         FROM Training t
         JOIN Company c ON t.CompanyID = c.CompanyID
     `;
@@ -896,13 +898,6 @@ exports.getTraineesForTraining2 = async (req, res) => {
 
         // Execute the JOIN query
         const result = await Qexecution.queryExecute(SQL, [TrainingID]);
-
-        if (result.length === 0) {
-            return res.status(400).send({
-                status: "fail",
-                message: "No matching trainees found for this training or invalid TrainingID",
-            });
-        }
 
         // Success response with trainee data
         res.status(200).send({
