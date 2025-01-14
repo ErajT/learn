@@ -216,9 +216,9 @@ const Login = () => {
       // console.log(response);
 
       if (response.status === 200) {
-        setSnackbarMessage("Login successful!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        // setSnackbarMessage("Login successful!");
+        // setSnackbarSeverity("success");
+        // setSnackbarOpen(true);
 
         if(position == "trainee")
         {
@@ -236,10 +236,13 @@ const Login = () => {
             secure: true, // Ensure secure cookie usage in HTTPS
           });
 
-          setSnackbarMessage("Details fetched and stored successfully!");
+          setSnackbarMessage("Login successful!");
           setSnackbarSeverity("success");
           setSnackbarOpen(true);
         
+        }
+        else{
+          throw new Error("Login not allowed.");
         }
         
         setTimeout(() => {
@@ -249,6 +252,9 @@ const Login = () => {
       else if(position == "admin")
       {
         Cookies.set("position", JSON.stringify("admin"));
+        setSnackbarMessage("Login successful!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
         setTimeout(() => {
           window.location.href = "/admin"; // Redirect on success
         }, 1500);

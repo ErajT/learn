@@ -45,6 +45,7 @@ const TraineePage = () => {
   const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [trainees, setTrainees] = useState([]);
+  const [selectedTrainees, setSelectedTrainees] = useState([]);
   const [newTrainee, setNewTrainee] = useState({
     name: "",
     email: "",
@@ -84,6 +85,7 @@ const TraineePage = () => {
           .then((response) => {
             if (response.data.data) {
               setTrainees(response.data.data);
+              // console.log(response.data.data)
               setSnackbarMessage("Trainees fetched successfully!");
               setSnackbarOpen(true);
             } else {
@@ -168,6 +170,22 @@ const TraineePage = () => {
         setSnackbarOpen(true);
       });
   };
+
+  const handleDisallow = async() => {
+      try {
+        // console.log(selectedTrainees)
+
+        await axios.post(`${backendUrl}/admin/disallowLogin`, {
+          TraineeIDs: selectedTrainees,
+        });
+        setSnackbarMessage("Login disallowed for selected trainees.");
+        setSnackbarOpen(true);
+        // console.log("abcd")
+      } catch {
+        setSnackbarMessage("Failed to disallow login.");
+        setSnackbarOpen(true);
+      }
+    }
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -346,6 +364,34 @@ const TraineePage = () => {
           Upload Excel
           <input type="file" accept=".xlsx, .xls" hidden onChange={handleFileUpload} />
         </Button>
+        <Button
+    variant="contained"
+    onClick={() => {
+      if (selectedTrainees.length === trainees.length) {
+        setSelectedTrainees([]);
+      } else {
+        setSelectedTrainees(trainees.map((t) => t.TraineeID));
+      }
+    }}
+    sx={{
+      backgroundColor: "#2b6777",
+      color: "white",
+      width: { xs: "100%", sm: "auto" },
+    }}
+  >
+    {selectedTrainees.length === trainees.length ? "Deselect All" : "Select All"}
+  </Button>
+  <Button
+    variant="contained"
+    onClick={handleDisallow}
+    sx={{
+      backgroundColor: "#2b6777",
+      color: "white",
+      width: { xs: "100%", sm: "auto" },
+    }}
+  >
+    Disallow Login
+  </Button>
       </Box>
 
       <Box
@@ -360,44 +406,35 @@ const TraineePage = () => {
       >
         {filteredTrainees.map((trainee, index) => (
           <Paper
-            key={index}
-            elevation={4}
-            sx={{
-              padding: 3,
-              borderRadius: "15px",
-              position: "relative",
-              textAlign: "center",
-            }}
-          >
-            {/* <IconButton
-              onClick={() => handleDeleteTrainee(index)}
-              sx={{ position: "absolute", top: 10, right: 10 }}
-            >
-              <DeleteIcon />
-            </IconButton> */}
-            <PersonIcon sx={{ fontSize: 50, mb: 2 }} />
-            <Typography variant="h6" sx={{ wordBreak: "break-word" }}>
-              {trainee.Name}
-            </Typography>
-            <Typography sx={{ wordBreak: "break-word" }}>{trainee.Email}</Typography>
-            <Typography sx={{ wordBreak: "break-word" }}>{trainee.PhoneNumber}</Typography>
-            <Box
-        sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mt: 1,
-        }}
-    >
-        {/* <Typography>Password: </Typography>
-        <IconButton onClick={() => togglePasswordVisibility(index)}>
-            {passwordVisible[index] ? <VisibilityOffIcon /> : <VisibilityIcon />}
-        </IconButton>
-        <Typography sx={{ ml: 1 }}>
-            {passwordVisible[index] ? trainee.password : "••••••••"}
-        </Typography> */}
-    </Box>
-          </Paper>
+          key={index}
+          elevation={4}
+          sx={{
+            padding: 3,
+            borderRadius: "15px",
+            position: "relative",
+            textAlign: "center",
+          }}
+        >
+          <Box sx={{ position: "absolute", top: 10, left: 10 }}>
+            <input
+              type="checkbox"
+              checked={selectedTrainees.includes(trainee.TraineeID)}
+              onChange={(e) => {
+                const updatedSelection = e.target.checked
+                  ? [...selectedTrainees, trainee.TraineeID]
+                  : selectedTrainees.filter((TraineeID) => TraineeID !== trainee.TraineeID);
+                setSelectedTrainees(updatedSelection);
+              }}
+            />
+          </Box>
+          <PersonIcon sx={{ fontSize: 50, mb: 2 }} />
+          <Typography variant="h6" sx={{ wordBreak: "break-word" }}>
+            {trainee.Name}
+          </Typography>
+          <Typography sx={{ wordBreak: "break-word" }}>{trainee.Email}</Typography>
+          <Typography sx={{ wordBreak: "break-word" }}>{trainee.PhoneNumber}</Typography>
+        </Paper>
+        
         ))}
       </Box>
 
