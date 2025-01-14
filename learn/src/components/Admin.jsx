@@ -8,6 +8,8 @@ import Cookies from 'js-cookie'; // Import js-cookie
 import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+
 
 
 const theme = createTheme({
@@ -32,11 +34,26 @@ const TrainingManager = () => {
     trainer: "",
     companyName: "",
     topic: "",
-    date: "",
+    category: "",
     description: ""
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [trainingToDelete, setTrainingToDelete] = useState(null);
+  const categories = [
+    "Early Years Foundation Stage",
+    "Personal development",
+    "Teachership",
+    "Leadership",
+    "Management",
+    "Change management",
+    "Communication",
+    "Resilience",
+    "Facilitation",
+    "Conflict",
+    "Presentation skills",
+    "Time management",
+  ];
+  
 
   useEffect(() => {
     // Fetch the trainings when the component mounts
@@ -47,7 +64,7 @@ const TrainingManager = () => {
             name: training.Topic,
             trainer: training.TrainerName,
             company: training.CompanyName,
-            date: new Date(training.Date).toLocaleDateString(), // Format the date
+            category: training.category,
             companyId: training.CompanyID, // Assuming CompanyId is present
             trainingId: training.TrainingID // Assuming TrainingId is present
           }));
@@ -63,14 +80,15 @@ const TrainingManager = () => {
   const handleCloseModal = () => setOpenModal(false);
 
   const handleAddTraining = async () => {
-    if (newTraining.trainer && newTraining.companyName && newTraining.topic && newTraining.date && newTraining.description) {
+    if (newTraining.trainer && newTraining.companyName && newTraining.topic && newTraining.category && newTraining.description) {
       try {
+        const selectedCategoryId = categories.indexOf(newTraining.category) + 1;
         // First, post the new training
         const response = await axios.post( `${backendUrl}/admin/addTraining`, {
           companyName: newTraining.companyName,
           TrainerName: newTraining.trainer,
           Topic: newTraining.topic,
-          Date: newTraining.date,
+          CategoryID: selectedCategoryId,
           Description: newTraining.description
         });
 
@@ -83,7 +101,7 @@ const TrainingManager = () => {
                   name: training.Topic,
                   trainer: training.TrainerName,
                   company: training.CompanyName,
-                  date: new Date(training.Date).toLocaleDateString(), // Format the date
+                  category: training.Category,
                   companyId: training.CompanyID, // Assuming CompanyId is present
                   trainingId: training.trainingID // Assuming TrainingId is present
                 }));
@@ -95,7 +113,7 @@ const TrainingManager = () => {
             });
 
           // Reset form fields and close the modal
-          setNewTraining({ topic: "", trainer: "", companyName: "", date: "", description: "" });
+          setNewTraining({ topic: "", trainer: "", companyName: "", category: "", description: "" });
           handleCloseModal();
         } else {
           console.error("Failed to add training");
@@ -128,7 +146,7 @@ const TrainingManager = () => {
       name: training.name,
       trainer: training.trainer,
       company: training.company,
-      date: training.date
+      category: training.category
     };
 
     // Save to cookie for 7 days
@@ -260,9 +278,6 @@ const TrainingManager = () => {
                 <Typography variant="body2" color="text.secondary" textAlign="center"  fontSize="1.1rem">
                   Trainer: {training.trainer}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center"  fontSize="1.1rem">
-                  Date: {training.date}
-                </Typography>
               </Box>
             </Link>
             {/* <IconButton
@@ -332,17 +347,23 @@ const TrainingManager = () => {
               setNewTraining({ ...newTraining, companyName: e.target.value })
             }
           />
-          <TextField
-            label=""
-            fullWidth
-            variant="outlined"
-            margin="dense"
-            type="date"
-            value={newTraining.date}
+          <FormControl fullWidth margin="dense">
+          <InputLabel>Category</InputLabel>
+          <Select
+            value={newTraining.category}
             onChange={(e) =>
-              setNewTraining({ ...newTraining, date: e.target.value })
+              setNewTraining({ ...newTraining, category: e.target.value })
             }
-          />
+            label="Category"
+          >
+            {categories.map((category, index) => (
+              <MenuItem key={index} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
           <TextField
             label="Description"
             fullWidth

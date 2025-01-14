@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Select, MenuItem, TextField, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import Cookies from 'js-cookie';
 
 const theme = createTheme({
   typography: {
@@ -62,26 +63,137 @@ const TraineeChatPage = () => {
   const [selectedTrainee, setSelectedTrainee] = useState('');
   const [messageHistory, setMessageHistory] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [trainees, setTrainees] = useState([]);
 
-  const trainees = [
-    { name: 'John Doe', messages: [{ sender: 'trainee', text: 'Hello, I need help with my training.' }] },
-    { name: 'Jane Smith', messages: [{ sender: 'trainee', text: 'I have a question regarding the schedule.' }] },
-    { name: 'Sam Wilson', messages: [{ sender: 'trainee', text: 'Can you explain the training modules?' }] },
-  ];
 
-  const handleTraineeChange = (event) => {
+  useEffect(() => {
+    const fetchTrainees = async () => {
+      try {
+        // Get the selectedTraining object from cookies
+        const selectedTraining = Cookies.get('selectedTraining');
+        
+        if (selectedTraining) {
+          // Parse the JSON string to an object
+          const parsedTraining = JSON.parse(selectedTraining);
+
+          // Extract the trainingId
+          const trainingId = parsedTraining.trainingID;
+          // console.log(parsedTraining);
+
+          // Call the API using the trainingId
+          const response = await fetch(`http://localhost:2000/admin/getTraineesForChat/${trainingId}`);
+          const result = await response.json();
+
+          if (result.status === 'success') {
+            // Transform the data
+            const updatedTrainees = result.data.map(trainee => ({
+              name: trainee.Name,
+              id: trainee.TraineeID,
+              messages: [],
+            }));
+
+            setTrainees(updatedTrainees);
+          }
+        } else {
+          console.error('No selectedTraining cookie found');
+        }
+      } catch (error) {
+        console.error('Error fetching trainees:', error);
+      }
+    };
+
+    fetchTrainees();
+  }, []);
+
+  const handleTraineeChange = async (event) => {
     const traineeName = event.target.value;
     setSelectedTrainee(traineeName);
+  
+    // Find the selected trainee
     const trainee = trainees.find((t) => t.name === traineeName);
-    setMessageHistory(trainee ? trainee.messages : []);
-  };
-
-  const handleMessageSend = () => {
-    if (newMessage.trim()) {
-      setMessageHistory([...messageHistory, { sender: 'user', text: newMessage }]);
-      setNewMessage('');
+  
+    if (trainee) {
+      try {
+        // Fetch the chat messages using the trainee's ID
+        const response = await fetch(`http://localhost:2000/admin/getChat/${trainee.id}`);
+        const result = await response.json();
+  
+        if (result.status === 'success') {
+          // Map through result.data and format messages
+          const formattedMessages = result.data.map((chat) => {
+            const sender = chat.ByTrainee === 1 ? 'trainee' : 'admin';
+            return { sender, text: chat.ChatDetails };
+          });
+  
+          // Update the message history
+          setMessageHistory(formattedMessages);
+        } else {
+          console.error('Failed to fetch messages:', result.message || 'Unknown error');
+          setMessageHistory([]);
+        }
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        setMessageHistory([]);
+      }
+    } else {
+      // If no trainee is found, clear the message history
+      setMessageHistory([]);
     }
   };
+  
+  
+
+  const handleMessageSend = async () => {
+    if (newMessage.trim()) {
+      // Find the selected trainee from the list
+      const trainee = trainees.find((t) => t.name === selectedTrainee);
+
+      const selectedTraining = Cookies.get('selectedTraining');
+        
+          // Parse the JSON string to an object
+          const parsedTraining = JSON.parse(selectedTraining);
+
+          // Extract the trainingId
+          const trainingId = parsedTraining.trainingID;
+        
+  
+      if (trainee) {
+        try {
+          // Prepare the request body
+          const requestBody = {
+            TrainingID: trainingId, // Replace this with the actual training ID if dynamic
+            TraineeID: trainee.id,
+            Message: newMessage.trim(),
+          };
+  
+          // Send the message to the API
+          const response = await fetch('http://localhost:2000/leaderboard/sendChat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          });
+  
+          const result = await response.json();
+  
+          if (result.status === 'success') {
+            // Add the message to the message history locally
+            setMessageHistory([...messageHistory, { sender: 'admin', text: newMessage }]);
+            setNewMessage('');
+          } else {
+            console.error('Failed to send message:', result.message || 'Unknown error');
+          }
+        
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      } else {
+        console.error('No trainee selected');
+      }
+    }
+  };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -119,7 +231,7 @@ const TraineeChatPage = () => {
           <>
             <ChatContainer>
               {messageHistory.map((msg, index) => (
-                <ChatBubble key={index} isUser={msg.sender === 'user'}>
+                <ChatBubble key={index} isUser={msg.sender === 'trainee'}>
                   {msg.text}
                 </ChatBubble>
               ))}
