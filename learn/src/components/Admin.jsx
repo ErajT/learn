@@ -265,7 +265,7 @@ const TrainingManager = () => {
                 </Typography>
               </Box>
             </Link>
-            <IconButton
+            {/* <IconButton
               sx={{
                 position: "absolute",
                 top: 8,
@@ -274,12 +274,12 @@ const TrainingManager = () => {
                 ":hover": { backgroundColor: "red", color: "white" },
               }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent routing when clicking delete icon
+                e.stopPropagation(); 
                 openDeleteDialog(index);
               }}
             >
               <DeleteIcon />
-            </IconButton>
+            </IconButton> */}
           </Box>
         ))}
       </Box>
