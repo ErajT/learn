@@ -167,7 +167,7 @@ const TraineeChatPage = () => {
           };
   
           // Send the message to the API
-          const response = await fetch('http://localhost:2000/leaderboard/sendChat', {
+          const response = await fetch('http://localhost:2000/admin/sendChat', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
