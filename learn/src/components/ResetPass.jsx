@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams } from "react-router-dom";  // Import useParams to get token from URL
+import { backendUrl } from "./constants";
 
 // Styled Components
 const MainContainer = styled.div`
@@ -98,7 +99,7 @@ const Snackbar = styled.div`
 `;
 
 const ResetPass = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const { token } = useParams(); // Extract token from URL
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

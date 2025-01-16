@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Snackbar, Alert } from "@mui/material";
 import Cookies from "js-cookie";
+import { backendUrl } from "./constants";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
@@ -292,7 +293,7 @@ const Input = styled.input`
 `;
 
 const Application = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri"];
   // Get today's index

@@ -5,7 +5,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-
+import { backendUrl } from "./constants";
 
 // Animations
 
@@ -326,7 +326,7 @@ const GlobalStyles = styled("style")(() => ({
 
 // Main Leaderboard Component
 const Leaderboard = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [topThree, setTopThree] = useState([]);
   const [loading, setLoading] = useState(true);

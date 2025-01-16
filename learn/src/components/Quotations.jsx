@@ -5,6 +5,7 @@ import axios from "axios";
 import { Snackbar, Alert, Box, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -153,7 +154,7 @@ const Quotations = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:2000/leaderboard/subscribe", {
+      const response = await axios.post( `${backendUrl}/leaderboard/subscribe`, {
         TrainingID: trainingID,
         message: quotation,
       });

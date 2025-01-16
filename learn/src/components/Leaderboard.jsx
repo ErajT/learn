@@ -8,6 +8,7 @@ import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
 // import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -110,7 +111,7 @@ const Logo = styled("img")(() => ({
 
 
 const LeaderboardPage = () => {
-  const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
+  // const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [weeks, setWeeks] = useState([]);
   const [dates, setDates] = useState([]);
   const [leaderboards, setLeaderboards] = useState(null); 
@@ -128,7 +129,7 @@ const LeaderboardPage = () => {
     const fetchWeeks = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:2000/admin/getweeks/${trainingID}`
+          `${backendUrl}/admin/getweeks/${trainingID}`
         );
 
         if (response.data.status === "success") {
@@ -160,7 +161,7 @@ const LeaderboardPage = () => {
       }
 
       const response = await axios.get(
-        `http://localhost:2000/admin/getAllLeaderboards/${trainingID}`
+        `${backendUrl}/admin/getAllLeaderboards/${trainingID}`
       );
 
       if (response.data.status === "success") {

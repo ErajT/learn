@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'; // Import js-cookie
 // import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 
 const theme = createTheme({
@@ -156,7 +157,7 @@ const FeatureBox = styled.div`
 
 
 const HomePage = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [TrainingName, setTrainingName] = useState(null);
   const [companyName, setCompanyName] = useState(null);
 

@@ -24,6 +24,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -41,7 +42,7 @@ const GlobalStyles = styled("style")(() => ({
 
 const TrainingPage = () => {
   const theme = useTheme();
-  const backendUrl = "http://localhost:2000"; // Use this in API calls
+  // const backendUrl = "http://localhost:2000"; // Use this in API calls
 
   const [trainees, setTrainees] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);

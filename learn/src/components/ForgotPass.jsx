@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { backendUrl } from "./constants";
 
 // Styled Components
 const MainContainer = styled.div`
@@ -97,7 +98,7 @@ const Snackbar = styled.div`
 `;
 
 const ForgotPass = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

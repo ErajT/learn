@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios"; // Import axios
 import Cookies from "js-cookie"; // Import js-cookie for managing cookies
+import { backendUrl } from "./constants";
 
 // Styled Components (same as before)
 const MainContainer = styled.div`
@@ -179,7 +180,7 @@ const Snackbar = styled.div`
 `;
 
 const Login = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

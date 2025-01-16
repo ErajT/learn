@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -38,7 +39,7 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const MaterialPage = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState("");

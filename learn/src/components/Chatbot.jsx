@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import Cookies from 'js-cookie';
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -81,7 +82,7 @@ const TraineeChatPage = () => {
           // console.log(parsedTraining);
 
           // Call the API using the trainingId
-          const response = await fetch(`http://localhost:2000/admin/getTraineesForChat/${trainingId}`);
+          const response = await fetch(`${backendUrl}/admin/getTraineesForChat/${trainingId}`);
           const result = await response.json();
 
           if (result.status === 'success') {
@@ -115,7 +116,7 @@ const TraineeChatPage = () => {
     if (trainee) {
       try {
         // Fetch the chat messages using the trainee's ID
-        const response = await fetch(`http://localhost:2000/admin/getChat/${trainee.id}`);
+        const response = await fetch(`${backendUrl}/admin/getChat/${trainee.id}`);
         const result = await response.json();
   
         if (result.status === 'success') {
@@ -167,7 +168,7 @@ const TraineeChatPage = () => {
           };
   
           // Send the message to the API
-          const response = await fetch('http://localhost:2000/leaderboard/sendChat', {
+          const response = await fetch(`${backendUrl}/admin/sendChat`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

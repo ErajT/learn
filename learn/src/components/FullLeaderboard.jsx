@@ -5,6 +5,7 @@ import Cookies from "js-cookie"; // Add js-cookie for cookie handling
 // import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { backendUrl } from "./constants";
 
 const theme = createTheme({
   typography: {
@@ -148,7 +149,7 @@ const Message = styled.div`
 `;
 
 const FullLeaderboard = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [message, setMessage] = useState(null);

@@ -5,6 +5,7 @@ import { Box, Typography, Button } from '@mui/material';
 import jsPDF from 'jspdf';
 import DownloadIcon from '@mui/icons-material/Download'; 
 import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
+import { backendUrl } from "./constants";
 
 const Container = styled(Box)`
   // background-color: #f5f5f5;
@@ -82,7 +83,7 @@ const GeneratePDFButton = styled(Button)`
 `;
 
 const DetailedLeaderboard = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const { weekId } = useParams(); // Get the weekId from URL parameters
   const [leaderboardData, setLeaderboardData] = useState([]);

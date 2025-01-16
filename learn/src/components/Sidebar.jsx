@@ -6,6 +6,7 @@ import { FaFileAlt } from "react-icons/fa";
 import cookie from "js-cookie";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { backendUrl } from "./constants";
 
 // Styled Components
 const SidebarContainer = styled.div`
@@ -116,7 +117,7 @@ const Sidebar = () => {
 
     try {
       const token = JSON.parse(tok);
-      const response = await fetch("http://localhost:2000/users/logout", {
+      const response = await fetch(`${backendUrl}/users/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

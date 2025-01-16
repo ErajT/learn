@@ -301,6 +301,7 @@ import { IconButton, CircularProgress } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import { backendUrl } from "./constants";
 
 import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
@@ -508,7 +509,7 @@ const HomePage = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const backendUrl = "http://localhost:2000";  
+  // const backendUrl = "http://localhost:2000";  
 
   const [traineeDetails, setTraineeDetails] = useState({
     name: "",

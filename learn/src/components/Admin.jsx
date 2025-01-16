@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { backendUrl } from "./constants";
 
 
 
@@ -27,7 +28,7 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const TrainingManager = () => {
-  const backendUrl = "http://localhost:2000";  // Use this in API calls
+  // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [openModal, setOpenModal] = useState(false);
   const [trainings, setTrainings] = useState([]);
   const [newTraining, setNewTraining] = useState({
