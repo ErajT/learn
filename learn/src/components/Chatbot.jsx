@@ -38,7 +38,7 @@ const ChatBubble = styled(Box)(({ isUser }) => ({
   wordWrap: 'break-word',
 }));
 
-const SendButton = styled(Button)({
+const SendButton1= styled(Button)({
   backgroundColor: '#2b6777',
   color: '#fff',
   '&:hover': {
@@ -69,23 +69,15 @@ const TraineeChatPage = () => {
   useEffect(() => {
     const fetchTrainees = async () => {
       try {
-        // Get the selectedTraining object from cookies
         const selectedTraining = Cookies.get('selectedTraining');
         
         if (selectedTraining) {
-          // Parse the JSON string to an object
           const parsedTraining = JSON.parse(selectedTraining);
-
-          // Extract the trainingId
           const trainingId = parsedTraining.trainingID;
-          // console.log(parsedTraining);
-
-          // Call the API using the trainingId
           const response = await fetch(`http://localhost:2000/admin/getTraineesForChat/${trainingId}`);
           const result = await response.json();
 
           if (result.status === 'success') {
-            // Transform the data
             const updatedTrainees = result.data.map(trainee => ({
               name: trainee.Name,
               id: trainee.TraineeID,
@@ -108,24 +100,18 @@ const TraineeChatPage = () => {
   const handleTraineeChange = async (event) => {
     const traineeName = event.target.value;
     setSelectedTrainee(traineeName);
-  
-    // Find the selected trainee
     const trainee = trainees.find((t) => t.name === traineeName);
   
     if (trainee) {
       try {
-        // Fetch the chat messages using the trainee's ID
         const response = await fetch(`http://localhost:2000/admin/getChat/${trainee.id}`);
         const result = await response.json();
   
         if (result.status === 'success') {
-          // Map through result.data and format messages
           const formattedMessages = result.data.map((chat) => {
             const sender = chat.ByTrainee === 1 ? 'trainee' : 'admin';
             return { sender, text: chat.ChatDetails };
           });
-  
-          // Update the message history
           setMessageHistory(formattedMessages);
         } else {
           console.error('Failed to fetch messages:', result.message || 'Unknown error');
@@ -136,7 +122,6 @@ const TraineeChatPage = () => {
         setMessageHistory([]);
       }
     } else {
-      // If no trainee is found, clear the message history
       setMessageHistory([]);
     }
   };
@@ -145,28 +130,20 @@ const TraineeChatPage = () => {
 
   const handleMessageSend = async () => {
     if (newMessage.trim()) {
-      // Find the selected trainee from the list
       const trainee = trainees.find((t) => t.name === selectedTrainee);
 
       const selectedTraining = Cookies.get('selectedTraining');
-        
-          // Parse the JSON string to an object
           const parsedTraining = JSON.parse(selectedTraining);
-
-          // Extract the trainingId
           const trainingId = parsedTraining.trainingID;
         
   
       if (trainee) {
         try {
-          // Prepare the request body
           const requestBody = {
-            TrainingID: trainingId, // Replace this with the actual training ID if dynamic
+            TrainingID: trainingId,
             TraineeID: trainee.id,
             Message: newMessage.trim(),
           };
-  
-          // Send the message to the API
           const response = await fetch('http://localhost:2000/admin/sendChat', {
             method: 'POST',
             headers: {
@@ -178,7 +155,6 @@ const TraineeChatPage = () => {
           const result = await response.json();
   
           if (result.status === 'success') {
-            // Add the message to the message history locally
             setMessageHistory([...messageHistory, { sender: 'admin', text: newMessage }]);
             setNewMessage('');
           } else {
@@ -246,13 +222,13 @@ const TraineeChatPage = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
               />
-              <SendButton
+              <SendButton1
                 variant="contained"
                 onClick={handleMessageSend}
                 sx={{ height: '100%' }}
               >
                 Send
-              </SendButton>
+              </SendButton1>
             </Box>
           </>
         )}
