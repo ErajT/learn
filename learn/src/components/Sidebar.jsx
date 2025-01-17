@@ -57,6 +57,23 @@ const Logo = styled.img`
     height: 50px;
   }
 `;
+const Logo1 = styled.img`
+  width: 60px;
+  height: 60px; /* Adjusted height to make logos smaller */
+  object-fit: contain;
+  margin-top:20px
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+  }
+`;
+
 
 
 const NavItems = styled.div`
@@ -148,8 +165,6 @@ const Sidebar = () => {
     <SidebarContainer>
       <LogoContainer>
         <Logo src="Logo1.png" alt="Logo 2" />
-        <Logo src="/logo-synergify.png" alt="Logo 1" />
-        <Logo src="Logo2.png" alt="Logo 3" />
       </LogoContainer>
       <NavItems>
         <NavItem to="/home" title="Home">
@@ -168,6 +183,8 @@ const Sidebar = () => {
           <FaFileAlt />
         </NavItem>
       </NavItems>
+      <Logo1 src="/logo-synergify.png" alt="Logo 1" />
+        <Logo1 src="Logo2.png" alt="Logo 3" />
       <LogoutButton onClick={handleLogout} title="Logout">
         <FaSignOutAlt />
       </LogoutButton>
