@@ -29,7 +29,7 @@ const UserInfoBanner = styled.div`
   gap: 40px;
   height: 250px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1200px) {
     background: url('/back1.png') no-repeat center center;
     background-size: cover;
     flex-direction: column;
@@ -181,7 +181,7 @@ const HomePage = () => {
               <label>Participant's Name:</label> {traineeDetails.name}
             </p>
             <p>
-              <label>Company Name:</label> {traineeDetails.companyName}
+              <label>Company:</label> {traineeDetails.companyName}
             </p>
           </UserInfo>
         </UserInfoBanner>

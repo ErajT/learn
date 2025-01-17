@@ -506,7 +506,7 @@ const SectionContent = styled(Container)(() => ({
 }));
 
 const SectionHeading = styled(Typography)(() => ({
-  fontSize: "5rem",
+  fontSize: "4rem",
   fontWeight: "bold",
   marginBottom: "40px",
   color: "#2b6777",
@@ -665,12 +665,12 @@ const App = () => {
             sx={{
               marginBottom: "20px",
               color: "#2b6777",
-              fontSize: { xs: "2rem", sm: "3rem", md: "4rem" }, 
+              fontSize: { xs: "2rem", sm: "3rem", md: "3.1rem" }, 
               fontWeight: "bold",
               textAlign: { xs: "center", md: "left" }, 
             }}
           >
-            {id === "section2" ? "Leaderboard" : "Application Form"}
+            {id === "section2" ? "Your Leaderboard" : "Your Learning Experience"}
           </Typography>
           <Typography
             sx={{
@@ -701,7 +701,7 @@ const App = () => {
   }}
 >
   <SectionContent>
-    <SectionHeading>What Clients Need</SectionHeading>
+    <SectionHeading>Learning Outcome</SectionHeading>
     <Grid container spacing={4}>
       {["Participants can document their training application through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
         <Grid item xs={12} sm={4} key={index}>

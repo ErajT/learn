@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'; // Import js-cookie
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { backendUrl } from "./constants";
-
+// import Cookies from "js-cookie";
 
 const theme = createTheme({
   typography: {
@@ -157,6 +157,8 @@ const FeatureBox = styled.div`
 
 
 const HomePage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [TrainingName, setTrainingName] = useState(null);
   const [companyName, setCompanyName] = useState(null);

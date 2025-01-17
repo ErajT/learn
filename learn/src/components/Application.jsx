@@ -293,6 +293,8 @@ const Input = styled.input`
 `;
 
 const Application = () => {
+  const tok = Cookies.get("token");
+  const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri"];
@@ -394,6 +396,12 @@ useEffect(() => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText, newDate: selectedDate }),
+    }
+    ,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then((response) => response.json())
       .then((data) => {
@@ -422,6 +430,11 @@ useEffect(() => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail, newDate: selectedDate }),
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then((response) => response.json())
       .then((data) => {
@@ -448,6 +461,11 @@ useEffect(() => {
     fetch(`${backendUrl}/leaderboard/photo`, {
       method: "POST",
       body: formData,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then((response) => response.json())
       .then((data) => {

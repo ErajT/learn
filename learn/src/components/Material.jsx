@@ -39,6 +39,8 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const MaterialPage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [materials, setMaterials] = useState([]);
@@ -73,7 +75,12 @@ const MaterialPage = () => {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         }
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.ok) {
         const data = await response.json();

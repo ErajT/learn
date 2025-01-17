@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-// import Cookies from "js-cookie";
 import {
   Box,
   Typography,
@@ -41,6 +40,8 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const TrainingPage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   const theme = useTheme();
   // const backendUrl = "http://localhost:2000"; // Use this in API calls
 
@@ -85,7 +86,12 @@ const TrainingPage = () => {
         // console.log(`${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`);
         const response = await axios.get(
           `${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
         if (response.data.status === "success") {
           setTrainees(response.data.data);
@@ -117,7 +123,12 @@ const TrainingPage = () => {
 
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.data.status === "success") {
         setSubmission(response.data.submission);
@@ -148,7 +159,12 @@ const TrainingPage = () => {
       // console.log(`${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`);
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         const doc = new jsPDF();

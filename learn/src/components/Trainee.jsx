@@ -42,6 +42,8 @@ const GlobalStyles = styled("style")(() => ({
   },
 }));
 const TraineePage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [trainees, setTrainees] = useState([]);
@@ -81,7 +83,12 @@ const TraineePage = () => {
         setCompanyId(parsedTraining.companyID);
 
         axios
-          .get(`${backendUrl}/admin/getTraineesForTraining/${parsedTraining.trainingID}`)
+          .get(`${backendUrl}/admin/getTraineesForTraining/${parsedTraining.trainingID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
           .then((response) => {
             if (response.data.data) {
               setTrainees(response.data.data);
@@ -119,7 +126,12 @@ const TraineePage = () => {
     setModalOpen(false);
 
     axios
-      .post(`${backendUrl}/admin/saveTrainee`, traineeData)
+      .post(`${backendUrl}/admin/saveTrainee`, traineeData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
       .then((response) => {
         if (response.status) {
           setTrainees((prevTrainees) => [
@@ -144,7 +156,12 @@ const TraineePage = () => {
           };
 
           axios
-            .post(`${backendUrl}/users`, userData)
+            .post(`${backendUrl}/users`, userData,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
             .then((userResponse) => {
               if (userResponse.status) {
                 setSnackbarMessage("Trainee and user account created successfully!");
@@ -177,6 +194,11 @@ const TraineePage = () => {
 
         await axios.post(`${backendUrl}/admin/disallowLogin`, {
           TraineeIDs: selectedTrainees,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         setSnackbarMessage("Login disallowed for selected trainees.");
         setSnackbarOpen(true);
@@ -229,7 +251,12 @@ const TraineePage = () => {
         const response = await axios.post(
           `${backendUrl}/admin/saveAllTrainees`,
           requestData
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
         if (response.status) {
           const traineeIdsofeach = response.data.data;
@@ -244,7 +271,12 @@ const TraineePage = () => {
             };
 
             try {
-              await axios.post(`${backendUrl}/users`, userData);
+              await axios.post(`${backendUrl}/users`, userData,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                });
             } catch (error) {
               console.error(`Error creating user for ${trainee.Email}:`, error);
             }

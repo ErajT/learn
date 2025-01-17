@@ -3,8 +3,9 @@ import { Container, Box, Typography, Select, MenuItem, TextField, Button } from 
 import { styled } from '@mui/system';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { backendUrl } from "./constants";
+import Cookies from "js-cookie";
 
 const theme = createTheme({
   typography: {
@@ -61,6 +62,8 @@ const SelectTrainee = styled(Select)({
 });
 
 const TraineeChatPage = () => {
+  const tok = Cookies.get("token");
+  const token = JSON.parse(tok);
   const [selectedTrainee, setSelectedTrainee] = useState('');
   const [messageHistory, setMessageHistory] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -82,7 +85,12 @@ const TraineeChatPage = () => {
           // console.log(parsedTraining);
 
           // Call the API using the trainingId
-          const response = await fetch(`${backendUrl}/admin/getTraineesForChat/${trainingId}`);
+          const response = await fetch(`${backendUrl}/admin/getTraineesForChat/${trainingId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
           const result = await response.json();
 
           if (result.status === 'success') {
@@ -116,7 +124,12 @@ const TraineeChatPage = () => {
     if (trainee) {
       try {
         // Fetch the chat messages using the trainee's ID
-        const response = await fetch(`${backendUrl}/admin/getChat/${trainee.id}`);
+        const response = await fetch(`${backendUrl}/admin/getChat/${trainee.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
         const result = await response.json();
   
         if (result.status === 'success') {
@@ -174,6 +187,11 @@ const TraineeChatPage = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(requestBody),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           });
   
           const result = await response.json();
@@ -210,7 +228,7 @@ const TraineeChatPage = () => {
             color: '#2b6777',
           }}
         >
-          Trainee Query Chat
+        Query Chat
         </Typography>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
@@ -219,7 +237,7 @@ const TraineeChatPage = () => {
             onChange={handleTraineeChange}
             displayEmpty
           >
-            <MenuItem value="" disabled>Select a Trainee</MenuItem>
+            <MenuItem value="" disabled>Select a Participant</MenuItem>
             {trainees.map((trainee, index) => (
               <MenuItem key={index} value={trainee.name}>
                 {trainee.name}

@@ -28,6 +28,8 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const TrainingManager = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [openModal, setOpenModal] = useState(false);
   const [trainings, setTrainings] = useState([]);
@@ -58,7 +60,12 @@ const TrainingManager = () => {
 
   useEffect(() => {
     // Fetch the trainings when the component mounts
-    axios.get(`${backendUrl}/admin/getAllTrainings`)
+    axios.get(`${backendUrl}/admin/getAllTrainings`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then(response => {
         if (response.data.status === "success") {
           const fetchedTrainings = response.data.trainings.map(training => ({
@@ -91,11 +98,21 @@ const TrainingManager = () => {
           Topic: newTraining.topic,
           CategoryID: selectedCategoryId,
           Description: newTraining.description
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
 
         if (response.data.status === "success") {
           // After successfully adding the training, fetch the updated list
-          axios.get(`${backendUrl}/admin/getAllTrainings`)
+          axios.get(`${backendUrl}/admin/getAllTrainings`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
             .then(response => {
               if (response.data.status === "success") {
                 const fetchedTrainings = response.data.trainings.map(training => ({

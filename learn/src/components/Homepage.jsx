@@ -505,6 +505,8 @@ const ChatInput = styled.div`
 `;
 
 const HomePage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -536,7 +538,12 @@ const HomePage = () => {
       const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
       if (trainingID) {
         try {
-          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`);
+          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
           if (response.data.status === "success") {
             setMaterials(response.data.materials);
           }
@@ -598,6 +605,11 @@ const HomePage = () => {
       const response = await axios.post(`${backendUrl}/leaderboard/saveSubscription`, {
         "subscription": subscription,
         "traineeID": traineeID
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       // await axios.post("/api/subscribe", subscription);
       console.log("Subscription object sent to backend.");
