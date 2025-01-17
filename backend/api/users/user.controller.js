@@ -82,7 +82,7 @@ module.exports = {
             results.password = undefined;
     
             // Generate JSON Web Token (JWT)
-            const jsontoken = sign({ result: results }, "eraj50", {
+            const jsontoken = sign({ result: results }, "eraj20", {
                 expiresIn: "1h",
             });
     
@@ -208,7 +208,8 @@ module.exports = {
     },
 
     logout: (req, res) => {
-        let {token} = req.body;
+        let token = req.headers.authorization;
+        console.log(token);
         // If the token has a "Bearer " prefix, remove it
         if (token.startsWith("Bearer ")) {
             token = token.slice(7);

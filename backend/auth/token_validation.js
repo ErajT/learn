@@ -4,11 +4,14 @@ const { checkIfLoggedInByToken } = require('./../api/users/user.service');
 module.exports = {
     checkToken: (req, res, next) => {
         let token = req.headers.authorization;
-        let id;
+        // let id;
 
         if (token) {
-            token = token.slice(7);
-            verify(token, "muneer123", async (err, decoded) => {
+            if (token.startsWith("Bearer ")) {
+                token = token.slice(7);
+            }
+            // console.log(token);
+            verify(token, "eraj20", async (err, decoded) => {
                 if (err) {
                     return res.status(400).json({
                         status: "fail",
@@ -19,7 +22,7 @@ module.exports = {
 
                 try {
                     const ifLoggedIn = await checkIfLoggedInByToken(token, req, res);
-                    console.log("in validation",ifLoggedIn);
+                    // console.log("in validation",ifLoggedIn);
                     if (ifLoggedIn) {
                         next();
                     } else {

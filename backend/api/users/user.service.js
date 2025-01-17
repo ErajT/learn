@@ -1,5 +1,6 @@
 const pool = require('./../../config/database')
 const Qexecution = require('./../../Controllers/query')
+const crypto = require('crypto');
 
 module.exports= {
     create: (data,callBack)=>{
@@ -36,6 +37,26 @@ module.exports= {
             return callBack(null,result[0]);
         }catch(err){
             return callBack(err);
+        }
+    },
+    checkIfLoggedInByToken: async (token,req,res)=>{
+        const SQL= "SELECT * FROM session";
+        const encrypted=crypto.createHash('sha256').update(token).digest('hex');
+        try{
+            const result= await Qexecution.queryExecute(SQL);
+            const tokens= result.map(data=> data.token)
+            if(tokens.includes(encrypted)) {
+                console.log('true');
+                return true
+            }else{
+                console.log('false');
+                return false;
+            }
+        }catch(err){
+            return res.json({
+                status: "fail",
+                message: err.message
+            });
         }
     },
     resetPwd: async (updatedPwd,email,callBack)=>{
