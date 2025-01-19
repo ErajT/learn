@@ -162,13 +162,9 @@ const TraineeChatPage = () => {
             TraineeID: trainee.id,
             Message: newMessage.trim(),
           };
-<<<<<<< HEAD
   
           // Send the message to the API
           const response = await fetch(`${backendUrl}/admin/sendChat`, {
-=======
-          const response = await fetch('http://localhost:2000/admin/sendChat', {
->>>>>>> de991637ab210d0eb0a8a39ec3e19c769bbe8579
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

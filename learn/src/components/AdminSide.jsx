@@ -87,49 +87,47 @@ const LogoutButton = styled.button`
     transform: scale(1.1);
   }
 `;
-
 const Sidebar = () => {
-    const tok = Cookies.get("token");
-    const token = JSON.parse(tok);
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
-  
-    const handleSnackbarClose = (event, reason) => {
-      if (reason === "clickaway") return; // Prevent closing on clickaway
-      setSnackbarOpen(false);
-    };
-    const handleLogout = async () => {
-      const tok = Cookies.get("token");
-  
-      if (!tok) {
-        alert("No token found. Please log in first.");
-        return;
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return; // Prevent closing on clickaway
+    setSnackbarOpen(false);
+  };
+
+  const handleLogout = async () => {
+    const tok = Cookies.get("token");
+
+    if (!tok) {
+      alert("No token found. Please log in first.");
+      return;
+    }
+
+    try {
+      const token = JSON.parse(tok);
+      const response = await fetch(`${backendUrl}/users/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        Cookies.remove("token"); // Remove the token from cookies
+        setSnackbarOpen(true); // Show Snackbar
+        setTimeout(() => navigate("/"), 1500); // Redirect after 1.5s
+      } else {
+        const error = await response.json();
+        alert(`Logout failed: ${error.message || "Unknown error"}`);
       }
-  
-      try {
-        const token = JSON.parse(tok);
-        const response = await fetch(`${backendUrl}/users/logout`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          // body: JSON.stringify({ "token":token }),
-        });
-  
-        if (response.ok) {
-          Cookies.remove("token"); // Clear the token from cookies
-          setSnackbarOpen(true); // Show Snackbar
-          setTimeout(() => navigate("/"), 1500); // Redirect after 1.5s
-        } else {
-          const error = await response.json();
-          alert(`Logout failed: ${error.message || "Unknown error"}`);
-        }
-      } catch (error) {
-        console.error("Error logging out:", error);
-        alert("An error occurred while logging out. Please try again.");
-      }
-    };
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("An error occurred while logging out. Please try again.");
+    }
+  };
+
 
   return (
     <SidebarContainer>
@@ -142,14 +140,18 @@ const Sidebar = () => {
         <FaSignOutAlt />
       </LogoutButton>
       <Snackbar
-      open={snackbarOpen}
-      autoHideDuration={3000}
-      onClose={handleSnackbarClose}
-    >
-      <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
-        Logged out successfully!
-      </Alert>
-    </Snackbar>
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Logged out successfully!
+        </Alert>
+      </Snackbar>
     </SidebarContainer>
   );
 };

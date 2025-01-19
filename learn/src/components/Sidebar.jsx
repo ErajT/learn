@@ -46,6 +46,7 @@ const Logo = styled.img`
   width: 80px;
   height: 80px; /* Adjusted height to make logos smaller */
   object-fit: contain;
+  margin-top:5px;
 
   @media (max-width: 768px) {
     width: 60px;
@@ -58,10 +59,13 @@ const Logo = styled.img`
   }
 `;
 const Logo1 = styled.img`
-  width: 60px;
-  height: 60px; /* Adjusted height to make logos smaller */
+  width: 43px;
+  height: 43px; /* Adjusted height to make logos smaller */
   object-fit: contain;
-  margin-top:20px
+  margin-top:30px;
+  gap:30px;
+  margin-bottom:20px;
+
 
   @media (max-width: 768px) {
     width: 40px;
@@ -117,8 +121,6 @@ const LogoutButton = styled.button`
 `;
 
 const Sidebar = () => {
-    const tok = Cookies.get("token");
-    const token = JSON.parse(tok);
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
 
@@ -136,7 +138,8 @@ const Sidebar = () => {
     }
 
     try {
-      const token = JSON.parse(tok);
+      // const token = JSON.parse(tok);
+      console.log(tok)
       const response = await fetch(`${backendUrl}/users/logout`, {
         method: "POST",
         headers: {
@@ -193,7 +196,7 @@ const Sidebar = () => {
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%", zIndex:-1 }}>
           Logged out successfully!
         </Alert>
       </Snackbar>

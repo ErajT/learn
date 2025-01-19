@@ -213,7 +213,9 @@ const Login = () => {
       });
       const position = response.data.position;
       const token1 = response.data.token;
+      // console.log(token1);
       Cookies.set("token", JSON.stringify(token1));
+      
 
       // console.log(response);
 

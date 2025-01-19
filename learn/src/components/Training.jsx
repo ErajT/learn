@@ -195,13 +195,13 @@ const HomePage = () => {
         image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
       },
       quotation: { 
-        title: "Quotations",
-        description: "Explore motivational quotes.",
+        title: "Notifications",
+        description: "Send notifications to Participants in a click.",
         image: "https://static.vecteezy.com/system/resources/thumbnails/009/458/854/small/quote-icon-logo-design-template-vector.jpg",
       },
       chatbot: { 
         title: "Chatbot",
-        description: "Manage and assist trainee inquiries.",
+        description: "Manage and assist participant inquiries.",
         image: "https://img.freepik.com/free-vector/chat-bot-concept-illustration_114360-30458.jpg?t=st=1737053208~exp=1737056808~hmac=8c17d6453ab0918c97345624d0adc4aef91140129958a1ae6e329e611eaf63d4&w=740",
       },
     });

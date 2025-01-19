@@ -89,8 +89,6 @@ const LogoutButton = styled.button`
 `;
 
 const Sidebar = () => {
-    const tok = Cookies.get("token");
-    const token = JSON.parse(tok);
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
   
