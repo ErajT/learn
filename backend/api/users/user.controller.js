@@ -209,6 +209,7 @@ module.exports = {
 
     logout: (req, res) => {
         let token = req.headers.authorization;
+        // let token = req.body.token;
         console.log(token);
         // If the token has a "Bearer " prefix, remove it
         if (token.startsWith("Bearer ")) {
