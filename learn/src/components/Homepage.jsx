@@ -503,8 +503,27 @@ const ChatInput = styled.div`
     }
   }
 `;
+const ChatInputField = styled.input`
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+`;
+const ChatSendButton = styled.button`
+  background: #2b6777;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
 
 const HomePage = () => {
+  // const backendUrl = process.env.BACKEND_URL; 
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -529,14 +548,22 @@ const HomePage = () => {
           name: parsedDetails.Name || "",
           trainingName: parsedDetails.TrainingName || "",
           companyName: parsedDetails.CompanyName || "",
+          // TraineeID: parsedDetails.TraineeID || "",
+
         });
+        // console.log("ggf",TraineeID);
       }
   
       // Fetch training materials
       const trainingID = JSON.parse(traineeDetailsCookie)?.TrainingID;
       if (trainingID) {
         try {
-          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`);
+          const response = await axios.get(`${backendUrl}/admin/getMaterial/${trainingID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
           if (response.data.status === "success") {
             setMaterials(response.data.materials);
           }
@@ -598,6 +625,11 @@ const HomePage = () => {
       const response = await axios.post(`${backendUrl}/leaderboard/saveSubscription`, {
         "subscription": subscription,
         "traineeID": traineeID
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       // await axios.post("/api/subscribe", subscription);
       console.log("Subscription object sent to backend.");
@@ -617,13 +649,86 @@ const HomePage = () => {
     }
     return outputArray;
   }
+  const fetchTraineeAndTrainingDetails = () => {
+    const traineeDetailsCookie = Cookies.get("traineeDetails");
 
-  const toggleChatWindow = () => {
-    setIsChatOpen(!isChatOpen);
+    if (traineeDetailsCookie) {
+      try {
+        const parsedDetails = JSON.parse(traineeDetailsCookie);
+        const traineeID = parsedDetails.TraineeID || null;
+        const trainingID = parsedDetails.TrainingID || null;
+        return { traineeID, trainingID };
+      } catch (error) {
+        console.error("Error parsing traineeDetails cookie:", error);
+        return { traineeID: null, trainingID: null };
+      }
+    }
+    console.error("Trainee details cookie not found.");
+    return { traineeID: null, trainingID: null };
   };
 
-  const handleSendMessage = () => {
+
+  const toggleChatWindow = async () => {
+    setIsChatOpen(!isChatOpen);
+  
+    if (!isChatOpen) {
+      const { traineeID } = fetchTraineeAndTrainingDetails();
+  
+      if (traineeID) {
+        try {
+          const response = await axios.get(
+            `http://localhost:2000/admin/getChat/${traineeID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+  
+          if (response.data?.status === "success") {
+            const chatData = response.data?.data;
+  
+            if (Array.isArray(chatData) && chatData.length > 0) {
+              setMessages(
+                chatData.map((chat) => ({
+                  text: chat.ChatDetails, // Use 'ChatDetails' for chat content
+                  sender: chat.ByTrainee ? "user" : "bot", // Determine sender
+                }))
+              );
+            } else {
+              // Display message in the chat window if no previous chats exist
+              setMessages([{ text: "No previous chats found.", sender: "bot" }]);
+            }
+          } else {
+            console.warn(response.data?.message || "Unexpected response format.");
+            setMessages([{ text: response.data?.message || "Unable to fetch chats.", sender: "bot" }]);
+          }
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+          setMessages([{ text: "Failed to load chats. Please try again later.", sender: "bot" }]);
+        }
+      } else {
+        setMessages([{ text: "Trainee ID not found. Unable to fetch chats.", sender: "bot" }]);
+      }
+    }
+  };
+  
+  // Function to handle sending a message
+  const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
+
+    const { traineeID, trainingID } = fetchTraineeAndTrainingDetails();
+
+    if (!traineeID || !trainingID) {
+      console.error("Trainee ID or Training ID not found in cookies.");
+      return;
+    }
+
+    const messageData = {
+      TraineeID: traineeID,
+      TrainingID: trainingID,
+      Message: newMessage,
+    };
 
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -632,15 +737,41 @@ const HomePage = () => {
     setNewMessage("");
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const response = await axios.post(
+        "http://localhost:2000/leaderboard/sendChat",
+        messageData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: "Message sent successfully!", sender: "bot" },
+        ]);
+      } else {
+        console.error("Error sending message:", response.data);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: "Failed to send message.", sender: "bot" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: "Message received!", sender: "bot" },
+        { text: "Failed to send message.", sender: "bot" },
       ]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
+  // Handle input change
   const handleInputChange = (e) => {
     setNewMessage(e.target.value);
   };
@@ -732,42 +863,42 @@ const HomePage = () => {
         <ChatWindow>
           <ChatHeader>
             Chat with Us
-            <IconButton onClick={toggleChatWindow} style={{ color: "white" }}>
+            <button onClick={toggleChatWindow} style={{ color: "#2b6777" }}>
               <CloseIcon />
-            </IconButton>
+            </button>
           </ChatHeader>
           <ChatBody>
-            {messages.map((msg, index) => (
-              <p
-                key={index}
-                style={{
-                  textAlign: msg.sender === "user" ? "right" : "left",
-                  background: msg.sender === "user" ? "#2b6777" : "#ddd",
-                  color: msg.sender === "user" ? "#fff" : "#000",
-                  padding: "8px",
-                  borderRadius: "10px",
-                  marginBottom: "10px",
-                  maxWidth: "80%",
-                  alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-                }}
-              >
-                {msg.text}
-              </p>
-            ))}
-            {isLoading && (
-              <div style={{ textAlign: "center", margin: "10px 0" }}>
-                <CircularProgress size={20} />
-              </div>
-            )}
-          </ChatBody>
+  {messages.map((msg, index) => (
+    <p
+      key={index}
+      style={{
+        textAlign: msg.sender === "user" ? "right" : "left",
+        background: msg.sender === "user" ? "#2b6777" : "#ddd",
+        color: msg.sender === "user" ? "#fff" : "#000",
+        padding: "8px",
+        borderRadius: "10px",
+        marginBottom: "10px",
+        maxWidth: "80%",
+        alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
+      }}
+    >
+      {msg.text}
+    </p>
+  ))}
+  {isLoading && (
+    <div style={{ textAlign: "center", margin: "10px 0" }}>
+      <CircularProgress size={20} />
+    </div>
+  )}
+</ChatBody>
           <ChatInput>
-            <input
+            <ChatInputField
               type="text"
               placeholder="Type a message..."
               value={newMessage}
               onChange={handleInputChange}
             />
-            <button onClick={handleSendMessage}>Send</button>
+            <ChatSendButton onClick={handleSendMessage}>Send</ChatSendButton>
           </ChatInput>
         </ChatWindow>
       )}

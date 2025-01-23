@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import DownloadIcon from '@mui/icons-material/Download'; 
 import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
 import { backendUrl } from "./constants";
+// import Cookies from "js-cookie";
 
 const Container = styled(Box)`
   // background-color: #f5f5f5;
@@ -83,6 +84,8 @@ const GeneratePDFButton = styled(Button)`
 `;
 
 const DetailedLeaderboard = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const { weekId } = useParams(); // Get the weekId from URL parameters
@@ -102,7 +105,12 @@ const DetailedLeaderboard = () => {
       // Fetch leaderboard data from the API using weekId and trainingId
       const fetchLeaderboardData = async () => {
         try {
-          const response = await fetch(`${backendUrl}/admin/getFullLeaderboard/${trainingId}/${weekId}`);
+          const response = await fetch(`${backendUrl}/admin/getFullLeaderboard/${trainingId}/${weekId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
           if (response.ok) {
             const data = await response.json();
             // console.log(data);

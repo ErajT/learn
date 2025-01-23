@@ -41,6 +41,8 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const TrainingPage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   const theme = useTheme();
   // const backendUrl = "http://localhost:2000"; // Use this in API calls
 
@@ -83,7 +85,12 @@ const TrainingPage = () => {
       try {
         const response = await axios.get(
           `${backendUrl}/admin/getAllTraineesForTraining/${trainingId}`
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
         if (response.data.status === "success") {
           setTrainees(response.data.data);
@@ -115,7 +122,12 @@ const TrainingPage = () => {
 
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsBasedOnDate/${trainingId}/${traineeId}/${formattedDate}`
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.data.status === "success") {
         setSubmission(response.data.submission);
@@ -145,7 +157,12 @@ const TrainingPage = () => {
     try {
       const response = await axios.get(
         `${backendUrl}/admin/getSubmissionsOfTrainee/${trainingId}/${traineeId}`
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         const doc = new jsPDF();
@@ -256,7 +273,12 @@ response.data.forEach((submission, index) => {
     };
 
     try {
-      const response = await axios.post(`${backendUrl}/admin/approve`, requestBody);
+      const response = await axios.post(`${backendUrl}/admin/approve`, requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.status === 200 && response.data?.message) {
         setSnackbarMessage("Approved");
@@ -296,7 +318,12 @@ response.data.forEach((submission, index) => {
     };
 
     try {
-      const response = await axios.post(`${backendUrl}/admin/disapprove`, requestBody);
+      const response = await axios.post(`${backendUrl}/admin/disapprove`, requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.status === 200 && response.data?.message) {
         setSnackbarMessage("Disapproved");

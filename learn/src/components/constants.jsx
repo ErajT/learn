@@ -1,2 +1,4 @@
-// export const backendUrl = "https://backend-5862xf61k-erajts-projects.vercel.app";
-export const backendUrl = "http://localhost:2000";
+export const backendUrl = "https://backend-snowy-delta.vercel.app";
+// require('dotenv').config();
+// export const backendUrl = process.env.BACKEND_URL;
+// export const backendUrl = "http://localhost:2000";

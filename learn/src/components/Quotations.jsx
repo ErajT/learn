@@ -123,6 +123,8 @@ const Logo = styled.img`
 `;
 
 const Quotations = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   const [quotation, setQuotation] = useState("");
   const [trainingID, setTrainingID] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -157,6 +159,11 @@ const Quotations = () => {
       const response = await axios.post( `${backendUrl}/leaderboard/subscribe`, {
         TrainingID: trainingID,
         message: quotation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       setSnackbarMessage("Notification sent successfully!");

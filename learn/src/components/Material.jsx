@@ -39,6 +39,8 @@ const GlobalStyles = styled("style")(() => ({
 }));
 
 const MaterialPage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [materials, setMaterials] = useState([]);
@@ -67,13 +69,13 @@ const MaterialPage = () => {
 
   const fetchMaterials = async (trainingId) => {
     try {
+      console.log(token);
       const response = await fetch(
         `${backendUrl}/admin/getMaterial/${trainingId}`,
         {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+          headers: { Authorization: `Bearer ${token}`},
+        });
 
       if (response.ok) {
         const data = await response.json();
@@ -121,6 +123,7 @@ const MaterialPage = () => {
       const response = await fetch(`${backendUrl}/admin/addMaterial`, {
         method: "POST",
         body: formData,
+        headers: { Authorization: `Bearer ${token}`},
       });
 
       if (response.ok) {
@@ -160,7 +163,8 @@ const confirmDelete = async () => {
   try {
     // console.log(materialToDelete);
     const response = await axios.get(
-      `${backendUrl}/admin/deleteMaterial/${trainingId}/${materialToDelete.id}`,
+      `${backendUrl}/admin/deleteMaterial/${trainingId}/${materialToDelete.id}`,{
+      headers: { Authorization: `Bearer ${token}`},}
     );
 
     if (response.status === 200) {

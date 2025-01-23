@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaHome, FaFileAlt, FaTrophy,FaCommentDots, FaChartBar, FaWpforms, FaSignOutAlt, FaPeopleCarry, FaPeopleArrows, FaFolderMinus, FaQuoteLeft } from "react-icons/fa";
-import cookie from "js-cookie";
+// import cookie from "js-cookie";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { backendUrl } from "./constants";
+import Cookies from "js-cookie";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -96,7 +97,7 @@ const Sidebar = () => {
       setSnackbarOpen(false);
     };
     const handleLogout = async () => {
-      const tok = cookie.get("token");
+      const tok = Cookies.get("token");
   
       if (!tok) {
         alert("No token found. Please log in first.");
@@ -109,12 +110,13 @@ const Sidebar = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ "token":token }),
+          // body: JSON.stringify({ "token":token }),
         });
   
         if (response.ok) {
-          cookie.remove("token"); // Clear the token from cookies
+          Cookies.remove("token"); // Clear the token from cookies
           setSnackbarOpen(true); // Show Snackbar
           setTimeout(() => navigate("/"), 1500); // Redirect after 1.5s
         } else {

@@ -3,8 +3,9 @@ import { Container, Box, Typography, Select, MenuItem, TextField, Button } from 
 import { styled } from '@mui/system';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { backendUrl } from "./constants";
+import Cookies from "js-cookie";
 
 const theme = createTheme({
   typography: {
@@ -32,14 +33,14 @@ const ChatBubble = styled(Box)(({ isUser }) => ({
   margin: isUser ? '10px 0 10px auto' : '10px 0 10px 0',
   padding: '12px',
   borderRadius: '20px',
-  backgroundColor: isUser ? '#f0f0f0' : '#2b6777',
-  color: isUser ? '#333' : '#fff',
+  backgroundColor: isUser ?'#2b6777': '#d8d8d7',
+  color: isUser ? '#fff' : '#333',
   fontSize: '14px',
   fontWeight: '400',
   wordWrap: 'break-word',
 }));
 
-const SendButton = styled(Button)({
+const SendButton1= styled(Button)({
   backgroundColor: '#2b6777',
   color: '#fff',
   '&:hover': {
@@ -61,6 +62,8 @@ const SelectTrainee = styled(Select)({
 });
 
 const TraineeChatPage = () => {
+  const tok = Cookies.get("token");
+  const token = JSON.parse(tok);
   const [selectedTrainee, setSelectedTrainee] = useState('');
   const [messageHistory, setMessageHistory] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -70,23 +73,23 @@ const TraineeChatPage = () => {
   useEffect(() => {
     const fetchTrainees = async () => {
       try {
-        // Get the selectedTraining object from cookies
         const selectedTraining = Cookies.get('selectedTraining');
         
         if (selectedTraining) {
-          // Parse the JSON string to an object
           const parsedTraining = JSON.parse(selectedTraining);
-
-          // Extract the trainingId
           const trainingId = parsedTraining.trainingID;
           // console.log(parsedTraining);
 
           // Call the API using the trainingId
-          const response = await fetch(`${backendUrl}/admin/getTraineesForChat/${trainingId}`);
+          const response = await fetch(`${backendUrl}/admin/getTraineesForChat/${trainingId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
           const result = await response.json();
 
           if (result.status === 'success') {
-            // Transform the data
             const updatedTrainees = result.data.map(trainee => ({
               name: trainee.Name,
               id: trainee.TraineeID,
@@ -109,24 +112,24 @@ const TraineeChatPage = () => {
   const handleTraineeChange = async (event) => {
     const traineeName = event.target.value;
     setSelectedTrainee(traineeName);
-  
-    // Find the selected trainee
     const trainee = trainees.find((t) => t.name === traineeName);
   
     if (trainee) {
       try {
         // Fetch the chat messages using the trainee's ID
-        const response = await fetch(`${backendUrl}/admin/getChat/${trainee.id}`);
+        const response = await fetch(`${backendUrl}/admin/getChat/${trainee.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
         const result = await response.json();
   
         if (result.status === 'success') {
-          // Map through result.data and format messages
           const formattedMessages = result.data.map((chat) => {
             const sender = chat.ByTrainee === 1 ? 'trainee' : 'admin';
             return { sender, text: chat.ChatDetails };
           });
-  
-          // Update the message history
           setMessageHistory(formattedMessages);
         } else {
           console.error('Failed to fetch messages:', result.message || 'Unknown error');
@@ -137,7 +140,6 @@ const TraineeChatPage = () => {
         setMessageHistory([]);
       }
     } else {
-      // If no trainee is found, clear the message history
       setMessageHistory([]);
     }
   };
@@ -146,23 +148,17 @@ const TraineeChatPage = () => {
 
   const handleMessageSend = async () => {
     if (newMessage.trim()) {
-      // Find the selected trainee from the list
       const trainee = trainees.find((t) => t.name === selectedTrainee);
 
       const selectedTraining = Cookies.get('selectedTraining');
-        
-          // Parse the JSON string to an object
           const parsedTraining = JSON.parse(selectedTraining);
-
-          // Extract the trainingId
           const trainingId = parsedTraining.trainingID;
         
   
       if (trainee) {
         try {
-          // Prepare the request body
           const requestBody = {
-            TrainingID: trainingId, // Replace this with the actual training ID if dynamic
+            TrainingID: trainingId,
             TraineeID: trainee.id,
             Message: newMessage.trim(),
           };
@@ -174,12 +170,16 @@ const TraineeChatPage = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(requestBody),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           });
   
           const result = await response.json();
   
           if (result.status === 'success') {
-            // Add the message to the message history locally
             setMessageHistory([...messageHistory, { sender: 'admin', text: newMessage }]);
             setNewMessage('');
           } else {
@@ -210,7 +210,7 @@ const TraineeChatPage = () => {
             color: '#2b6777',
           }}
         >
-          Trainee Query Chat
+        Query Chat
         </Typography>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
@@ -219,7 +219,7 @@ const TraineeChatPage = () => {
             onChange={handleTraineeChange}
             displayEmpty
           >
-            <MenuItem value="" disabled>Select a Trainee</MenuItem>
+            <MenuItem value="" disabled>Select a Participant</MenuItem>
             {trainees.map((trainee, index) => (
               <MenuItem key={index} value={trainee.name}>
                 {trainee.name}
@@ -247,13 +247,13 @@ const TraineeChatPage = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
               />
-              <SendButton
+              <SendButton1
                 variant="contained"
                 onClick={handleMessageSend}
                 sx={{ height: '100%' }}
               >
                 Send
-              </SendButton>
+              </SendButton1>
             </Box>
           </>
         )}

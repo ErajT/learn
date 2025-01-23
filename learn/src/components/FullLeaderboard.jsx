@@ -149,6 +149,8 @@ const Message = styled.div`
 `;
 
 const FullLeaderboard = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -170,10 +172,15 @@ const FullLeaderboard = () => {
       try {
         const response = await axios.get(
           `${backendUrl}/leaderboard/getFullLeaderboard/${trainingID}`
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
         if (response.data.status === "success") {
-          if (response.data.message === "All Participants fetched successfully.") {
+          if (response.data.message === "All trainees fetched successfully.") {
             setLeaderboardData(response.data.allTrainees || []);
           } else {
             setMessage(response.data.message || "Failed to fetch leaderboard.");

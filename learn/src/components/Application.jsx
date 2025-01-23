@@ -293,6 +293,8 @@ const Input = styled.input`
 `;
 
 const Application = () => {
+  const tok = Cookies.get("token");
+  const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri"];
@@ -392,7 +394,7 @@ useEffect(() => {
 
     fetch(`${backendUrl}/leaderboard/example`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}` },
       body: JSON.stringify({ TrainingID, TraineeID, Example: exampleText, newDate: selectedDate }),
     })
       .then((response) => response.json())
@@ -420,7 +422,7 @@ useEffect(() => {
 
     fetch(`${backendUrl}/leaderboard/refer`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}` },
       body: JSON.stringify({ TrainingID, TraineeID, refer: referenceEmail, newDate: selectedDate }),
     })
       .then((response) => response.json())
@@ -438,6 +440,7 @@ useEffect(() => {
       setSnackbar({ open: true, message: "Please select a photo file to upload.", severity: "error" });
       return;
     }
+    // console.log(photoFile);
 
     const formData = new FormData();
     formData.append("TrainingID", TrainingID);
@@ -448,6 +451,9 @@ useEffect(() => {
     fetch(`${backendUrl}/leaderboard/photo`, {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then((response) => response.json())
       .then((data) => {

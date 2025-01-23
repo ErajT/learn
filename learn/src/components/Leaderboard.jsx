@@ -111,6 +111,8 @@ const Logo = styled("img")(() => ({
 
 
 const LeaderboardPage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "https://64f9-116-90-103-244.ngrok-free.app";  // Use this in API calls
   const [weeks, setWeeks] = useState([]);
   const [dates, setDates] = useState([]);
@@ -130,7 +132,12 @@ const LeaderboardPage = () => {
       try {
         const response = await axios.get(
           `${backendUrl}/admin/getweeks/${trainingID}`
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
         if (response.data.status === "success") {
           setWeeks(response.data.weeks || []);
@@ -162,7 +169,12 @@ const LeaderboardPage = () => {
 
       const response = await axios.get(
         `${backendUrl}/admin/getAllLeaderboards/${trainingID}`
-      );
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
       if (response.data.status === "success") {
         setLeaderboards(response.data.allLeaderboards);

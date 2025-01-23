@@ -326,6 +326,8 @@ const GlobalStyles = styled("style")(() => ({
 
 // Main Leaderboard Component
 const Leaderboard = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
 
   const [topThree, setTopThree] = useState([]);
@@ -350,7 +352,12 @@ const Leaderboard = () => {
 
         const response = await axios.get(
           `${backendUrl}/leaderboard/getTopThree/${trainingID}`
-        );
+          ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
         if (response.data.status === "success") {
           if (response.data.topThree?.length > 0) {
             setTopThree(response.data.topThree);

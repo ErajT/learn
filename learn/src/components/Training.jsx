@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'; // Import js-cookie
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { backendUrl } from "./constants";
-
+// import Cookies from "js-cookie";
 
 const theme = createTheme({
   typography: {
@@ -92,15 +92,15 @@ const FeatureBoxesContainer = styled.div`
     // margin-top: 40px;
   }
 
-  & > :nth-child(4) {
-    grid-column: 2 / span 1; /* Center the first box in the second row */
-  }
+  // & > :nth-child(4) {
+  //   grid-column: 2 / span 1; /* Center the first box in the second row */
+  // }
 `;
 
 const FeatureBox = styled.div`
   background: #fff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 15px;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -108,7 +108,7 @@ const FeatureBox = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height:170px;
+  height:150px;
   color: #000; /* Pitch black text */
   text-decoration: none; /* No underline for text */
   height: auto;
@@ -119,10 +119,10 @@ const FeatureBox = styled.div`
   }
 
   img {
-    width: 80%; /* Full width of the box */
+    width: 50%; /* Full width of the box */
     max-height: 120; /* Adjust to maintain uniformity */
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     object-fit: cover; /* Scale and crop to fit */
   }
 
@@ -157,6 +157,8 @@ const FeatureBox = styled.div`
 
 
 const HomePage = () => {
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
   const [TrainingName, setTrainingName] = useState(null);
   const [companyName, setCompanyName] = useState(null);
@@ -192,10 +194,15 @@ const HomePage = () => {
         description: "Check the Participant submissions.",
         image: "https://img.freepik.com/free-vector/fill-out-concept-illustration_114360-5560.jpg",
       },
-      quotation: { // Data for the fifth box
-        title: "Quotations",
-        description: "Explore motivational quotes.",
+      quotation: { 
+        title: "Notifications",
+        description: "Send notifications to Participants in a click.",
         image: "https://static.vecteezy.com/system/resources/thumbnails/009/458/854/small/quote-icon-logo-design-template-vector.jpg",
+      },
+      chatbot: { 
+        title: "Chatbot",
+        description: "Manage and assist participant inquiries.",
+        image: "https://img.freepik.com/free-vector/chat-bot-concept-illustration_114360-30458.jpg?t=st=1737053208~exp=1737056808~hmac=8c17d6453ab0918c97345624d0adc4aef91140129958a1ae6e329e611eaf63d4&w=740",
       },
     });
 
@@ -240,3 +247,7 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+

@@ -206,13 +206,16 @@ const Login = () => {
 
     try {
       // console.log(`${backendUrl}/users/login`);
-      const response = await axios.post(`${backendUrl}/users/login`, {
+      const response = await axios.post(`${backendUrl}/users/login`,
+         {
         email: email,
         password: password,
       });
       const position = response.data.position;
-      const token = response.data.token;
-      Cookies.set("token", JSON.stringify(token));
+      const token1 = response.data.token;
+      // console.log(token1);
+      Cookies.set("token", JSON.stringify(token1));
+      
 
       // console.log(response);
 
@@ -226,8 +229,16 @@ const Login = () => {
           Cookies.set("position", JSON.stringify("trainee"));
         // Second API call to fetch trainee details
         // console.log(`${backendUrl}/leaderboard/getDetails/${email}`);
+        const tok = Cookies.get("token");
+        const token = JSON.parse(tok);
+        // console.log(token);
         const traineeDetailsResponse = await axios.get(
-          `${backendUrl}/leaderboard/getDetails/${email}`
+          `${backendUrl}/leaderboard/getDetails/${email}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         if (traineeDetailsResponse.status === 200) {
           // Store trainee details in a cookie

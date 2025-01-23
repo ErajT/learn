@@ -3,10 +3,11 @@ import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaHome, FaTrophy, FaChartBar, FaWpforms, FaSignOutAlt } from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
-import cookie from "js-cookie";
+// import cookie from "js-cookie";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { backendUrl } from "./constants";
+import Cookies from "js-cookie";
 
 // Styled Components
 const SidebarContainer = styled.div`
@@ -19,10 +20,10 @@ const SidebarContainer = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  transition: width 0.3s ease, margin-right 0.3s ease;
+  transition: width 0.3s ease;
 
   @media (max-width: 768px) {
     width: 60px;
@@ -33,18 +34,34 @@ const SidebarContainer = styled.div`
   }
 `;
 
-const LogoContainer = styled.div`
+const TopSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: -10px; /* Completely removes the gap between logos */
-  margin-bottom: 5px; /* Reduced bottom margin */
+  gap: 10px;
+`;
+
+const CenterSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  flex-grow: 1;
+  justify-content: center;
+`;
+
+const BottomSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 `;
 
 const Logo = styled.img`
   width: 80px;
-  height: 80px; /* Adjusted height to make logos smaller */
+  height: 80px;
   object-fit: contain;
+  margin-top:5px;
 
   @media (max-width: 768px) {
     width: 60px;
@@ -57,12 +74,20 @@ const Logo = styled.img`
   }
 `;
 
+const SmallLogo = styled.img`
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
 
-const NavItems = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const NavItem = styled(NavLink)`
@@ -90,8 +115,6 @@ const LogoutButton = styled.button`
   font-size: 1.5rem;
   cursor: pointer;
   transition: transform 0.2s;
-  position: absolute;
-  bottom: 20px;
 
   &:hover {
     transform: scale(1.1);
@@ -100,35 +123,37 @@ const LogoutButton = styled.button`
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") return; // Prevent closing on clickaway
+    if (reason === "clickaway") return;
     setSnackbarOpen(false);
   };
 
   const handleLogout = async () => {
-    const tok = cookie.get("token");
-
+    const tok = Cookies.get("token");
+    const token = JSON.parse(tok);
     if (!tok) {
       alert("No token found. Please log in first.");
       return;
     }
 
     try {
-      const token = JSON.parse(tok);
+      // const token = JSON.parse(tok);
+      console.log(tok)
       const response = await fetch(`${backendUrl}/users/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ "token":token }),
+        body: JSON.stringify({ token }),
       });
 
       if (response.ok) {
-        cookie.remove("token"); // Clear the token from cookies
-        setSnackbarOpen(true); // Show Snackbar
-        setTimeout(() => navigate("/"), 1500); // Redirect after 1.5s
+        Cookies.remove("token");
+        setSnackbarOpen(true);
+        setTimeout(() => navigate("/"), 1500);
       } else {
         const error = await response.json();
         alert(`Logout failed: ${error.message || "Unknown error"}`);
@@ -139,15 +164,13 @@ const Sidebar = () => {
     }
   };
 
-
   return (
     <SidebarContainer>
-      <LogoContainer>
-        <Logo src="Logo1.png" alt="Logo 2" />
-        <Logo src="/logo-synergify.png" alt="Logo 1" />
-        <Logo src="Logo2.png" alt="Logo 3" />
-      </LogoContainer>
-      <NavItems>
+      <TopSection>
+        <Logo src="Logo1.png" alt="Top Logo" />
+      </TopSection>
+
+      <CenterSection>
         <NavItem to="/home" title="Home">
           <FaHome />
         </NavItem>
@@ -163,21 +186,26 @@ const Sidebar = () => {
         <NavItem to="/submissiont" title="Submissions">
           <FaFileAlt />
         </NavItem>
-      </NavItems>
-      <LogoutButton onClick={handleLogout} title="Logout">
-        <FaSignOutAlt />
-      </LogoutButton>
+      </CenterSection>
+
+      <BottomSection>
+        <SmallLogo src="/logo-synergify.png" alt="Logo 1" />
+        <SmallLogo src="Logo2.png" alt="Logo 2" />
+        <LogoutButton onClick={handleLogout} title="Logout">
+          <FaSignOutAlt />
+        </LogoutButton>
+      </BottomSection>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%", zIndex:-1 }}>
           Logged out successfully!
         </Alert>
       </Snackbar>
     </SidebarContainer>
-    
   );
 };
 
