@@ -521,6 +521,7 @@ const ChatSendButton = styled.button`
 
 
 const HomePage = () => {
+  // const backendUrl = process.env.BACKEND_URL; 
     const tok = Cookies.get("token");
     const token = JSON.parse(tok);
   const [isChatOpen, setIsChatOpen] = useState(false);
