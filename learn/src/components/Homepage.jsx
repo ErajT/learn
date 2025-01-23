@@ -676,7 +676,12 @@ const HomePage = () => {
       if (traineeID) {
         try {
           const response = await axios.get(
-            `http://localhost:2000/admin/getChat/${traineeID}`
+            `http://localhost:2000/admin/getChat/${traineeID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
           );
   
           if (response.data?.status === "success") {
@@ -734,7 +739,12 @@ const HomePage = () => {
     try {
       const response = await axios.post(
         "http://localhost:2000/leaderboard/sendChat",
-        messageData
+        messageData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
       if (response.status === 200) {

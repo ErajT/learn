@@ -73,13 +73,13 @@
 //   boxShadow: isTransparent ? "none" : "0px 4px 6px rgba(0, 0, 0, 0.1)",
 // }));
 
-// const LoginButton = styled(Button)(({ inSection1 }) => ({
+// const LoginButton = styled(Button)(({ inHome }) => ({
 //   borderRadius: "20px",
 //   padding: "8px 20px",
 //   fontWeight: "bold",
 //   fontSize: "14px",
-//   backgroundColor: inSection1 ? "rgba(255, 255, 255, 0.8)" : "#f5f5f5",
-//   color: inSection1 ? "#2b6777" : "#2b6777",
+//   backgroundColor: inHome ? "rgba(255, 255, 255, 0.8)" : "#f5f5f5",
+//   color: inHome ? "#2b6777" : "#2b6777",
 //   border: "1px solid #2b6777",
 //   "&:hover": {
 //     backgroundColor: "#2b6777",
@@ -134,7 +134,7 @@
 //         entries.forEach((entry) => {
 //           if (entry.isIntersecting) {
 //             const sectionId = entry.target.id;
-//             setNavbarTransparent(sectionId === "section1");
+//             setNavbarTransparent(sectionId === "Home");
 //           }
 //         });
 //       },
@@ -170,7 +170,7 @@
 //               </IconButton>
 //               <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
 //                 <List>
-//                   {["section1", "section2", "section3", "section4"].map((section) => (
+//                   {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
 //                     <ListItem
 //                       button
 //                       key={section}
@@ -192,7 +192,7 @@
 //             </>
 //           ) : (
 //             <Box>
-//               {["section1", "section2", "section3", "section4"].map((section) => (
+//               {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
 //                 <Button
 //                   key={section}
 //                   onClick={() => scrollToSection(section)}
@@ -206,37 +206,37 @@
 //                 </Button>
 //               ))}
 //               <Link to="/login" style={{ textDecoration: "none" }}>
-//                 <LoginButton inSection1={navbarTransparent}>Login</LoginButton>
+//                 <LoginButton inHome={navbarTransparent}>Login</LoginButton>
 //               </Link>
 //             </Box>
 //           )}
 //         </Toolbar>
 //       </Navbar>
 
-//       {/* <Section id="section1" ref={(el) => (sectionRefs.current[0] = el)} /> */}
-//       <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} />
+//       {/* <Section id="Home" ref={(el) => (sectionRefs.current[0] = el)} /> */}
+//       <FullHeightSection id="Home" ref={(el) => (sectionRefs.current[0] = el)} />
 
 
-//       {["section2", "section3"].map((id, index) => (
+//       {["Leaderboard", "Application"].map((id, index) => (
 //         <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
 //           <SectionContent>
 //             <Grid
 //               container
 //               spacing={4}
 //               alignItems="center"
-//               direction={isMobile ? "column-reverse" : id === "section3" ? "row-reverse" : "row"}
+//               direction={isMobile ? "column-reverse" : id === "Application" ? "row-reverse" : "row"}
 //             >
 //               <Grid
 //                 item
 //                 xs={12}
 //                 md={6}
 //                 sx={{
-//                   animation: `${id === "section2" ? fadeInRight : fadeInLeft} s ease-in-out`,
+//                   animation: `${id === "Leaderboard" ? fadeInRight : fadeInLeft} s ease-in-out`,
 //                 }}
 //               >
 //                 <ImageWrapper>
 //                   <img
-//                     src={id === "section2" ? "/lap.png" : "/form.png"}
+//                     src={id === "Leaderboard" ? "/lap.png" : "/form.png"}
 //                     alt={`Section ${index + 2}`}
 //                     style={{ width: "100%" }}
 //                   />
@@ -247,10 +247,10 @@
 //                   variant="h4"
 //                   sx={{ marginBottom: "20px", color: "#2b6777", fontSize: "3rem" }}
 //                 >
-//                   {id === "section2" ? "Leaderboard" : "Application Form"}
+//                   {id === "Leaderboard" ? "Leaderboard" : "Application Form"}
 //                 </Typography>
 //                 <Typography sx={{ fontSize: "1.6rem", color: "#2b6777" }}>
-//                   {id === "section2" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
+//                   {id === "Leaderboard" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
 //                 </Typography>
 //               </Grid>
 //             </Grid>
@@ -258,7 +258,7 @@
 //         </Section>
 //       ))}
 // <Section
-//   id="section4"
+//   id="Outcome"
 //   ref={(el) => (sectionRefs.current[3] = el)}
 //   style={{
 //     background: "linear-gradient(to right, #e1eef6, #ffffff)",
@@ -478,13 +478,13 @@ const Navbar = styled(AppBar)(({ isTransparent }) => ({
   boxShadow: isTransparent ? "none" : "0px 4px 6px rgba(0, 0, 0, 0.1)",
 }));
 
-const LoginButton = styled(Button)(({ inSection1 }) => ({
+const LoginButton = styled(Button)(({ inHome }) => ({
   borderRadius: "20px",
   padding: "8px 20px",
   fontWeight: "bold",
   fontSize: "17px",
-  backgroundColor: inSection1 ? "rgba(255, 255, 255, 0.8)" : "#f5f5f5",
-  color: inSection1 ? "#2b6777" : "#2b6777",
+  backgroundColor: inHome ? "rgba(255, 255, 255, 0.8)" : "#f5f5f5",
+  color: inHome ? "#2b6777" : "#2b6777",
   border: "1px solid #2b6777",
   "&:hover": {
     backgroundColor: "#2b6777",
@@ -539,7 +539,7 @@ const App = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const sectionId = entry.target.id;
-            setNavbarTransparent(sectionId === "section1");
+            setNavbarTransparent(sectionId === "Home");
           }
         });
       },
@@ -568,9 +568,14 @@ const App = () => {
       <div>
       <Navbar position="fixed" isTransparent={navbarTransparent}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Logo
-          </Typography>
+        <Typography variant="h6" sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}>
+        <img 
+          src="Logo1.png" 
+          alt="Logo" 
+          style={{ height: "80px", objectFit: "contain" }}
+        />
+      </Typography>
+
           {isMobile ? (
             <>
               <IconButton onClick={() => setDrawerOpen(true)}>
@@ -578,7 +583,7 @@ const App = () => {
               </IconButton>
               <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <List>
-                  {["section1", "section2", "section3", "section4"].map((section) => (
+                  {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
                     <ListItem
                       button
                       key={section}
@@ -600,7 +605,7 @@ const App = () => {
             </>
           ) : (
             <Box>
-              {["section1", "section2", "section3", "section4"].map((section) => (
+              {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
                 <Button
                   key={section}
                   onClick={() => scrollToSection(section)}
@@ -615,13 +620,13 @@ const App = () => {
                 </Button>
               ))}
               <Link to="/login" style={{ textDecoration: "none" }}>
-                <LoginButton inSection1={navbarTransparent}>Login</LoginButton>
+                <LoginButton inHome={navbarTransparent}>Login</LoginButton>
               </Link>
             </Box>
           )}
         </Toolbar>
       </Navbar>
-      <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} >
+      <FullHeightSection id="Home" ref={(el) => (sectionRefs.current[0] = el)} >
       <TextBox>
         {/* <h1>Welcome to Our Website</h1> */}
         <p>Track your growth, inspire others, and rise to the top! Showcase how you apply training concepts, compete on a dynamic leaderboard, and explore a hub of shared ideas. Generate personalized PDFs and turn every submission into a step toward success
@@ -629,31 +634,31 @@ const App = () => {
       </TextBox>
     </FullHeightSection>
 
-      {/* <Section id="section1" ref={(el) => (sectionRefs.current[0] = el)} /> */}
-      {/* <FullHeightSection id="section1" ref={(el) => (sectionRefs.current[0] = el)} /> */}
+      {/* <Section id="Home" ref={(el) => (sectionRefs.current[0] = el)} /> */}
+      {/* <FullHeightSection id="Home" ref={(el) => (sectionRefs.current[0] = el)} /> */}
 
 
-      {["section2", "section3"].map((id, index) => (
+      {["Leaderboard", "Application"].map((id, index) => (
   <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
     <SectionContent>
       <Grid
         container
         spacing={4}
         alignItems="center"
-        direction={isMobile ? "column-reverse" : id === "section3" ? "row-reverse" : "row"}
+        direction={isMobile ? "column-reverse" : id === "Application" ? "row-reverse" : "row"}
       >
         <Grid
           item
           xs={12}
           md={6}
           sx={{
-            animation: `${id === "section2" ? fadeInRight : fadeInLeft} 1s ease-in-out`,
+            animation: `${id === "Leaderboard" ? fadeInRight : fadeInLeft} 1s ease-in-out`,
             textAlign: "center", 
           }}
         >
           <ImageWrapper>
             <img
-              src={id === "section2" ? "/lap.png" : "/form.png"}
+              src={id === "Leaderboard" ? "/lap.png" : "/form.png"}
               alt={`Section ${index + 2}`}
               style={{ width: "100%", height: "auto" }} 
             />
@@ -670,7 +675,7 @@ const App = () => {
               textAlign: { xs: "center", md: "left" }, 
             }}
           >
-            {id === "section2" ? "Your Leaderboard" : "Your Learning Experience"}
+            {id === "Leaderboard" ? "Your Leaderboard" : "Your Learning Experience"}
           </Typography>
           <Typography
             sx={{
@@ -682,7 +687,7 @@ const App = () => {
               margin: "0 auto", 
             }}
           >
-            {id === "section2"
+            {id === "Leaderboard"
               ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!"
               : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."}
           </Typography>
@@ -693,7 +698,7 @@ const App = () => {
 ))}
 
 <Section
-  id="section4"
+  id="Outcome"
   ref={(el) => (sectionRefs.current[3] = el)}
   style={{
     background: "linear-gradient(to right, #e1eef6, #ffffff)",
@@ -769,7 +774,7 @@ const App = () => {
 
 
       <Footer>
-        <Typography variant="body2">© 2024 Your Company. All rights reserved.</Typography>
+        <Typography variant="body2">© 2025 Your Company. All rights reserved.</Typography>
       </Footer>
     </div>
     </ThemeProvider>
