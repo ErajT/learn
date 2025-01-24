@@ -32,6 +32,21 @@ app.use(bodyParser.json({ limit: '200mb' }))
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://learn-lime-three.vercel.app'], // Allowed origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
+  credentials: true // Allow credentials
+};
+
+// Global CORS middleware
+// app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly for critical routes
+app.options('/users', cors(corsOptions));
+app.options('/leaderboard', cors(corsOptions));
+app.options('/admin', cors(corsOptions));
+app.options('/schedule', cors(corsOptions));
+
 //middleware for request body
 app.use(express.json());
 app.use('/users', userRouter);
