@@ -227,6 +227,7 @@ const Login = () => {
         if(position == "trainee")
         {
           Cookies.set("position", JSON.stringify("trainee"));
+          console.log("trainee if is called");
         // Second API call to fetch trainee details
         // console.log(`${backendUrl}/leaderboard/getDetails/${email}`);
         const tok = Cookies.get("token");
@@ -247,6 +248,7 @@ const Login = () => {
             expires: 7, // Cookie will expire in 7 days
             secure: true, // Ensure secure cookie usage in HTTPS
           });
+          console.log(traineeDetailsResponse.data.data)
 
           setSnackbarMessage("Login successful!");
           setSnackbarSeverity("success");
@@ -258,7 +260,7 @@ const Login = () => {
         }
         
         setTimeout(() => {
-          window.location.href = "/ParticipantHome"; // Redirect on success
+          // window.location.href = "/ParticipantHome"; // Redirect on success
         }, 1500);
       }
       else if(position == "admin")
