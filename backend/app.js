@@ -22,7 +22,7 @@ app.options('*', cors()); // Allow preflight requests
 // });
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://learn-lime-three.vercel.app'], // Allow requests from frontend application
+  origin: ['https://learn-lime-three.vercel.app'], // Allow requests from frontend application
   // origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true // Allow credentials (cookies) to be included with requests
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://learn-lime-three.vercel.app'], // Allowed origins
+  origin: ['https://learn-lime-three.vercel.app'], // Allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
   credentials: true // Allow credentials
 };
@@ -96,5 +96,10 @@ cron.schedule('30 22 * * 5', async () => {
     console.error('Error triggering API:', error.message);
   }
 });
+
+app.listen(2000,()=>{
+  console.log("Server has started");
+})
+
 
 module.exports = app;
