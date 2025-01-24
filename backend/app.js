@@ -22,7 +22,7 @@ app.options('*', cors()); // Allow preflight requests
 // });
 
 app.use(cors({
-  origin: ['https://learn-lime-three.vercel.app'], // Allow requests from frontend application
+  origin: ['https://learn-nu-nine.vercel.app'], // Allow requests from frontend application
   // origin: ['https://learn-git-main-erajts-projects.vercel.app'],
   // origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
 const corsOptions = {
-  origin: ['https://learn-lime-three.vercel.app'], // Allowed origins
+  origin: ['https://learn-nu-nine.vercel.app'], // Allowed origins
   // origin: ['https://learn-git-main-erajts-projects.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
   credentials: true // Allow credentials
