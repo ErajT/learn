@@ -311,7 +311,7 @@ const Login = () => {
               />
             </InputContainer>
             <Button disabled={loading}>Sign In</Button>
-            <ForgotPasswordLink onClick={() => window.location.href = "/forgot"}>
+            <ForgotPasswordLink onClick={() => navigate("/forgot")}>
               Forgot Password?
             </ForgotPasswordLink>
           </Form>

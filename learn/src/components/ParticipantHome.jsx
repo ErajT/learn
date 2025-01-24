@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Cookies from "js-cookie";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   typography: {
@@ -134,6 +134,7 @@ const Title = styled.h2`
 
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [trainings, setTrainings] = useState([]);
   const [traineeDetails, setTraineeDetails] = useState({
     name: "",
@@ -167,7 +168,7 @@ const HomePage = () => {
     });
 
     setTimeout(() => {
-      window.location.href = "/Home";
+      Navigate("/Home");
     }, 1500);
   };
 
