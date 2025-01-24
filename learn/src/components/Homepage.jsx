@@ -307,6 +307,8 @@ import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 
 const theme = createTheme({
   typography: {
@@ -524,6 +526,7 @@ const HomePage = () => {
   // const backendUrl = process.env.BACKEND_URL; 
     const tok = Cookies.get("token");
     const token = JSON.parse(tok);
+    const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");

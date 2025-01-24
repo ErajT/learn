@@ -168,7 +168,7 @@ const HomePage = () => {
     });
 
     setTimeout(() => {
-      Navigate("/Home");
+      navigate("/Home");
     }, 1500);
   };
 
