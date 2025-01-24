@@ -1,5 +1,5 @@
 const { create, deleteUser, getUserByEmail, resetPwd, logout,checkIfLoggedInByEmail, loginSession } = require('./user.service');
-const { genSaltSync, hashSync, compareSync } = require('bcrypt');
+const { genSaltSync, hashSync, compareSync } = require('bcryptjs');
 const { sign, verify } = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
