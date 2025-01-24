@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios"; // Import axios
 import Cookies from "js-cookie"; // Import js-cookie for managing cookies
 import { backendUrl } from "./constants";
+import { useNavigate } from "react-router-dom";
 
 // Styled Components (same as before)
 const MainContainer = styled.div`
@@ -181,7 +182,7 @@ const Snackbar = styled.div`
 
 const Login = () => {
   // const backendUrl = "http://localhost:2000";  // Use this in API calls
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -260,8 +261,8 @@ const Login = () => {
         }
         
         setTimeout(() => {
-          window.location.href = "/ParticipantHome"; // Redirect on success
-        }, 1500);
+          navigate("/ParticipantHome");
+      }, 1500);
       }
       else if(position == "admin")
       {
@@ -270,7 +271,7 @@ const Login = () => {
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
         setTimeout(() => {
-          window.location.href = "/admin"; // Redirect on success
+          navigate("/admin"); // Redirect on success
         }, 1500);
       }
       } else {
