@@ -338,7 +338,7 @@ const TraineePage = () => {
           fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
         }}
       >
-        Participant Management
+        Participant Dashboard
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>

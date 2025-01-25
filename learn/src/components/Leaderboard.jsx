@@ -250,7 +250,7 @@ const LeaderboardPage = () => {
     fontSize: { xs: '2.4rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' }
   }}
 >
-  Leaderboard Weeks
+  Weekly Leaderboard
 </Typography>
 
       <Divider />
