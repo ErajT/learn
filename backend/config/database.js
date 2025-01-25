@@ -10,9 +10,9 @@ const connection=mysql.createPool({
     // port: 3306,
     // ssl: false
     connectionLimit: 6,
-    host: "qec-db-3.mysql.database.azure.com",
-    user: "qecproject",
-    password: "software22NED",
+    host: "learn-2.mysql.database.azure.com",
+    user: "learn",
+    password: "Delib2005",
     database: "learn",
     port: 3306,
     ssl: true
