@@ -188,7 +188,7 @@ const HomePage = () => {
         </UserInfoBanner>
 
         <PageWrapper>
-          <Title>Choose Training</Title> {/* Title at the top of the grid */}
+          <Title>Select Training</Title> {/* Title at the top of the grid */}
           <TrainingsGrid>
             {trainings.map((training, index) => (
               <TrainingBox key={index} onClick={() => handleTrainingClick(training)}>
