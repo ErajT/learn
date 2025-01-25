@@ -245,7 +245,7 @@ const confirmDelete = async () => {
           fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
         }}
       >
-        Material Management
+        Learning Content
       </Typography>
 
       <Grid container spacing={4}>
@@ -282,7 +282,7 @@ const confirmDelete = async () => {
               textAlign="center"
               mb={3}
             >
-              Upload New Material
+              Upload New Content
             </Typography>
             <TextField
               variant="outlined"
@@ -381,7 +381,7 @@ const confirmDelete = async () => {
                       },
                     }}
                   >
-                    View Material
+                    View Content
                   </Button>
                 </Paper>
               </Grid>
@@ -392,9 +392,9 @@ const confirmDelete = async () => {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
-        <DialogTitle>Delete Material</DialogTitle>
+        <DialogTitle>Delete Content</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this material?
+          Are you sure you want to delete this Content?
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete}>Cancel</Button>

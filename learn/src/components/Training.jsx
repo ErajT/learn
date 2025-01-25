@@ -226,8 +226,8 @@ const HomePage = () => {
     <Container>
       <UserInfoBox>
         <UserInfo>
-          <h3>Training Name: {TrainingName}</h3>
-          <h3>Company Name: {companyName}</h3>
+          <h3>Training: {TrainingName}</h3>
+          <h3>Company: {companyName}</h3>
         </UserInfo>
       </UserInfoBox>
       <FeatureBoxesContainer>
