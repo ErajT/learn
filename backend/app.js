@@ -52,7 +52,7 @@ app.options('/schedule', cors(corsOptions));
 //middleware for request body
 app.use(express.json());
 app.use('/users', userRouter);
-app.use('/leaderboard' , LeaderboardRouter);
+app.use('/leaderboard', LeaderboardRouter);
 app.use('/admin', AdminRouter);
 app.use('/schedule', ScheduleRouter);
 
