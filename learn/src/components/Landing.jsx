@@ -170,7 +170,7 @@
 //               </IconButton>
 //               <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
 //                 <List>
-//                   {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
+//                   {["Home", "Leaderboard", "Showcase", "Outcome"].map((section) => (
 //                     <ListItem
 //                       button
 //                       key={section}
@@ -192,7 +192,7 @@
 //             </>
 //           ) : (
 //             <Box>
-//               {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
+//               {["Home", "Leaderboard", "Showcase", "Outcome"].map((section) => (
 //                 <Button
 //                   key={section}
 //                   onClick={() => scrollToSection(section)}
@@ -217,14 +217,14 @@
 //       <FullHeightSection id="Home" ref={(el) => (sectionRefs.current[0] = el)} />
 
 
-//       {["Leaderboard", "Application"].map((id, index) => (
+//       {["Leaderboard", "Showcase"].map((id, index) => (
 //         <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
 //           <SectionContent>
 //             <Grid
 //               container
 //               spacing={4}
 //               alignItems="center"
-//               direction={isMobile ? "column-reverse" : id === "Application" ? "row-reverse" : "row"}
+//               direction={isMobile ? "column-reverse" : id === "Showcase" ? "row-reverse" : "row"}
 //             >
 //               <Grid
 //                 item
@@ -247,10 +247,10 @@
 //                   variant="h4"
 //                   sx={{ marginBottom: "20px", color: "#2b6777", fontSize: "3rem" }}
 //                 >
-//                   {id === "Leaderboard" ? "Leaderboard" : "Application Form"}
+//                   {id === "Leaderboard" ? "Leaderboard" : "Showcase Form"}
 //                 </Typography>
 //                 <Typography sx={{ fontSize: "1.6rem", color: "#2b6777" }}>
-//                   {id === "Leaderboard" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
+//                   {id === "Leaderboard" ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!" : "Submit your progress and let your actions speak! Log your Showcases through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."} 
 //                 </Typography>
 //               </Grid>
 //             </Grid>
@@ -583,7 +583,7 @@ const App = () => {
               </IconButton>
               <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <List>
-                  {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
+                  {["Home", "Leaderboard", "Showcase", "Outcome"].map((section) => (
                     <ListItem
                       button
                       key={section}
@@ -605,7 +605,7 @@ const App = () => {
             </>
           ) : (
             <Box>
-              {["Home", "Leaderboard", "Application", "Outcome"].map((section) => (
+              {["Home", "Leaderboard", "Showcase", "Outcome"].map((section) => (
                 <Button
                   key={section}
                   onClick={() => scrollToSection(section)}
@@ -638,14 +638,14 @@ const App = () => {
       {/* <FullHeightSection id="Home" ref={(el) => (sectionRefs.current[0] = el)} /> */}
 
 
-      {["Leaderboard", "Application"].map((id, index) => (
+      {["Leaderboard", "Showcase"].map((id, index) => (
   <Section id={id} ref={(el) => (sectionRefs.current[index + 1] = el)} key={id}>
     <SectionContent>
       <Grid
         container
         spacing={4}
         alignItems="center"
-        direction={isMobile ? "column-reverse" : id === "Application" ? "row-reverse" : "row"}
+        direction={isMobile ? "column-reverse" : id === "Showcase" ? "row-reverse" : "row"}
       >
         <Grid
           item
@@ -689,7 +689,7 @@ const App = () => {
           >
             {id === "Leaderboard"
               ? "Celebrate your achievements and see how you rank! The leaderboard highlights top performers, fostering healthy competition and motivation. Keep applying, sharing, and climbing to the top!"
-              : "Submit your progress and let your actions speak! Log your applications through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."}
+              : "Submit your progress and let your actions speak! Log your Showcases through text, photos, or references to showcase your dedication. Each submission brings you closer to the top of the leaderboard and inspires others in the community."}
           </Typography>
         </Grid>
       </Grid>
@@ -708,7 +708,7 @@ const App = () => {
   <SectionContent>
     <SectionHeading>Learning Outcome</SectionHeading>
     <Grid container spacing={4}>
-      {["Participants can document their training application through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
+      {["Participants can document their training Showcase through text, photos, or emails, capturing insights and achievements for measurable growth.", "The leaderboard promotes healthy competition by ranking participants, motivating users to stay consistent and excel.", "Showcasing submissions fosters collaboration, while personalized PDFs help track and share progress."].map((box, index) => (
         <Grid item xs={12} sm={4} key={index}>
           <Card
             sx={{

@@ -216,7 +216,7 @@ const TrainingManager = () => {
           }}
         >
           <Typography variant="h3" fontWeight="bold">
-            Training Manager
+            Training Dashboard
           </Typography>
         </Box>
       </Box>
@@ -290,11 +290,11 @@ const TrainingManager = () => {
                 <Typography variant="h5" fontWeight="bold" textAlign="center">
                   {training.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center" fontSize="1.1rem">
-                  Company: {training.company}
-                </Typography>
                 <Typography variant="body2" color="text.secondary" textAlign="center"  fontSize="1.1rem">
-                  Trainer: {training.trainer}
+                  By: {training.trainer}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" textAlign="center" fontSize="1.1rem">
+                  To: {training.company}
                 </Typography>
               </Box>
             </Link>
