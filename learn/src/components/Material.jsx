@@ -93,14 +93,14 @@ const MaterialPage = () => {
       }
       
     } catch (error) {
-      console.error("Error fetching materials:", error);
+      console.error("Error fetching content:", error);
     }
   };
 
  
   const handleUpload = async () => {
     if (materials.length >= MAX_MATERIALS) {
-      setSnackbarMessage(`Upload limit of ${MAX_MATERIALS} materials reached.`);
+      setSnackbarMessage(`Upload limit of ${MAX_MATERIALS} content reached.`);
       setSnackbarSeverity("warning");
       setSnackbarOpen(true);
       return;
@@ -128,7 +128,7 @@ const MaterialPage = () => {
 
       if (response.ok) {
         const addedMaterial = await response.json();
-        setSnackbarMessage("Material uploaded successfully!");
+        setSnackbarMessage("Content uploaded successfully!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
         setNewMaterial("");
@@ -144,8 +144,8 @@ const MaterialPage = () => {
         setSnackbarOpen(true);
       }
     } catch (error) {
-      console.error("Error uploading material:", error);
-      setSnackbarMessage("Failed to upload material. Please try again.");
+      console.error("Error uploading content:", error);
+      setSnackbarMessage("Failed to upload content. Please try again.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
@@ -171,21 +171,21 @@ const confirmDelete = async () => {
       setMaterials(materials.filter((m) => m.id !== materialToDelete.id));
       setDeleteDialogOpen(false);
       setMaterialToDelete(null);
-      setSnackbarMessage("Material deleted successfully.");
+      setSnackbarMessage("Content deleted successfully.");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
 
       // Refetch materials to show the updated list
       fetchMaterials(trainingId);
     } else {
-      setSnackbarMessage(response.data?.message || "Failed to delete material.");
+      setSnackbarMessage(response.data?.message || "Failed to delete content.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   } catch (error) {
-    console.error("Error deleting material:", error);
+    console.error("Error deleting content:", error);
     setSnackbarMessage(
-      error.response?.data?.message || "Failed to delete material. Please try again."
+      error.response?.data?.message || "Failed to delete content. Please try again."
     );
     setSnackbarSeverity("error");
     setSnackbarOpen(true);
@@ -320,7 +320,7 @@ const confirmDelete = async () => {
                 "&:hover": { backgroundColor: "#225866" },
               }}
             >
-              Upload Material
+              Upload Content
             </Button>
           </Paper>
         </Grid>

@@ -175,8 +175,8 @@ const HomePage = () => {
     // Simulating API call with hardcoded data
     setData({
       material: {
-        title: "Material",
-        description: "Explore materials and resources.",
+        title: "Content",
+        description: "Explore content and resources.",
         image: "https://cdn.pixabay.com/photo/2013/07/13/01/18/pdf-155498_640.png",
       },
       trainee: {

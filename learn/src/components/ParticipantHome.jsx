@@ -179,7 +179,7 @@ const HomePage = () => {
         <UserInfoBanner>
           <UserInfo>
             <p>
-              <label>Participant's Name:</label> {traineeDetails.name}
+              <label>Participant:</label> {traineeDetails.name}
             </p>
             <p>
               <label>Company:</label> {traineeDetails.companyName}

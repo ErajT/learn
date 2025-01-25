@@ -788,13 +788,13 @@ const HomePage = () => {
       <UserInfoBox>
         <UserInfo>
           <p>
-            <label>Participant's Name:</label> {traineeDetails.name}
+            <label>Participant:</label> {traineeDetails.name}
           </p>
           <p>
-            <label>Training Name:</label> {traineeDetails.trainingName}
+            <label>Training:</label> {traineeDetails.trainingName}
           </p>
           <p>
-            <label>Company Name:</label> {traineeDetails.companyName}
+            <label>Company:</label> {traineeDetails.companyName}
           </p>
         </UserInfo>
       </UserInfoBox>

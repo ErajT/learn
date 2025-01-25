@@ -303,7 +303,7 @@ const Application = () => {
 
   // Map JavaScript's weekday index (0-6) to your `days` array
   const dayMapping = [0, 1, 2, 3, 4, 5, 6]; // Adjust if needed to match your array's order
-  const todayidx = dayMapping[currentDayIndex+1];
+  const todayIdx = dayMapping[(currentDayIndex + 1) % dayMapping.length];
   // console.log(todayidx);
 
   // Get today's name
