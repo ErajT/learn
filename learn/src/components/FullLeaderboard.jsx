@@ -210,7 +210,7 @@ const FullLeaderboard = () => {
           <CssBaseline />
           <GlobalStyles />
     <LeaderboardContainer>
-      <Title>Consolidated Leaderboard</Title>
+      <Title>Leaderboard</Title>
       {message ? (
         <Message>{message}</Message>
       ) : (
