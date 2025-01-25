@@ -404,38 +404,39 @@ const StyledCard = styled(Card)`
 
 const ChatBotButton = styled(IconButton)`
   position: fixed;
-  bottom: 16px; 
-  right: 16px; 
-  background-color: #2b6777 !important; 
-  color: #fff !important; 
-  width: 50px; 
-  height: 50px; 
-  border-radius: 50%; 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
-  z-index: 9999; 
+  bottom: -2vh; /* 2% of the viewport height */
+  right: -85vw; /* 2% of the viewport width */
+  background-color: #2b6777 !important;
+  color: #fff !important;
+  width: 4vw; /* 5% of the viewport width */
+  height: 4vw; /* Ensures the button is square */
+  border-radius: 50%; /* Makes the button circular */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Professional shadow */
+  z-index: 9999;
+
   @media (max-width: 1024px) {
-    width: 60px; 
-    height: 60px; 
-    bottom: 20px; 
-    right: 20px; 
+    bottom: -2vh; /* Slightly larger margin for smaller screens */
+    right: -75vw;
+    width: 8vw; /* Increase button size slightly */
+    height: 8vw;
   }
 
   @media (max-width: 768px) {
-    width: 70px;
-    height: 70px; 
-    bottom: 25px; 
-    right: 25px; 
+    bottom: -2vh;
+    right: -70vw;
+    width: 10vw; /* Larger button for smaller screens */
+    height: 10vw;
   }
 
   @media (max-width: 480px) {
-    width: 60px; 
-    height: 60px;
-    bottom: 6px; 
-    right: -300px; 
+    bottom: -2vh;
+    right: -56vw;
+    width: 15vw; /* Even larger button for very small screens */
+    height: 15vw;
   }
 
   &:hover {
-    background-color: #3a7991 !important; 
+    background-color: #3a7991 !important; /* Subtle color change on hover */
   }
 `;
 

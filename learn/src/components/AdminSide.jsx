@@ -87,6 +87,23 @@ const LogoutButton = styled.button`
     transform: scale(1.1);
   }
 `;
+const SmallLogo = styled.img`
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+  }
+`;
+
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -136,6 +153,8 @@ const Sidebar = () => {
           <FaHome />
         </NavItem>
       </NavItems>
+      <SmallLogo src="/logo-synergify.png" alt="Logo 1" />
+      <SmallLogo src="Logo2.png" alt="Logo 2" />
       <LogoutButton onClick={handleLogout} title="Logout">
         <FaSignOutAlt />
       </LogoutButton>
