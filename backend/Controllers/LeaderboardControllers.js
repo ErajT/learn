@@ -3,7 +3,7 @@ const webpush = require("web-push");
 const sharp = require("sharp");
 
 exports.getTraineeDetails = async (req, res) => {
-    const SQL = "SELECT * FROM Trainee WHERE TraineeID=?";
+    const SQL = "SELECT * FROM trainee WHERE TraineeID=?";
     try {
         const { id } = req.params;
         const result = await Qexecution.queryExecute(SQL, [id]);
@@ -29,7 +29,7 @@ exports.getTraineeDetails = async (req, res) => {
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ?";
+    const SQL = "SELECT * FROM trainee WHERE TrainingID = ?";
 
     try {
         const { id } = req.params; // Get TrainingID from request params
@@ -60,9 +60,9 @@ exports.getTraineesForTraining = async (req, res) => {
 };
 
 exports.Example = async (req, res) => {
-    const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Example) VALUES(?,?,?,?,?)";
-    const SQL3 = "UPDATE Submissions SET Options = ?, Example = ?, Approved=0 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
+    const SQL1 = "SELECT Options FROM submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
+    const SQL2 = "INSERT INTO submissions(TraineeID, TrainingID, Date, Options, Example) VALUES(?,?,?,?,?)";
+    const SQL3 = "UPDATE submissions SET Options = ?, Example = ?, Approved=0 WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
         const { TrainingID, TraineeID, Example, newDate } = req.body;
@@ -98,9 +98,9 @@ exports.Example = async (req, res) => {
 
 exports.Photo = async (req, res) => {
     const { TrainingID, TraineeID, newDate } = req.body;
-    const SQL1 = "SELECT Options FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Photo) VALUES(?,?,?,?,?)";
-    const SQL3 = "UPDATE Submissions SET Options = ?, Photo = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
+    const SQL1 = "SELECT Options FROM submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
+    const SQL2 = "INSERT INTO submissions(TraineeID, TrainingID, Date, Options, Photo) VALUES(?,?,?,?,?)";
+    const SQL3 = "UPDATE submissions SET Options = ?, Photo = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
         const photo = req.file;
@@ -148,9 +148,9 @@ exports.Photo = async (req, res) => {
 
 
 exports.Refer = async (req, res) => {
-    const SQL1 = "SELECT Options, Refer FROM Submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
-    const SQL2 = "INSERT INTO Submissions(TraineeID, TrainingID, Date, Options, Refer) VALUES(?,?,?,?,?)";
-    const SQL3 = "UPDATE Submissions SET Refer = ?, Options = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
+    const SQL1 = "SELECT Options, Refer FROM submissions WHERE TrainingID = ? AND TraineeID = ? AND Date = ?";
+    const SQL2 = "INSERT INTO submissions(TraineeID, TrainingID, Date, Options, Refer) VALUES(?,?,?,?,?)";
+    const SQL3 = "UPDATE submissions SET Refer = ?, Options = ? WHERE TraineeID = ? AND TrainingID = ? AND Date = ?";
 
     try {
         const { TrainingID, TraineeID, refer, newDate } = req.body;
@@ -191,12 +191,12 @@ exports.Refer = async (req, res) => {
 exports.generateLeaderboard = async (req, res) => {
     const getAllTrainingsSQL = `
         SELECT TrainingID
-        FROM Training
+        FROM training
     `;
 
     const getLastLeaderboardSQL = `
         SELECT LeaderboardID, WeekDates, WeekNumber
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
         LIMIT 1
@@ -204,17 +204,17 @@ exports.generateLeaderboard = async (req, res) => {
 
     const getTraineesSQL = `
         SELECT TraineeID, COALESCE(Score, 0) AS Score
-        FROM Trainee
+        FROM trainee
         WHERE TrainingID = ?
     `;
 
     const insertLeaderboardSQL = `
-        INSERT INTO Leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
+        INSERT INTO leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
     
     const resetSQL = `
-        UPDATE Trainee SET Score = 0
+        UPDATE trainee SET Score = 0
         WHERE TrainingID = ?
     `;
 
@@ -337,7 +337,7 @@ exports.getTopThreeTrainees = async (req, res) => {
 
     const getLatestLeaderboardSQL = `
         SELECT LeaderboardID, WeekDates, Ranking, Score
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
         LIMIT 1
@@ -366,7 +366,7 @@ exports.getTopThreeTrainees = async (req, res) => {
             const score = scoreList[i];
             
             // Get the name of the trainee
-            const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+            const getTraineeSQL = `SELECT Name FROM trainee WHERE TraineeID = ? AND TrainingID = ?`;
             const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
 
             if (trainee.length) {
@@ -398,7 +398,7 @@ exports.getFullLeaderboard = async (req, res) => {
 
     const getLatestLeaderboardSQL = `
         SELECT LeaderboardID, WeekDates, Ranking, Score
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
         LIMIT 1
@@ -427,7 +427,7 @@ exports.getFullLeaderboard = async (req, res) => {
             const score = scoreList[i];
             
             // Get the name of the trainee
-            const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+            const getTraineeSQL = `SELECT Name FROM trainee WHERE TraineeID = ? AND TrainingID = ?`;
             const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
 
             if (trainee.length) {
@@ -457,21 +457,21 @@ exports.getDetails = async (req, res) => {
     // SQL query to join Trainee, Training, and Company tables
     const SQL = `
         SELECT 
-            Trainee.*, 
-            Training.Topic AS TrainingName, 
-            Company.Name AS CompanyName 
+            trainee.*, 
+            training.Topic AS TrainingName, 
+            company.Name AS CompanyName 
         FROM 
-            Trainee 
+            trainee 
         LEFT JOIN 
-            Training 
+            training 
         ON 
-            Trainee.TrainingID = Training.TrainingID 
+            trainee.TrainingID = training.TrainingID 
         LEFT JOIN 
-            Company 
+            company 
         ON 
-            Trainee.CompanyID = Company.CompanyID 
+            trainee.CompanyID = company.CompanyID 
         WHERE 
-            Trainee.Email = ? and Trainee.Allowed = 1`;
+            trainee.Email = ? and trainee.Allowed = 1`;
 
     try {
         const { email } = req.params; // Get email from request parameters
@@ -545,7 +545,7 @@ exports.subscribe = async (req, res) => {
     }
   
     const SQL1 = "SELECT TraineeID, TrainingID, Endpoint FROM trainee WHERE TrainingID=?";
-    const SQL2 = "SELECT Topic FROM Training WHERE TrainingID = ?"; // Query to get the training name
+    const SQL2 = "SELECT Topic FROM training WHERE TrainingID = ?"; // Query to get the training name
   
     try {
       // Execute the SQL query to get the list of subscriptions
@@ -594,7 +594,7 @@ exports.subscribe = async (req, res) => {
 
 exports.sendChat = async (req, res) => {
 
-    const SQL = "INSERT INTO Chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
+    const SQL = "INSERT INTO chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
     try {
         const { TraineeID, TrainingID, Message } = req.body; // Get TrainingID from request params
 

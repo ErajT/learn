@@ -3,12 +3,12 @@ const Qexecution = require("./query");
 exports.generateLeaderboard = async (req, res) => {
     const getAllTrainingsSQL = `
         SELECT TrainingID
-        FROM Training
+        FROM training
     `;
 
     const getLastLeaderboardSQL = `
         SELECT LeaderboardID, WeekDates, WeekNumber
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
         LIMIT 1
@@ -16,17 +16,17 @@ exports.generateLeaderboard = async (req, res) => {
 
     const getTraineesSQL = `
         SELECT TraineeID, COALESCE(Score, 0) AS Score
-        FROM Trainee
+        FROM trainee
         WHERE TrainingID = ?
     `;
 
     const insertLeaderboardSQL = `
-        INSERT INTO Leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
+        INSERT INTO leaderboard (LeaderboardID, TrainingID, WeekNumber, WeekDates, Ranking, Score)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
     
     const resetSQL = `
-        UPDATE Trainee SET Score = 0
+        UPDATE trainee SET Score = 0
         WHERE TrainingID = ?
     `;
 

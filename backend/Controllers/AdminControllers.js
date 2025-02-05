@@ -4,7 +4,7 @@ const webpush = require("web-push");
 const updateTraineeScore = async (TraineeID, pointsToAdd) => {
     try {
         // Query to get the current score of the trainee
-        const currentScoreResult = await Qexecution.queryExecute("SELECT Score FROM Trainee WHERE TraineeID = ?", [TraineeID]);
+        const currentScoreResult = await Qexecution.queryExecute("SELECT Score FROM trainee WHERE TraineeID = ?", [TraineeID]);
         const currentScore = currentScoreResult.length ? currentScoreResult[0].Score : 0; // Default to 0 if score is null
         
         // Calculate the new score by adding the new points to the old score
@@ -75,11 +75,11 @@ exports.addTrainee = async (req, res) => {
 
     // Queries
     const SQL_INSERT_TRAINEE = `
-        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
+        INSERT INTO trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const SQL_GET_TRAINEE_ID = `
-        SELECT TraineeID FROM Trainee WHERE Email = ? AND PhoneNumber = ? ORDER BY TraineeID DESC LIMIT 1
+        SELECT TraineeID FROM trainee WHERE Email = ? AND PhoneNumber = ? ORDER BY TraineeID DESC LIMIT 1
     `;
 
     try {
@@ -134,11 +134,11 @@ exports.addManyTrainees = async (req, res) => {
 
     // SQL Query to Insert Multiple Trainees
     const SQL_INSERT_MANY_TRAINEES = `
-        INSERT INTO Trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
+        INSERT INTO trainee (CompanyID, TrainingID, Name, Email, PhoneNumber, Score, Allowed)
         VALUES ?
     `;
     const SQL_GET_TRAINEE_IDS = `
-        SELECT TraineeID FROM Trainee WHERE Email IN (?) AND PhoneNumber IN (?) ORDER BY TraineeID ASC
+        SELECT TraineeID FROM trainee WHERE Email IN (?) AND PhoneNumber IN (?) ORDER BY TraineeID ASC
     `;
 
     // Prepare the values to insert in the proper format for batch insertion
@@ -190,7 +190,7 @@ exports.getAllLeaderboards = async (req, res) => {
 
     const getAllLeaderboardsSQL = `
         SELECT LeaderboardID, WeekDates, Ranking, Score, WeekNumber
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ?
         ORDER BY LeaderboardID DESC
     `;
@@ -225,7 +225,7 @@ exports.getAllLeaderboards = async (req, res) => {
                 const score = scoreList[i];
 
                 // Get the name of the trainee
-                const getTraineeSQL = `SELECT Name FROM Trainee WHERE TraineeID = ? AND TrainingID = ?`;
+                const getTraineeSQL = `SELECT Name FROM trainee WHERE TraineeID = ? AND TrainingID = ?`;
                 const trainee = await Qexecution.queryExecute(getTraineeSQL, [traineeID, TrainingID]);
 
                 if (trainee.length) {
@@ -263,8 +263,8 @@ exports.getAllLeaderboards = async (req, res) => {
 exports.getAllTrainings = async (req, res) => {
     const getAllTrainingsSQL = `
         SELECT t.TrainingID, t.CompanyID, t.TrainerName, t.Topic, t.Description, c.Name AS CompanyName
-        FROM Training t
-        JOIN Company c ON t.CompanyID = c.CompanyID
+        FROM training t
+        JOIN company c ON t.CompanyID = c.CompanyID
     `;
 
     try {
@@ -295,7 +295,7 @@ exports.getAllTrainings = async (req, res) => {
 
 exports.getTraineesForTraining = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = "SELECT * FROM Trainee WHERE TrainingID = ? AND Allowed = 1";
+    const SQL = "SELECT * FROM trainee WHERE TrainingID = ? AND Allowed = 1";
 
     try {
         const { TrainingID } = req.params; // Get TrainingID from request params
@@ -341,7 +341,7 @@ exports.addMaterial = async (req, res) => {
     }
 
     // SQL Query to Check if a record for the given TrainingID exists in the Material table
-    const checkMaterialSQL = "SELECT * FROM Material WHERE TrainingID = ?";
+    const checkMaterialSQL = "SELECT * FROM material WHERE TrainingID = ?";
 
     // Prepare the column names for materials
     const materialColumns = ['M1_File', 'M2_File', 'M3_File', 'M4_File', 'M5_File', 'M6_File'];
@@ -355,7 +355,7 @@ exports.addMaterial = async (req, res) => {
         // If no record exists, create a new record and store the material
         if (existingMaterial.length === 0) {
             const insertMaterialSQL = `
-                INSERT INTO Material (TrainingID, M1_Title, M1_Description, M1_File)
+                INSERT INTO material (TrainingID, M1_Title, M1_Description, M1_File)
                 VALUES (?, ?, ?, ?)
             `;
             await Qexecution.queryExecute(insertMaterialSQL, [
@@ -433,7 +433,7 @@ exports.getMaterials = async (req, res) => {
             M4_Title, M4_Description, M4_File,
             M5_Title, M5_Description, M5_File,
             M6_Title, M6_Description, M6_File
-        FROM Material
+        FROM material
         WHERE TrainingID = ?
     `;
 
@@ -516,7 +516,7 @@ exports.getFullLeaderboard = async (req, res) => {
 
     const getLatestLeaderboardSQL = `
         SELECT LeaderboardID, WeekDates, Ranking, Score
-        FROM Leaderboard
+        FROM leaderboard
         WHERE TrainingID = ? AND WeekNumber = ?
         ORDER BY LeaderboardID DESC
         LIMIT 1
@@ -573,7 +573,7 @@ exports.getFullLeaderboard = async (req, res) => {
 
 exports.getSubmissionsBasedOnDate = async (req,res) => {
     const {TrainingID, Date, TraineeID} = req.params;
-    const SQL1 = "SELECT Approved, Example, Refer, Photo FROM Submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
+    const SQL1 = "SELECT Approved, Example, Refer, Photo FROM submissions WHERE TrainingID = ? AND Date = ? AND TraineeID = ?";
     try{
         const result = await Qexecution.queryExecute(SQL1, [TrainingID, Date, TraineeID]);
         const sub = result[0];
@@ -669,7 +669,7 @@ exports.disapprove = async (req, res) => {
 
     try {
         // console.log(TrainingID, TraineeIDs, Date);
-        const SQL2 = "SELECT Topic FROM Training WHERE TrainingID = ?"; // Query to get the training name
+        const SQL2 = "SELECT Topic FROM training WHERE TrainingID = ?"; // Query to get the training name
         const res2 = await Qexecution.queryExecute(SQL2, [TrainingID]);
         const topic = res2[0].Topic;
         // Step 1: Loop through all the TraineeIDs
@@ -703,7 +703,7 @@ exports.disapprove = async (req, res) => {
 
 exports.getTraineesForTraining1 = async (req, res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = "SELECT TraineeID, Name FROM Trainee WHERE TrainingID = ?";
+    const SQL = "SELECT TraineeID, Name FROM trainee WHERE TrainingID = ?";
 
     try {
         const { TrainingID } = req.params; // Get TrainingID from request params
@@ -885,9 +885,9 @@ exports.getTraineesForTraining2 = async (req, res) => {
             t.TraineeID, 
             t.Name 
         FROM 
-            Trainee t
+            trainee t
         INNER JOIN 
-            Chats c 
+            chats c 
         ON 
             t.TraineeID = c.TraineeID
         WHERE 
@@ -919,7 +919,7 @@ exports.getTraineesForTraining2 = async (req, res) => {
 
 exports.sendChat = async (req, res) => {
 
-    const SQL = "INSERT INTO Chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
+    const SQL = "INSERT INTO chats(TraineeID, TrainingID, ChatDetails, ByTrainee) VALUES(?,?,?,?)";
     try {
         const { TraineeID, TrainingID, Message } = req.body; // Get TrainingID from request params
 
@@ -943,7 +943,7 @@ exports.sendChat = async (req, res) => {
 
 exports.getChat = async (req,res) => {
     // Query to join Training and Trainee tables and fetch Trainees
-    const SQL = "SELECT * FROM Chats WHERE TraineeID = ?";
+    const SQL = "SELECT * FROM chats WHERE TraineeID = ?";
 
     try {
         const { TraineeID } = req.params; // Get TrainingID from request params
@@ -974,7 +974,7 @@ exports.getChat = async (req,res) => {
 }
 
 exports.disallow = async (req,res) => {
-    const SQL1 = "UPDATE Trainee SET Allowed = 0 WHERE TraineeID = ?";
+    const SQL1 = "UPDATE trainee SET Allowed = 0 WHERE TraineeID = ?";
     try{
         const {TraineeIDs} = req.body;
         // console.log(TraineeIDs)
