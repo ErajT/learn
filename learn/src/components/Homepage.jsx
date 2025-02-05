@@ -681,7 +681,7 @@ const HomePage = () => {
       if (traineeID) {
         try {
           const response = await axios.get(
-            `http://localhost:2000/admin/getChat/${traineeID}`,
+            `${backendUrl}/admin/getChat/${traineeID}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -743,7 +743,7 @@ const HomePage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:2000/leaderboard/sendChat",
+        `${backendUrl}/leaderboard/sendChat`,
         messageData,
         {
           headers: {
