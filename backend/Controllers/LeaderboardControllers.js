@@ -475,7 +475,7 @@ exports.getDetails = async (req, res) => {
 
     try {
         const { email } = req.params; // Get email from request parameters
-        // console.log(email);
+        // console.log(email); hello there
 
         // Execute the query with the provided email
         const result = await Qexecution.queryExecute(SQL, [email]);
