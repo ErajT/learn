@@ -139,7 +139,7 @@ module.exports = {
                 const code = sign({ result: results }, "eraj20", {
                     expiresIn: 5*60*1000
                 });
-                const resetURL = `localhost:5173/reset/${code}`
+                const resetURL = `https://learn-nu-nine.vercel.app/reset/${code}`
                 console.log(resetURL);
 
                 const transporter = nodemailer.createTransport({
@@ -147,8 +147,8 @@ module.exports = {
                     port: 587,
                     secure: false,
                     auth: {
-                        user: 'nashkaisar@gmail.com', // TBC with CloudID
-                        pass: 'tzly ablu adaj swic'
+                        user: "nashkaisar@gmail.com", // TBC with CloudID
+                        pass: "mvjt aoeq ioql hpeb",
                     }
                 });
                 try {
