@@ -1,0 +1,38 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🔑 Install SSH & SSHPASS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass openssh-client
+      - name: 🚀 Deployment
+        run: |
+          sshpass -p "3BvyPCdMqcz9IlHM9tRt" ssh -o StrictHostKeyChecking=no deliberatives@147.93.85.48 << 'EOF'
+            # Navigate to the project directory
+            cd /home/deliberatives/learn
+            # ✅ Fix: Force Git to Use No Authentication
+            git pull --no-rebase https://github.com/ErajT/learn.git main
+            # Backend Setup (server.js directly)
+            cd backend
+            npm install
+            pm2 restart server.js || pm2 start server.js
+            cd ..
+            # Frontend Setup
+            cd learn
+            npm install
+            npm run build
+            cp -r dist/* /home/deliberatives/htdocs/deliberatives.com/
+            
+          EOF
