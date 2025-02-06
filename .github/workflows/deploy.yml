@@ -27,7 +27,13 @@ jobs:
             # Backend Setup (server.js directly)
             cd backend
             npm install
-            pm2 restart server.js || pm2 start server.js
+            
+            # ✅ Fix: Kill Any Process Using Port 5000 (CloudPanel Port)
+            PID=$(lsof -t -i:5001) && [ -n "$PID" ] && kill -9 $PID || echo "No process running on port 5001"
+
+            # ✅ Restart PM2 Without Conflict
+            pm2 delete server || echo "No previous PM2 process"
+            PORT=5001 pm2 start server.js --name server
             cd ..
             # Frontend Setup
             cd learn
