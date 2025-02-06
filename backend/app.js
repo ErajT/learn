@@ -99,7 +99,7 @@ cron.schedule('30 22 * * 5', async () => {
   }
 });
 
-app.listen(2000,()=>{
+app.listen(3000,()=>{
   console.log("Server has started");
 })
 
