@@ -22,18 +22,19 @@ jobs:
           sshpass -p "3BvyPCdMqcz9IlHM9tRt" ssh -o StrictHostKeyChecking=no deliberatives@147.93.85.48 << 'EOF'
             # Navigate to the project directory
             cd /home/deliberatives/learn
-            # ✅ Fix: Force Git to Use No Authentication
-            git pull --no-rebase https://github.com/ErajT/learn.git main
-            # Backend Setup (server.js directly)
+            
+            # ✅ FIX: Reset the repository to match GitHub’s main branch
+            git reset --hard origin/main
+            git clean -fd
+            git pull origin main --force
+
+            # ✅ Backend Setup
             cd backend
             npm install
-            
-            # ✅ Fix: Kill Any Process Using Port 5000 (CloudPanel Port)
-            PID=$(lsof -t -i:5001) && [ -n "$PID" ] && kill -9 $PID || echo "No process running on port 5001"
 
-            # ✅ Restart PM2 Without Conflict
-            pm2 delete server || echo "No previous PM2 process"
-            PORT=5001 pm2 start server.js --name server
+            # ✅ Restart PM2
+            PORT=5001 pm2 restart server.js --name server || pm2 start server.js --name server
+
             cd ..
             # Frontend Setup
             cd learn
