@@ -142,3 +142,38 @@ exports.generateLeaderboard = async (req, res) => {
         });
     }
 };
+
+
+// API to Get All Trainings with Company Name
+exports.getAllTrainings = async (req, res) => {
+    const getAllTrainingsSQL = `
+        SELECT t.TrainingID, t.CompanyID, t.TrainerName, t.Topic, t.Description, c.Name AS CompanyName
+        FROM training t
+        JOIN company c ON t.CompanyID = c.CompanyID
+    `;
+
+    try {
+        // Get all trainings with company names
+        const trainings = await Qexecution.queryExecute(getAllTrainingsSQL);
+
+        if (trainings.length === 0) {
+            return res.status(404).send({
+                status: "fail",
+                message: "No trainings found.",
+            });
+        }
+
+        res.status(200).send({
+            status: "success",
+            message: "All trainings fetched successfully.",
+            trainings,
+        });
+    } catch (err) {
+        console.error("Error fetching trainings:", err.message);
+        res.status(500).send({
+            status: "fail",
+            message: "Error fetching trainings.",
+            error: err.message,
+        });
+    }
+};
