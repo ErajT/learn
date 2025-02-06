@@ -139,7 +139,7 @@ module.exports = {
                 const code = sign({ result: results }, "eraj20", {
                     expiresIn: 5*60*1000
                 });
-                const resetURL = `https://learn-nu-nine.vercel.app/reset/${code}`
+                const resetURL = `https://deliberatives.com/api/reset/${code}`
                 console.log(resetURL);
 
                 const transporter = nodemailer.createTransport({
@@ -156,7 +156,7 @@ module.exports = {
                         from: 'nashkaisar@gmail.com', // TBC with CloudID
                         to: email,
                         subject: "Password reset request",
-                        text: "We have received a password reset request of your funfinity learning portal account. Please open this link\nlink: " + resetURL
+                        text: "We have received a password reset request of your deliberatives portal account. Please open this link\nlink: " + resetURL
                     });
 
                     res.status(200).send({

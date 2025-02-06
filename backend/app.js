@@ -53,7 +53,7 @@ app.options('/schedule', cors(corsOptions));
 app.use(express.json());
 app.use('/users', userRouter);
 app.use('/leaderboard', checkToken, LeaderboardRouter);
-app.use('/admin',checkToken, AdminRouter);
+app.use('/admin', AdminRouter);
 app.use('/schedule', ScheduleRouter);
 
 const cron = require('node-cron');
@@ -61,7 +61,7 @@ const axios = require('axios');
 
 cron.schedule('30 15 * * 5', async () => {
   try {
-    const response = await axios.post('https://backend-snowy-delta.vercel.app/schedule/generate');
+    const response = await axios.post('https://deliberatives.com/api/schedule/generate');
 
     console.log('API triggered successfully:', response.data);
   } catch (error) {
@@ -71,7 +71,7 @@ cron.schedule('30 15 * * 5', async () => {
 
 cron.schedule('40 18 * * 5', async () => {
   try {
-    const response = await axios.post('https://backend-snowy-delta.vercel.app/schedule/generate');
+    const response = await axios.post('https://deliberatives.com/api/schedule/generate');
 
     console.log('API triggered successfully:', response.data);
   } catch (error) {
@@ -81,7 +81,7 @@ cron.schedule('40 18 * * 5', async () => {
 
 cron.schedule('30 20 * * 5', async () => {
   try {
-    const response = await axios.post('https://backend-snowy-delta.vercel.app/schedule/generate');
+    const response = await axios.post('https://deliberatives.com/api/schedule/generate');
 
     console.log('API triggered successfully:', response.data);
   } catch (error) {
@@ -91,7 +91,7 @@ cron.schedule('30 20 * * 5', async () => {
 
 cron.schedule('30 22 * * 5', async () => {
   try {
-    const response = await axios.post('https://backend-snowy-delta.vercel.app/schedule/generate');
+    const response = await axios.post('https://deliberatives.com/api/schedule/generate');
 
     console.log('API triggered successfully:', response.data);
   } catch (error) {
