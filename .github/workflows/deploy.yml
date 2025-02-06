@@ -24,9 +24,7 @@ jobs:
             cd /home/deliberatives/learn
             
             # ✅ FIX: Reset the repository to match GitHub’s main branch
-            git reset --hard origin/main
-            git clean -fd
-            git pull origin main --force
+            git pull --no-rebase https://github.com/ErajT/learn.git main
 
             # ✅ Backend Setup
             cd backend
