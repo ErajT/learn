@@ -161,14 +161,6 @@ const OverlayPanel = styled.div`
   text-align: center;
 `;
 
-const Paragraph = styled.p`
-  font-size: 14px;
-  font-weight: 100;
-  line-height: 20px;
-  letter-spacing: 0.5px;
-  margin: 20px 0 30px;
-`;
-
 const Snackbar = styled.div`
   visibility: ${(props) => (props.open ? "visible" : "hidden")};
   min-width: 250px;
