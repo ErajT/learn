@@ -83,6 +83,12 @@ const Title = styled.h1`
   color: #2b6777;
 `;
 
+const Title1 = styled.h1`
+  font-weight: bold;
+  margin: 0;
+  color: #f0f8f7;
+`;
+
 const InputContainer = styled.div`
   position: relative;
   width: 100%;
@@ -319,7 +325,7 @@ const Login = () => {
         <OverlayContainer>
           <Overlay>
             <OverlayPanel>
-              <Title>Welcome Back!</Title>
+              <Title1>Welcome Back!</Title1>
               <Paragraph>
                 To keep connected with us, please login with your personal info
               </Paragraph>
