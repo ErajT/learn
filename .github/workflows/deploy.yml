@@ -22,12 +22,17 @@ jobs:
           sshpass -p "3BvyPCdMqcz9IlHM9tRt" ssh -o StrictHostKeyChecking=no deliberatives@147.93.85.48 << 'EOF'
             # Navigate to the project directory
             cd /home/deliberatives/learn
-            # ✅ Fix: Force Git to Use No Authentication
+            
+            # ✅ FIX: Reset the repository to match GitHub’s main branch
             git pull --no-rebase https://github.com/ErajT/learn.git main
-            # Backend Setup (server.js directly)
+
+            # ✅ Backend Setup
             cd backend
             npm install
-            pm2 restart server.js || pm2 start server.js
+
+            # ✅ Restart PM2
+            PORT=5001 pm2 restart server.js --name server || pm2 start server.js --name server
+
             cd ..
             # Frontend Setup
             cd learn
