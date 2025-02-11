@@ -299,7 +299,6 @@ const Login = () => {
       <Container>
         <SignInContainer>
           <Form onSubmit={handleLogin}>
-            <Title>Sign In</Title>
             <InputContainer>
               <Input
                 type="email"
@@ -326,9 +325,6 @@ const Login = () => {
           <Overlay>
             <OverlayPanel>
               <Title1>Welcome Back!</Title1>
-              <Paragraph>
-                To keep connected with us, please login with your personal info
-              </Paragraph>
             </OverlayPanel>
           </Overlay>
         </OverlayContainer>
