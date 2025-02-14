@@ -25,7 +25,7 @@ jobs:
             
             # ✅ FIX: Reset the repository to match GitHub’s main branch
             git reset --hard origin/main
-            git pull --no-rebase https://github.com/ErajT/learn.git main --force
+            git pull origin main --force
 
             # ✅ Backend Setup
             cd backend
