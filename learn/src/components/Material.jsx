@@ -126,6 +126,8 @@ const MaterialPage = () => {
         headers: { Authorization: `Bearer ${token}`},
       });
 
+      console.log(response);
+
       if (response.ok) {
         const addedMaterial = await response.json();
         setSnackbarMessage("Content uploaded successfully!");
