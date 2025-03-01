@@ -171,11 +171,6 @@ const TraineeChatPage = () => {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(requestBody),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
           });
   
           const result = await response.json();
