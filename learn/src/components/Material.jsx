@@ -142,6 +142,7 @@ const MaterialPage = () => {
       } else {
         const errorResponse = await response.json();
         setSnackbarMessage(errorResponse.message || "Upload failed.");
+        console.log(errorResponse.error);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
