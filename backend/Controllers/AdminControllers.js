@@ -381,7 +381,7 @@ exports.addMaterial = async (req, res) => {
                 if (existingMaterial[0][materialColumn] === null) {
                     // Update the first empty column
                     const updateMaterialSQL = `
-                        UPDATE Material
+                        UPDATE material
                         SET 
                             ${titleColumn} = ?, 
                             ${descColumn} = ?, 
