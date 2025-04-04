@@ -147,13 +147,13 @@ module.exports = {
                     port: 587,
                     secure: false,
                     auth: {
-                        user: "nashkaisar@gmail.com", // TBC with CloudID
-                        pass: "mvjt aoeq ioql hpeb",
+                        user: "cnn.machinelearning@gmail.com", // TBC with CloudID
+                        pass: "iegh mjam qpzl amjd",
                     }
                 });
                 try {
                     let abc = transporter.sendMail({
-                        from: 'nashkaisar@gmail.com', // TBC with CloudID
+                        from: 'cnn.machinelearning@gmail.com', // TBC with CloudID
                         to: email,
                         subject: "Password reset request",
                         text: "We have received a password reset request of your deliberatives portal account. Please open this link\nlink: " + resetURL

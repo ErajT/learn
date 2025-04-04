@@ -13,7 +13,7 @@ const updateTraineeScore = async (TraineeID, pointsToAdd) => {
         // console.log("new score is ", currentScore);
 
         // Update the trainee's score in the database
-        await Qexecution.queryExecute("UPDATE Trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
+        await Qexecution.queryExecute("UPDATE trainee SET Score = ? WHERE TraineeID = ?", [newScore, TraineeID]);
 
         return newScore;
     } catch (err) {

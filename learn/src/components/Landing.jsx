@@ -658,7 +658,7 @@ const App = () => {
         >
           <ImageWrapper>
             <img
-              src={id === "Leaderboard" ? "/lap.png" : "/form.png"}
+              src={id === "Leaderboard" ? "/lap.png" : "/application.png"}
               alt={`Section ${index + 2}`}
               style={{ width: "100%", height: "auto" }} 
             />
@@ -675,7 +675,7 @@ const App = () => {
               textAlign: { xs: "center", md: "left" }, 
             }}
           >
-            {id === "Leaderboard" ? "Your Leaderboard" : "Your Learning Experience"}
+            {id === "Leaderboard" ? "Your Leaderboard" : "Your experience"}
           </Typography>
           <Typography
             sx={{
@@ -774,7 +774,7 @@ const App = () => {
 
 
       <Footer>
-        <Typography variant="body2">© 2025 Your Company. All rights reserved.</Typography>
+        <Typography variant="body2">© 2025 Synergify | Funverks. All rights reserved.</Typography>
       </Footer>
     </div>
     </ThemeProvider>
